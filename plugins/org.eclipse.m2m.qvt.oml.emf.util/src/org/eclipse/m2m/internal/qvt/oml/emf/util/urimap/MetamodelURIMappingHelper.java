@@ -190,7 +190,7 @@ public class MetamodelURIMappingHelper {
 
 	private static EPackage loadEPackage(URI uri, ResourceSet rs) {
 		try {
-			if(uri.fragment() != null) {
+			if(uri.hasFragment()) {
 				EObject eObject = rs.getEObject(uri, true);
 				return (eObject instanceof EPackage) ? (EPackage)eObject : null;
 			} 
