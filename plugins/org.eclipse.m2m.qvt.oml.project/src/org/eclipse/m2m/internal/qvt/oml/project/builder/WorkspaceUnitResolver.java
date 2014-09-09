@@ -161,8 +161,8 @@ public class WorkspaceUnitResolver extends DelegatingUnitResolver implements Uni
 
 	private IResource resolveResource(IContainer container, String qualifiedName, boolean isUnit) {		
 		IPath unitPath = qName2Path(qualifiedName);
-		if(isUnit) {
-			unitPath = unitPath.addFileExtension(MDAConstants.QVTO_FILE_EXTENSION);
+		if(!isUnit) {
+			unitPath = unitPath.removeFileExtension();
 		}
 		
 		return container.findMember(unitPath);		
@@ -180,7 +180,7 @@ public class WorkspaceUnitResolver extends DelegatingUnitResolver implements Uni
 	private static IPath qName2Path(String qname) {
 		assert qname != null;
 		
-		String pathStr = qname.replace('.', '/');
+		String pathStr = ResolverUtils.toNamespaceRelativeUnitFilePath(qname);
 		return new Path(pathStr);
 	}
 	

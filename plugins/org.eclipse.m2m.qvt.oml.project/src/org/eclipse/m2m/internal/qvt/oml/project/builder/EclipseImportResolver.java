@@ -29,6 +29,7 @@ import org.eclipse.m2m.internal.qvt.oml.common.io.CFolder;
 import org.eclipse.m2m.internal.qvt.oml.common.io.eclipse.EclipseFile;
 import org.eclipse.m2m.internal.qvt.oml.common.io.eclipse.EclipseFileUtil;
 import org.eclipse.m2m.internal.qvt.oml.compiler.IImportResolver;
+import org.eclipse.m2m.internal.qvt.oml.compiler.ResolverUtils;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.Logger;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.WorkspaceUtils;
 import org.eclipse.m2m.internal.qvt.oml.runtime.project.DeployedImportResolver;
@@ -81,8 +82,7 @@ public class EclipseImportResolver implements IImportResolver {
 	}	
 	
 	public CFile resolveImport(String importedUnitName) {
-        String path = importedUnitName.replace('.', '/');
-        path += MDAConstants.QVTO_FILE_EXTENSION_WITH_DOT;
+        String path = ResolverUtils.toNamespaceRelativeUnitFilePath(importedUnitName);
         
         IContainer[] roots = sourceProvider.getContainers();        
         for (int i = 0; i < roots.length; i++) {

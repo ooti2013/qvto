@@ -664,7 +664,7 @@ public class NewQvtModuleCreationPage extends WizardPage implements Listener {
 			return null;
 		}
 		// now we can safely convert nsQname to relative path
-		IPath nsPath = new Path(namespace.replace('.', '/'));
+		IPath nsPath = new Path(namespace.replace('.', IPath.SEPARATOR));
 		return srcContainer.getFolder(nsPath);
     }
 		

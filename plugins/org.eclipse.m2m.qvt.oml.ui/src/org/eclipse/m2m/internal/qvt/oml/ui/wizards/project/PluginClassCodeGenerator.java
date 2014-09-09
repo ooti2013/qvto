@@ -60,7 +60,7 @@ class PluginClassCodeGenerator {
 		String packageName = (nameloc == -1) ? "" : fQualifiedClassName.substring(0, nameloc); //$NON-NLS-1$
 		String className = fQualifiedClassName.substring(nameloc + 1);
 
-		IPath path = new Path(packageName.replace('.', '/'));
+		IPath path = new Path(packageName.replace('.', IPath.SEPARATOR));
 		if (fSourceFolderName != null && fSourceFolderName.trim().length() > 0) {
 			path = new Path(fSourceFolderName).append(path);			
 		}

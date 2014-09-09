@@ -37,6 +37,7 @@ import org.eclipse.m2m.internal.qvt.oml.common.project.TransformationRegistry;
 import org.eclipse.m2m.internal.qvt.oml.compiler.BlackboxUnitResolver;
 import org.eclipse.m2m.internal.qvt.oml.compiler.DelegatingUnitResolver;
 import org.eclipse.m2m.internal.qvt.oml.compiler.LegacyResolverSupport;
+import org.eclipse.m2m.internal.qvt.oml.compiler.ResolverUtils;
 import org.eclipse.m2m.internal.qvt.oml.compiler.UnitContents;
 import org.eclipse.m2m.internal.qvt.oml.compiler.UnitProxy;
 import org.eclipse.m2m.internal.qvt.oml.compiler.UnitResolver;
@@ -73,7 +74,7 @@ public class DeployedImportResolver extends DelegatingUnitResolver implements Le
 		if(folder == null) {
 			return ""; //$NON-NLS-1$
 		}
-		return folder.getFullPath().replace('\\', '/').replace('/', '.');
+		return ResolverUtils.toQualifiedName(folder.getFullPath().replace('\\', IPath.SEPARATOR));
 	}
 	
 	public CFile resolveImport(String importedUnitName) {
@@ -81,7 +82,7 @@ public class DeployedImportResolver extends DelegatingUnitResolver implements Le
 			return null;
 		}
 		
-		IPath fullPath = new Path(importedUnitName.replace('.', '/') + MDAConstants.QVTO_FILE_EXTENSION_WITH_DOT);
+		IPath fullPath = new Path(ResolverUtils.toNamespaceRelativeUnitFilePath(importedUnitName));
 		
 		for (BundleModuleRegistry nextRegistry : bundleModules) {
 			if (nextRegistry.fileExists(fullPath)) {
@@ -186,8 +187,8 @@ public class DeployedImportResolver extends DelegatingUnitResolver implements Le
 		}
 
 		{
-			IPath path = new Path(parentURI.toPlatformString(true)).append(qualifiedName.replace('.', '/'));
-			URI uri = URI.createPlatformPluginURI(path.toString(), false).appendFileExtension(MDAConstants.QVTO_FILE_EXTENSION);
+			IPath path = new Path(parentURI.toPlatformString(true)).append(ResolverUtils.toNamespaceRelativeUnitFilePath(qualifiedName));
+			URI uri = URI.createPlatformPluginURI(path.toString(), false);
 			
 			if(uriConverter.exists(uri, Collections.emptyMap())) {
 				return createUnit(qualifiedName, uri);

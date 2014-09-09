@@ -29,6 +29,7 @@ import org.eclipse.m2m.internal.qvt.oml.common.MDAConstants;
 import org.eclipse.m2m.internal.qvt.oml.common.MdaException;
 import org.eclipse.m2m.internal.qvt.oml.common.io.CFile;
 import org.eclipse.m2m.internal.qvt.oml.common.project.CompiledTransformation;
+import org.eclipse.m2m.internal.qvt.oml.compiler.ResolverUtils;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfUtil;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.ModelContent;
 import org.eclipse.m2m.internal.qvt.oml.runtime.generator.TransformationRunner;
@@ -45,7 +46,7 @@ public class QvtCompiledTransformation implements QvtTransformation, CompiledTra
         myNamespace = namespace;
         myId = id;
         this.transformationFilePath = file != null ? new Path(file) :
-        	new Path(id.replace('.', '/') + MDAConstants.QVTO_FILE_EXTENSION_WITH_DOT);
+        	new Path(ResolverUtils.toNamespaceRelativeUnitFilePath(id));
     }
 	
 	protected QvtTransformation getImpl() throws MdaException {
