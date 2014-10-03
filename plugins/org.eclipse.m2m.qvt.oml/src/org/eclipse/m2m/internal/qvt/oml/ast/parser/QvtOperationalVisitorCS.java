@@ -4064,8 +4064,7 @@ public class QvtOperationalVisitorCS
 		}
 
 		boolean isEntryPoint = QvtOperationalEnv.MAIN.equals(mappingDeclarationCS.getSimpleNameCS().getValue());
-		boolean isMapping = ExpressionsPackage.eINSTANCE.getMappingOperation().getClassifierID() == 
-							operation.eClass().getClassifierID();
+		boolean isMapping = operation instanceof MappingOperation;
 		boolean createMappingParams = isEntryPoint || isMapping;
 		
 		List<EParameter> params = operation.getEParameters();

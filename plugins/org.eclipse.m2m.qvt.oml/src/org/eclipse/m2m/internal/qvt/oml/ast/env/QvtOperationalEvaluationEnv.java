@@ -435,11 +435,11 @@ public class QvtOperationalEvaluationEnv extends EcoreEvaluationEnvironment {
 			
 		}
 		else if(object instanceof DynamicEObjectImpl) {
-			for (EClass objParent : ((DynamicEObjectImpl) object).eClass().getEAllSuperTypes()) {
-				if (objParent.getClassifierID() == classifier.getClassifierID())
+			for (EClass objType : ((EObject) object).eClass().getEAllSuperTypes()) {
+				if (objType.getEPackage() == classifier.getEPackage() 
+						&& objType.getClassifierID() == classifier.getClassifierID())
 					return true;
 			}
-				
 		}
 		
 		if (classifier instanceof CollectionType<?, ?> && object instanceof java.util.Collection<?>) {
