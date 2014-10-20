@@ -26,6 +26,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.m2m.internal.qvt.oml.common.CommonPlugin;
+import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.IMetamodelProvider;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.IMetamodelRegistryProvider;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.MetamodelRegistry;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.WorkspaceMetamodelProvider;
@@ -50,7 +51,7 @@ public class WorkspaceMetamodelRegistryProvider implements IMetamodelRegistryPro
 		
 		this.resolutionRSet = resourceSet;
 	}
-	
+		
 	public ResourceSet getResolutionResourceSet() {
 		return resolutionRSet;
 	}
@@ -62,7 +63,7 @@ public class WorkspaceMetamodelRegistryProvider implements IMetamodelRegistryPro
 		
 		URI uri = context.getURI();
 		if(!uri.isPlatformResource()) {
-			return MetamodelRegistry.getInstance();
+			return getDelegateRegistry();
 		}
 		
 		IPath wsLocation = new Path(uri.toPlatformString(true));		
@@ -95,11 +96,19 @@ public class WorkspaceMetamodelRegistryProvider implements IMetamodelRegistryPro
 			}			
 		}
 		
-		return MetamodelRegistry.getInstance();
+		return getDelegateRegistry();
+	}
+	
+	private MetamodelRegistry getDelegateRegistry() {
+		return new MetamodelRegistry(createDelegateMetamodelProvider()); 
+	}
+	
+	protected IMetamodelProvider createDelegateMetamodelProvider() {
+		return MetamodelRegistry.getDefaultMetamodelProvider();
 	}
 	
 	private MetamodelRegistry createRegistry(MappingContainer mappings) {
-		WorkspaceMetamodelProvider metamodelProvider = new WorkspaceMetamodelProvider(resolutionRSet);				
+		WorkspaceMetamodelProvider metamodelProvider = new WorkspaceMetamodelProvider(createDelegateMetamodelProvider(), resolutionRSet);				
 		
 		for (URIMapping nextMapping : mappings.getMapping()) {
 			URI uri = null;

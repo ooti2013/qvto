@@ -31,12 +31,18 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfUtilPlugin;
 import org.eclipse.osgi.util.NLS;
 
-public class WorkspaceMetamodelProvider implements IMetamodelProvider {
+public class WorkspaceMetamodelProvider extends DelegatingMetamodelProvider {
 
 	private ResourceSet resSet;
 	private List<IMetamodelDesc> metamodels;
 	
 	public WorkspaceMetamodelProvider(ResourceSet resolutionRSet) {
+		this(MetamodelRegistry.getDefaultMetamodelProvider(), resolutionRSet);
+	}
+	
+	public WorkspaceMetamodelProvider(IMetamodelProvider delegate, ResourceSet resolutionRSet) {
+		super(delegate);
+		
 		if(resolutionRSet == null) {
 			throw new IllegalArgumentException("Null resolution resource set"); //$NON-NLS-1$
 		}
@@ -44,7 +50,7 @@ public class WorkspaceMetamodelProvider implements IMetamodelProvider {
 		this.resSet = resolutionRSet;
 		this.metamodels = new ArrayList<IMetamodelDesc>();
 	}
-		
+			
 	public IMetamodelDesc addMetamodel(String metamodelID, URI metamodelResourceURI) {
 		if(metamodelID == null) {
 			throw new IllegalArgumentException("Null metamodel ID"); //$NON-NLS-1$			
@@ -60,10 +66,10 @@ public class WorkspaceMetamodelProvider implements IMetamodelProvider {
 		return desc;
 	}
 		
-	public IMetamodelDesc[] getMetamodels() {
+	protected final IMetamodelDesc[] getLocalMetamodels() {
 		return metamodels.toArray(new IMetamodelDesc[metamodels.size()]);
 	}
-
+	
     public static List<IResource> collectWorkspaceMetamodels() {
     	final List<IResource> result = new ArrayList<IResource>();
     
@@ -127,7 +133,7 @@ public class WorkspaceMetamodelProvider implements IMetamodelProvider {
 			}	
 					
 			if(eObject instanceof EPackage) {
-				return (EPackage)eObject;
+				return (EPackage) eObject;
 			}			
 			throw new WrappedException(new RuntimeException(NLS.bind(Messages.WorskpaceMetamodelProvider_URINotReferringMetamodel, uri)));
 		}

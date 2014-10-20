@@ -20,13 +20,18 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.impl.EPackageRegistryImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.m2m.internal.qvt.oml.common.io.CResourceRepositoryContext;
 import org.eclipse.m2m.internal.qvt.oml.common.io.eclipse.WorkspaceMetamodelRegistryProvider;
+import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfUtilPlugin;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.URIUtils;
+import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.EmfStandaloneMetamodelProvider;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.IMetamodelDesc;
+import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.IMetamodelProvider;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.IMetamodelRegistryProvider;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.MetamodelRegistry;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.urimap.MModelURIMapFactory;
@@ -57,16 +62,21 @@ public class TestMetamodelRegistry extends TestCase {
         
         URIMapping nestedUriMapping = MModelURIMapFactory.eINSTANCE.createURIMapping();
         nestedUriMapping.setSourceURI(METAMODEL_ID + "." + NESTED_PACKAGE_NAME);
+        
+        URIMapping overridingUriMapping = MModelURIMapFactory.eINSTANCE.createURIMapping();
+        overridingUriMapping.setSourceURI(EcorePackage.eNS_URI);
                 
         testEcoreFileURI = prepareTestMetamodel();
         uriMapping.setTargetURI(testEcoreFileURI.toString());
         nestedUriMapping.setTargetURI(platformTestModelURI.appendFragment("//" + NESTED_PACKAGE_NAME).toString());
+        overridingUriMapping.setTargetURI("invalid");
         
         allMappings.getMapping().add(uriMapping);
         allMappings.getMapping().add(nestedUriMapping);
+        allMappings.getMapping().add(overridingUriMapping);
         
         mappingResource.save(null);
-        // TODO - sould rather be MetamodelURIMappingHelper operation
+        // TODO - should rather be MetamodelURIMappingHelper operation
         // refresh .settings folder structure        
         myProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
         
@@ -117,6 +127,55 @@ public class TestMetamodelRegistry extends TestCase {
                 
         assertEquals(ePackage.getName(), NESTED_PACKAGE_NAME);
     }
+	
+	public void testBug376644PackageRegistryFallback() throws Exception {
+		IMetamodelRegistryProvider.IRepositoryContext ctx = createContext();
+
+        IMetamodelDesc metamodelDesc = new WorkspaceMetamodelRegistryProvider()
+        	.getRegistry(ctx).getMetamodelDesc(EcorePackage.eNS_URI);
+        assertNotNull(metamodelDesc);
+        assertTrue(EmfUtilPlugin.isSuccess(metamodelDesc.getLoadStatus()));
+        
+        EPackage ePackage = metamodelDesc.getModel();
+        assertSame(EcorePackage.eINSTANCE, ePackage);
+	}
+	
+	public void testBug441094DelegatePackageRegistry() {
+		EPackage myEPackage = EcoreFactory.eINSTANCE.createEPackage();
+		
+		final String ID = "myPackageID";
+		
+		EPackage.Registry delegateRegistry = new EPackageRegistryImpl();
+		delegateRegistry.put(ID, myEPackage);
+		EPackage.Registry packageRegistry = new EPackageRegistryImpl(delegateRegistry);
+						
+		IMetamodelProvider provider = new EmfStandaloneMetamodelProvider(packageRegistry);
+		MetamodelRegistry metaRegistry = new MetamodelRegistry(provider);
+				
+		EPackage result = metaRegistry.toEPackageRegistry().getEPackage(ID);
+		assertSame(myEPackage, result);
+	}
+	
+	public void testBug326651UpdateMetamodel() throws Exception {
+		
+		final String ID = "myPackageID";
+		EPackage p1 = EcoreFactory.eINSTANCE.createEPackage();
+		EPackage p2 = EcoreFactory.eINSTANCE.createEPackage();
+		
+		EPackage.Registry packageRegistry = new EPackageRegistryImpl();
+		packageRegistry.put(ID, p1);
+		
+		MetamodelRegistry registry = new MetamodelRegistry(new EmfStandaloneMetamodelProvider(packageRegistry));
+		
+		IMetamodelDesc desc = registry.getMetamodelDesc(ID);
+		assertSame(p1, desc.getModel());
+		
+		packageRegistry.put(ID, p2);
+		
+		desc = registry.getMetamodelDesc(ID);
+		assertSame(p2, desc.getModel());
+		
+	}
 	
 	private URI prepareTestMetamodel() throws IOException {
 		IFile ecoreFile = myProject.project.getFile("javaless.ecore"); //$NON-NLS-1$

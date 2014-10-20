@@ -31,7 +31,6 @@ import org.eclipse.m2m.internal.qvt.oml.NLS;
 import org.eclipse.m2m.internal.qvt.oml.QvtMessage;
 import org.eclipse.m2m.internal.qvt.oml.common.io.CResourceRepositoryContext;
 import org.eclipse.m2m.internal.qvt.oml.common.io.eclipse.WorkspaceMetamodelRegistryProvider;
-import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.EmfStandaloneMetamodelProvider;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.IMetamodelProvider;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.IMetamodelRegistryProvider;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.MetamodelRegistry;
@@ -106,7 +105,7 @@ public class CompilerUtils {
     	if(metamodelRegistry != null) {
     		packageRegistry = metamodelRegistry.toEPackageRegistry();
     	} else {
-    		packageRegistry = new EPackageRegistryImpl();
+    		packageRegistry = new EPackageRegistryImpl(EPackage.Registry.INSTANCE);
     	}
 
     	return packageRegistry;
@@ -132,7 +131,7 @@ public class CompilerUtils {
     static class Eclipse {
 
         static QVTOCompiler createCompiler() {
-        	return new QVTOCompiler(new WorkspaceMetamodelRegistryProvider(createResourceSet()));
+        	return new QVTOCompiler(createMetamodelRegistryProvider(createResourceSet()));
         }    	
 
     	static Monitor createMonitor(Monitor monitor, int ticks) {
@@ -151,23 +150,12 @@ public class CompilerUtils {
 
 		static WorkspaceMetamodelRegistryProvider createMetamodelRegistryProvider(final EPackage.Registry packageRegistry, ResourceSet metamodelResourceSet) {
 			return new WorkspaceMetamodelRegistryProvider(metamodelResourceSet) {
-				IMetamodelProvider registry = new EmfStandaloneMetamodelProvider(packageRegistry);
+								
 				@Override
-				public MetamodelRegistry getRegistry(IRepositoryContext context) {
-					MetamodelRegistry result = super.getRegistry(context);
-					if(result == MetamodelRegistry.getInstance()) {
-						// FIXME - get rid of this hack by providing
-						// a protected method WorkspaceProvider::getDelegateRegistry();
-						// which by default returns MetamodelRegistry.getInstance()
-						result = new MetamodelRegistry(registry);
-					} else if(result != null) {
-						MetamodelRegistry customRegistry = new MetamodelRegistry(registry);					
-						customRegistry.merge(result);
-						result = customRegistry;
-					}
-					return result;
+				protected IMetamodelProvider createDelegateMetamodelProvider() {
+					return MetamodelRegistry.getDefaultMetamodelProvider(packageRegistry);
 				}
 			};
-		}    	
+		}     	
     }
 }

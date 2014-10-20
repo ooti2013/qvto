@@ -49,7 +49,7 @@ public interface IMetamodelDesc {
     /**
      * Indicates whether the metamodel for this descriptor has already been loaded.
      * 
-     * @return <true>If the metamodel was loaded by a previous call {@link #getModel()}}, <code>false</code> owtherwise.  
+     * @return <true> if the metamodel was loaded by a previous call {@link #getModel()}}, <code>false</code> otherwise.  
      */
     boolean isLoaded();
 }

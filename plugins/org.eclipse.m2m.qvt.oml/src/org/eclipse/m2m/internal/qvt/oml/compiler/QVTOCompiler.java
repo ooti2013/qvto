@@ -37,7 +37,6 @@ import org.eclipse.emf.common.util.UniqueEList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Registry;
-import org.eclipse.emf.ecore.impl.EPackageRegistryImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
@@ -63,7 +62,6 @@ import org.eclipse.m2m.internal.qvt.oml.cst.ImportCS;
 import org.eclipse.m2m.internal.qvt.oml.cst.UnitCS;
 import org.eclipse.m2m.internal.qvt.oml.cst.parser.AbstractQVTParser;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfUtil;
-import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.EmfStandaloneMetamodelProvider;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.IMetamodelRegistryProvider;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.MetamodelRegistry;
 import org.eclipse.m2m.internal.qvt.oml.expressions.ModelType;
@@ -121,6 +119,7 @@ public class QVTOCompiler {
     
 	public static QVTOCompiler createCompiler(EPackage.Registry registry) {		
 		ResourceSetImpl rs = new ResourceSetImpl();
+		
 		if(registry != null) {
 			rs.setPackageRegistry(registry);
 			
@@ -139,11 +138,8 @@ public class QVTOCompiler {
 				rs.setURIResourceMap(uriResourceMap);
 			}
 		}
-		
-		final EPackageRegistryImpl packageRegistryImpl = new EPackageRegistryImpl(EPackage.Registry.INSTANCE);
-		packageRegistryImpl.putAll(registry);
-		
-		IMetamodelRegistryProvider metamodelRegistryProvider = createMetamodelRegistryProvider(packageRegistryImpl, rs);
+				
+		IMetamodelRegistryProvider metamodelRegistryProvider = createMetamodelRegistryProvider(registry, rs);
 
 		return new QVTOCompiler(metamodelRegistryProvider);
 	}
@@ -569,7 +565,7 @@ public class QVTOCompiler {
     private CompiledUnit loadBlackboxUnit(UnitProxy unit) throws IOException {
     	ModelContents contents = (ModelContents) unit.getContents();
     	
-    	List<EObject> topElements = contents.loadElements(CompilerUtils.getEPackageRegistry(unit.getURI(), fMetamodelRegistryProvider));
+    	List<EObject> topElements = contents.loadElements(getEPackageRegistry(unit.getURI()));
     	List<QvtOperationalModuleEnv> modelEnvs = new ArrayList<QvtOperationalModuleEnv>(topElements.size());
     	
     	for (EObject nextElement : topElements) {
@@ -746,15 +742,7 @@ public class QVTOCompiler {
 	}
 	
 	private static IMetamodelRegistryProvider createMetamodelRegistryProvider(ResourceSet metamodelResourceSet) {
-		if(EMFPlugin.IS_ECLIPSE_RUNNING && EMFPlugin.IS_RESOURCES_BUNDLE_AVAILABLE) {
-			return Eclipse.createMetamodelRegistryProvider(metamodelResourceSet);
-		}
-		
-		return new IMetamodelRegistryProvider() {
-			public MetamodelRegistry getRegistry(IRepositoryContext context) {
-				return new MetamodelRegistry(new EmfStandaloneMetamodelProvider());
-			}
-		};
+		return createMetamodelRegistryProvider(EPackage.Registry.INSTANCE, metamodelResourceSet);
 	}
 
 	private static IMetamodelRegistryProvider createMetamodelRegistryProvider(final EPackage.Registry packageRegistry, ResourceSet metamodelResourceSet) {
@@ -762,9 +750,13 @@ public class QVTOCompiler {
 			return Eclipse.createMetamodelRegistryProvider(packageRegistry, metamodelResourceSet);
 		}
 		
+		return createStandaloneMetamodelRegistryProvider(packageRegistry);
+	}
+	
+	private static IMetamodelRegistryProvider createStandaloneMetamodelRegistryProvider(final EPackage.Registry packageRegistry) {
 		return new IMetamodelRegistryProvider() {
 			public MetamodelRegistry getRegistry(IRepositoryContext context) {
-				return new MetamodelRegistry(new EmfStandaloneMetamodelProvider(packageRegistry));
+				return new MetamodelRegistry(packageRegistry);
 			}
 		};
 	}

@@ -11,7 +11,15 @@
  *******************************************************************************/
 package org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry;
 
+import org.eclipse.emf.ecore.EPackage;
+
 /** @author pkobiakov */
 public interface IMetamodelProvider {
+	
 	IMetamodelDesc[] getMetamodels();
+	
+	IMetamodelDesc getMetamodel(String id);
+	
+	EPackage.Registry getPackageRegistry();
+	
 }

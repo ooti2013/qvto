@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Registry;
 
-
 public class EmfStandaloneMetamodelProvider implements IMetamodelProvider {
 	
     private Registry fRegistry;	
@@ -32,15 +31,17 @@ public class EmfStandaloneMetamodelProvider implements IMetamodelProvider {
     	}
 
     	fRegistry = packageRegistry;
-    }    
+    }
     
-	public IMetamodelDesc[] getMetamodels() {
-		
+    public EPackage.Registry getPackageRegistry() {
+    	return fRegistry;
+    }
+    
+    public IMetamodelDesc[] getMetamodels() {
         List<IMetamodelDesc> descs = new ArrayList<IMetamodelDesc>();
-		List<String> uris = new ArrayList<String>(fRegistry.keySet());
         
-        for (String uri : uris) {
-            Object pack = fRegistry.get(uri);
+        for (String uri : fRegistry.keySet()) {
+        	Object pack = fRegistry.get(uri);
             if (pack instanceof EPackage.Descriptor) {
             	descs.add(new EmfMetamodelDesc((EPackage.Descriptor) pack, uri));
             } else if (pack instanceof EPackage) {
@@ -50,5 +51,10 @@ public class EmfStandaloneMetamodelProvider implements IMetamodelProvider {
         
         return descs.toArray(new IMetamodelDesc[descs.size()]);
     }
-
+		
+	public IMetamodelDesc getMetamodel(String nsURI) {
+		EPackage pack = getPackageRegistry().getEPackage(nsURI);
+		return new EmfMetamodelDesc(pack, nsURI);
+    }
+    
 }

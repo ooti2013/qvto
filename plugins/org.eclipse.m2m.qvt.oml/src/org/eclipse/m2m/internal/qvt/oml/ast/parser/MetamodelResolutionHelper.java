@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.m2m.internal.qvt.oml.ast.env.QvtOperationalEnv;
-import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfException;
+import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfUtil;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.MetamodelRegistry;
 
 /**
@@ -37,43 +37,34 @@ class MetamodelResolutionHelper {
 		EPackage.Registry registry = qvtEnv.getFactory().getEPackageRegistry();
         List<EPackage> metamodels = new ArrayList<EPackage>(1);
         
-		try {
-		    List<EPackage> desc = Collections.emptyList();            
-            if (metamodelUri != null && path.isEmpty()) {
-                EPackage ePackage = registry.getEPackage(metamodelUri);
-                if(ePackage != null) {                	
-                	desc = Collections.singletonList(ePackage);
-                } else {
-                	ePackage = MetamodelRegistry.tryLookupEmptyRootPackage(metamodelUri, registry);
-                	if(ePackage != null) {                	
-                    	desc = Collections.singletonList(ePackage);
-                    }
-               }
+		
+	    List<EPackage> desc = Collections.emptyList();            
+        if (metamodelUri != null && path.isEmpty()) {
+            EPackage ePackage = registry.getEPackage(metamodelUri);
+            if(ePackage != null) {                	
+            	desc = Collections.singletonList(ePackage);
             } else {
-                desc = MetamodelRegistry.resolveMetamodels(registry, path);
-            }
-                        
-			for(EPackage model : desc) {							        	
-	            // register meta-model for EClassifier lookup
-	        	if (model.getNsURI() == null) {
-					while (true) {
-						if (model.getESuperPackage() == null) {
-							break;
-						}
-						model = model.getESuperPackage();
-					}
-	        	}
-	        	
-	        	metamodels.add(model);
-	        	if(metamodelUri != null) {
-	        		qvtEnv.getEPackageRegistry().put(metamodelUri, model);
-	        	}
-	        	
-	            //break;
-	        }
-		} catch (EmfException e) {
-			// It's legal situation of unresolved metamodels
-		}
+            	ePackage = MetamodelRegistry.tryLookupEmptyRootPackage(metamodelUri, registry);
+            	if(ePackage != null) {                	
+                	desc = Collections.singletonList(ePackage);
+                }
+           }
+        } else {
+            desc = MetamodelRegistry.resolveMetamodels(registry, path);
+        }
+                    
+		for(EPackage model : desc) {							        	
+            // register meta-model for EClassifier lookup
+        	if (model.getNsURI() == null) {
+				model = EmfUtil.getRootPackage(model);
+        	}
+        	
+        	metamodels.add(model);
+        	if(metamodelUri != null) {
+        		qvtEnv.getEPackageRegistry().put(metamodelUri, model);
+        	}
+        }
+		
 		return metamodels;
 	}	
 }

@@ -12,23 +12,20 @@
  *******************************************************************************/
 package org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.EMFPlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.UniqueEList;
-import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EPackageRegistryImpl;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfException;
+import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfUtil;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfUtilPlugin;
 import org.eclipse.ocl.ecore.EcoreEnvironment;
 import org.eclipse.osgi.util.NLS;
@@ -36,23 +33,6 @@ import org.eclipse.osgi.util.NLS;
 
 /** @author pkobiakov */
 public class MetamodelRegistry {
-
-    private static class Desc implements EPackage.Descriptor {
-    	private final IMetamodelDesc fDesc;
-    	
-    	public Desc(IMetamodelDesc desc) {			
-			this.fDesc = desc;
-		}
-    	
-		public EFactory getEFactory() {
-			return fDesc.getModel().getEFactoryInstance();
-		}
-
-		public EPackage getEPackage() {
-			return fDesc.getModel();
-		}
-    }
-    
     
     public static boolean isMetamodelFileName(String fileName) {
     	return fileName.endsWith(".ecore") //$NON-NLS-1$
@@ -66,58 +46,50 @@ public class MetamodelRegistry {
     public static final String MM_POINT_ID = "metamodelProvider"; //$NON-NLS-1$
     
     private static final MetamodelRegistry ourInstance = new MetamodelRegistry();
-	
-	private final Map<String, IMetamodelDesc> myMetamodelDescs;
-	
-	
-	private MetamodelRegistry() {
-		List<IMetamodelProvider> providers = new ArrayList<IMetamodelProvider>();
-		providers.add(new EmfStandaloneMetamodelProvider(EPackage.Registry.INSTANCE));
 		
-		if(EMFPlugin.IS_ECLIPSE_RUNNING) {
-			providers.addAll(Eclipse.getMetamodelProviders());
-		}
-
-		myMetamodelDescs = getMetamodelDescs(providers);		
+	private final IMetamodelProvider myMetamodelProvider;
+	
+	
+	private MetamodelRegistry() {	
+		this(getDefaultMetamodelProvider());
     }
 	
-	public MetamodelRegistry(IMetamodelProvider metamodelProvider) {
-		myMetamodelDescs = new HashMap<String, IMetamodelDesc>(ourInstance.myMetamodelDescs);
-		myMetamodelDescs.putAll(getMetamodelDescs(Collections.singletonList(metamodelProvider)));
+	public MetamodelRegistry(EPackage.Registry packageRegistry) {
+		this(getDefaultMetamodelProvider(packageRegistry));
+	}
+		
+	public MetamodelRegistry(IMetamodelProvider metamodelProvider) {				
+		myMetamodelProvider = metamodelProvider;
 	}
 	
     public EPackage.Registry toEPackageRegistry() {
-    	EPackage.Registry packageRegistry = new EPackageRegistryImpl();
-		for(String nsURI : getMetamodelIds()) {
-			try {
-				IMetamodelDesc metamodelDesc = getMetamodelDesc(nsURI);
-				//if(metamodelDesc.getLoadStatus().getSeverity() < IStatus.ERROR) {
-					packageRegistry.put(nsURI, new Desc(metamodelDesc));
-	        	//}				
-			} catch (EmfException e) {
-				EmfUtilPlugin.log(e);
-			}
-		}
-
-    	return packageRegistry;
+    	return myMetamodelProvider.getPackageRegistry();
     }
+    
+    public static IMetamodelProvider getDefaultMetamodelProvider() {
+		return getDefaultMetamodelProvider(EPackage.Registry.INSTANCE);
+	}
+    
+    public static IMetamodelProvider getDefaultMetamodelProvider(EPackage.Registry packageRegistry) {
+		return getDefaultMetamodelProvider(new EmfStandaloneMetamodelProvider(packageRegistry));
+	}
 	
+	public static IMetamodelProvider getDefaultMetamodelProvider(IMetamodelProvider base) {
+		return EMFPlugin.IS_ECLIPSE_RUNNING ? Eclipse.getMetamodelProvider(base) : base;
+	}	
     
     public static MetamodelRegistry getInstance() {
         return ourInstance;
     }
-    
-    public void merge(MetamodelRegistry mergedRegistry) {
-    	for(String id : mergedRegistry.myMetamodelDescs.keySet()) {
-    		if(!this.myMetamodelDescs.containsKey(id)) {
-    			this.myMetamodelDescs.put(id, mergedRegistry.myMetamodelDescs.get(id));
-    		}
-    	}
-    }
-    
+        
 	public String[] getMetamodelIds() {
-		List<String> ids = new ArrayList<String>(myMetamodelDescs.size());
-		ids.addAll(myMetamodelDescs.keySet());
+		IMetamodelDesc[] metamodels = myMetamodelProvider.getMetamodels();
+		Set<String> ids = new HashSet<String>(metamodels.length);
+		
+		for(IMetamodelDesc desc : metamodels) {
+			ids.add(desc.getId());
+		}
+		
 		return ids.toArray(new String[ids.size()]);
 	}
 
@@ -137,18 +109,25 @@ public class MetamodelRegistry {
 			}
 		}
 				
-		// first attemp to select few packages which are likely
+		// first attempt to select few packages which are likely
 		// to be child packages to avoid initialization of all packages
 		// in the registry
         for(String nextNsURI : candidates) {
-        	EPackage pack = registry.getEPackage(nextNsURI);
-
-        	while (pack.getESuperPackage() != null) {
-    			pack = pack.getESuperPackage();
-    		}
+        	EPackage pack = null;
         	
-        	if (nsURI.equals(pack.getNsURI())) {
-        		return pack;
+        	try {
+        		pack = registry.getEPackage(nextNsURI);
+        	}
+        	catch(Throwable t) {
+        		EmfUtilPlugin.log(t);
+        	}
+        	
+        	if (pack != null) {
+	        	pack = EmfUtil.getRootPackage(pack);
+	        	
+	        	if (nsURI.equals(pack.getNsURI())) {
+	        		return pack;
+	        	}
         	}
         }
 
@@ -170,11 +149,12 @@ public class MetamodelRegistry {
 	}
 	
 	public IMetamodelDesc getMetamodelDesc(String id) throws EmfException {
-		IMetamodelDesc desc = myMetamodelDescs.get(id);
-
+		
+		IMetamodelDesc desc = myMetamodelProvider.getMetamodel(id);
+		
 		// FIXME - hack for #35157 
 		if(desc == null && id != null) {
-            for(IMetamodelDesc d: myMetamodelDescs.values()) {
+            for(IMetamodelDesc d: myMetamodelProvider.getMetamodels()) {
             	EPackage pack = d.getModel();
             	if (pack == null) {
             		continue;
@@ -183,12 +163,9 @@ public class MetamodelRegistry {
             		desc = d;
             		break;
             	}
-        		while (pack.getESuperPackage() != null) {
-        			pack = pack.getESuperPackage();
-        		}
+        		pack = EmfUtil.getRootPackage(pack);
             	if (id.equals(pack.getNsURI())) {
             		desc = new EmfMetamodelDesc(pack, pack.getNsURI());
-            		myMetamodelDescs.put(id, desc);
             		break;
             	}
             }
@@ -203,17 +180,57 @@ public class MetamodelRegistry {
 //        }
         
         if (desc == null) {
-        	throw new EmfException(NLS.bind(Messages.MetamodelRegistry_0, id, myMetamodelDescs.values()));
+        	throw new EmfException(NLS.bind(Messages.MetamodelRegistry_0, id, myMetamodelProvider.getMetamodels()));
         }
         
         return desc;
+      		
 	}
 
-    public static List<EPackage> resolveMetamodels(EPackage.Registry registry, List<String> packageName) throws EmfException {
-		final List<EPackage> metamodels = new UniqueEList<EPackage>(1);
+	public static List<EPackage> resolveMetamodels(EPackage.Registry registry, List<String> packageName) {	
+		final List<EPackage> metamodels = new UniqueEList<EPackage>(findPackages(registry, packageName));
 		
-        for (String nsURI: registry.keySet()) {
-        	EPackage pack = registry.getEPackage(nsURI);
+		for(EPackage globalPack : findPackages(packageName)) {
+			
+			// check if this global package is a valid finding
+			// i.e. if its root package is actually registered in the given registry
+			EPackage rootPack = EmfUtil.getRootPackage(globalPack);
+    		EPackage registeredPack = null;
+    		
+    		try {
+    			registeredPack = registry.getEPackage(rootPack.getNsURI());
+    		}
+    		catch(Throwable t) {
+    			EmfUtilPlugin.log(t);
+    		}
+    		
+			if(registeredPack == rootPack) {
+    			metamodels.add(globalPack);
+    		}
+		}
+      
+        return metamodels; 
+	}
+    
+    private static List<EPackage> findPackages(List<String> packageName) {
+    	return findPackages(EPackage.Registry.INSTANCE, packageName);
+    }
+    
+    private static List<EPackage> findPackages(EPackage.Registry registry, List<String> packageName) {
+    	final List<EPackage> metamodels = new UniqueEList<EPackage>(1);
+		
+    	// do not iterate over the key set itself to avoid concurrent modification
+    	final Set<String> keys = new HashSet<String>(registry.keySet());
+        for (String nsURI : keys) {
+        	EPackage pack = null;
+        	
+        	try {
+        		pack = registry.getEPackage(nsURI);
+        	}
+        	catch(Throwable t) {
+        		EmfUtilPlugin.log(t);
+        	}
+        	
         	if (pack == null || pack.getESuperPackage() != null) {
         		continue;
         	}
@@ -224,63 +241,34 @@ public class MetamodelRegistry {
         }
                 
         return metamodels;
-	}	
+    }
 	
 	public static EPackage lookupPackage(EPackage rootPackage, List<String> path) {
 		EPackage.Registry registry = new EPackageRegistryImpl();
 		registry.put(rootPackage.getNsURI(), rootPackage);
 		
 		return EcoreEnvironment.findPackage(path, registry);
-	}	
-	
-	private static Map<String, IMetamodelDesc> getMetamodelDescs(List<? extends IMetamodelProvider> providers) {
-		Map<String, IMetamodelDesc> metamodelDescs = new HashMap<String, IMetamodelDesc>();		
-		
-        for(IMetamodelProvider provider: providers) {
-        	IMetamodelDesc[] models;
-        	try {
-	        	models = provider.getMetamodels();
-        	}
-        	catch(Throwable e) { // should be more generic here as since for example NoSuchMethodError isn't an Exception
-        		//Logger.getLogger().log(Logger.SEVERE, "Failed to get metamodels from " + provider, e); //$NON-NLS-1$
-        		continue;
-        	}
-        	
-	        for(int i = 0; i < models.length; i++) {
-	        	if (models[i].getId() != null) {
-	        		metamodelDescs.put(models[i].getId(), models[i]);
-	        	}
-	        }
-        }
-		
-		return metamodelDescs;
-	}	
-
-	private static class Eclipse {
-		
-		private static List<IMetamodelProvider> getMetamodelProviders() {
-			List<IMetamodelProvider> metamodelProviders = new ArrayList<IMetamodelProvider>();
-
-				IConfigurationElement[] extensions = Platform.getExtensionRegistry().getConfigurationElementsFor(EmfUtilPlugin.getDefault().getBundle().getSymbolicName(), MM_POINT_ID);
-				
-				for (int i = 0; i < extensions.length; i++) {
-					IConfigurationElement extension = extensions[i];
-					try {
-						Object provider = extension.createExecutableExtension("class"); //$NON-NLS-1$
-						if(provider instanceof IMetamodelProvider) {
-							metamodelProviders.add((IMetamodelProvider)provider);
-						}
-					}
-					catch(CoreException e) {
-						EmfUtilPlugin.getDefault().getLog().log(e.getStatus());
-					}					
-					catch(Exception e) {
-						EmfUtilPlugin.log(e);
-					}
-				}
-
+	}
 			
-			return metamodelProviders;
+	private static class Eclipse {
+						
+		static IMetamodelProvider getMetamodelProvider(IMetamodelProvider base) {
+			if(base == null) {
+	    		throw new IllegalArgumentException();
+	    	}
+			 			
+			IMetamodelProvider metamodelProvider = base;
+							
+			IConfigurationElement[] configElements = Platform.getExtensionRegistry().getConfigurationElementsFor(EmfUtilPlugin.getDefault().getBundle().getSymbolicName(), MM_POINT_ID);
+			
+			for (IConfigurationElement configElement : configElements) {
+				IMetamodelProvider provider = EclipseMetamodelProvider.Factory.create(configElement, metamodelProvider);
+				if (provider != null) {
+					metamodelProvider = provider;
+				}
+			}
+					
+			return metamodelProvider;
 		}		
 	}
 }
