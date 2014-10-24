@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.m2m.internal.qvt.oml;
 
+import static org.eclipse.m2m.internal.qvt.oml.emf.util.EmfUtilPlugin.isSuccess;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +83,7 @@ public class InternalTransformationExecutor {
 	private EPackage.Registry fPackageRegistry;
 	private CompiledUnit fCompiledUnit;
 	private ResourceSet fCompilationRs;
-	private ExecutionDiagnosticImpl fLoadDiagnostic;
+	private ExecutionDiagnostic fLoadDiagnostic;
 	private OperationalTransformation fTransformation;
 	private QvtOperationalEnvFactory fEnvFactory;
 
@@ -214,7 +216,7 @@ public class InternalTransformationExecutor {
 				.createEvaluationEnvironment(context, null);
 
 		ExecutionDiagnostic modelParamsDiagnostic = initArguments(evaluationEnv, fTransformation, args);
-		if (modelParamsDiagnostic.getSeverity() != Diagnostic.OK) {
+		if (!isSuccess(modelParamsDiagnostic)) {
 			return modelParamsDiagnostic;
 		}
 
@@ -259,7 +261,7 @@ public class InternalTransformationExecutor {
 	}
 
 	private void doLoad(IProgressMonitor monitor) {
-		fLoadDiagnostic = ExecutionDiagnosticImpl.OK_INSTANCE;
+		fLoadDiagnostic = ExecutionDiagnostic.OK_INSTANCE;
 
 		UnitProxy unit = UnitResolverFactory.Registry.INSTANCE.getUnit(fURI);
 		if (unit == null) {
@@ -286,7 +288,7 @@ public class InternalTransformationExecutor {
 		}
 
 		if (fCompiledUnit != null
-				&& fLoadDiagnostic.getSeverity() == Diagnostic.OK) {
+				&& isSuccess(fLoadDiagnostic)) {
 			fTransformation = getTransformation();
 			if (fTransformation == null) {
 				fLoadDiagnostic = new ExecutionDiagnosticImpl(Diagnostic.ERROR,
@@ -296,8 +298,8 @@ public class InternalTransformationExecutor {
 				return;
 			}
 
-			ExecutionDiagnosticImpl validForExecution = checkIsExecutable(fTransformation);
-			if (validForExecution.getSeverity() != Diagnostic.OK) {
+			ExecutionDiagnostic validForExecution = checkIsExecutable(fTransformation);
+			if (!isSuccess(validForExecution)) {
 				fLoadDiagnostic = validForExecution;
 			}
 		}
@@ -342,13 +344,18 @@ public class InternalTransformationExecutor {
 		return result;
 	}
 
-	private static ExecutionDiagnosticImpl checkIsExecutable(
+	private static ExecutionDiagnostic checkIsExecutable(
 			OperationalTransformation transformation) {
+		
+		if (transformation.isIsBlackbox()) {
+			return ExecutionDiagnostic.OK_INSTANCE;
+		}
+		
 		EList<EOperation> operations = transformation.getEOperations();
 		for (EOperation oper : operations) {
 			if (oper instanceof ImperativeOperation
 					&& QvtOperationalEnv.MAIN.equals(oper.getName())) {
-				return ExecutionDiagnosticImpl.OK_INSTANCE;
+				return ExecutionDiagnostic.OK_INSTANCE;
 			}
 		}
 
@@ -437,11 +444,11 @@ public class InternalTransformationExecutor {
 		}
 	}
 
-	private static ExecutionDiagnosticImpl createCompilationDiagnostic(
+	private static ExecutionDiagnostic createCompilationDiagnostic(
 			CompiledUnit compiledUnit) {
 		List<QvtMessage> errors = compiledUnit.getErrors();
 		if (errors.isEmpty()) {
-			return ExecutionDiagnosticImpl.OK_INSTANCE;
+			return ExecutionDiagnostic.OK_INSTANCE;
 		}
 
 		URI uri = compiledUnit.getURI();
@@ -455,12 +462,6 @@ public class InternalTransformationExecutor {
 		}
 
 		return mainDiagnostic;
-	}
-
-	private static boolean isSuccess(Diagnostic diagnostic) {
-		int severity = diagnostic.getSeverity();
-		return severity == Diagnostic.OK || severity == Diagnostic.WARNING
-				|| severity == Diagnostic.INFO;
 	}
 
 	private static IContext createInternalContext(ExecutionContext executionContext, IProgressMonitor monitor) {

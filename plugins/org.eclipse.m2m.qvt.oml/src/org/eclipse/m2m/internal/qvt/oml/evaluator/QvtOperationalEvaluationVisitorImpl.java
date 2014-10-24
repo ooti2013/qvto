@@ -150,7 +150,6 @@ import org.eclipse.ocl.EvaluationVisitorImpl;
 import org.eclipse.ocl.ParserException;
 import org.eclipse.ocl.ecore.CallOperationAction;
 import org.eclipse.ocl.ecore.Constraint;
-import org.eclipse.ocl.ecore.EcoreEnvironment;
 import org.eclipse.ocl.ecore.EcoreFactory;
 import org.eclipse.ocl.ecore.EcorePackage;
 import org.eclipse.ocl.ecore.SendSignalAction;
@@ -172,7 +171,6 @@ import org.eclipse.ocl.types.TupleType;
 import org.eclipse.ocl.types.VoidType;
 import org.eclipse.ocl.util.CollectionUtil;
 import org.eclipse.ocl.util.Tuple;
-import org.eclipse.ocl.utilities.ASTNode;
 import org.eclipse.ocl.utilities.PredefinedType;
 import org.eclipse.ocl.utilities.UMLReflection;
 
@@ -551,14 +549,10 @@ implements QvtOperationalEvaluationVisitor, InternalEvaluator, DeferredAssignmen
     private Object doVisitBlackboxOperation(ImperativeOperation operation) {
     	
     	assert operation.isIsBlackbox() : "Blackbox operation expected"; //$NON-NLS-1$
-    	
-    	EcoreEnvironment moduleEnv = ASTBindingHelper.resolveEnvironment((ASTNode) operation.eContainer());
-    	if (false == moduleEnv instanceof QvtOperationalModuleEnv) {
-    		moduleEnv = ASTBindingHelper.getEnvironment(operation.eContainer(), QvtOperationalModuleEnv.class);
-    	}
-    	
-		Collection<CallHandler> handlers = BlackboxRegistry.INSTANCE.getBlackboxCallHandler(operation,
-				(QvtOperationalModuleEnv) moduleEnv);
+    	    	
+    	QvtOperationalModuleEnv moduleEnv = getOperationalEnv().getAdapter(QvtOperationalModuleEnv.class);
+    	    	
+		Collection<CallHandler> handlers = BlackboxRegistry.INSTANCE.getBlackboxCallHandler(operation, moduleEnv);
     	if (handlers.isEmpty()) {
         	throwQVTException(new QvtRuntimeException(NLS.bind(EvaluationMessages.NoBlackboxOperationFound,
         			QvtOperationalParserUtil.safeGetMappingQualifiedName(getOperationalEnv(), operation))));
@@ -702,7 +696,7 @@ implements QvtOperationalEvaluationVisitor, InternalEvaluator, DeferredAssignmen
     public Object visitOperationCallExp(OperationCallExp<EClassifier, EOperation> operationCallExp) {
     	// TODO - review the note bellow
     	// set IP of the current stack (represented by the top operation fEnv)
-    	// to the this operation call in order to refeflect this call position 
+    	// to the this operation call in order to reflect this call position 
     	// in possible QVT stack, in case an exception is thrown 
         EObject oldIP = setCurrentEnvInstructionPointer(operationCallExp);
         Object result = doVisitOperationCallExp(operationCallExp);    	        
@@ -1142,13 +1136,10 @@ implements QvtOperationalEvaluationVisitor, InternalEvaluator, DeferredAssignmen
 			public Object invoke(ModuleInstance module, Object source, Object[] args, QvtOperationalEvaluationEnv evalEnv) {
 				TransformationInstance transformation = (TransformationInstance) source;				
 				
-				EcoreEnvironment moduleEnv = ASTBindingHelper.resolveEnvironment(transformation.getTransformation());
-		    	if (false == moduleEnv instanceof QvtOperationalModuleEnv) {
-		    		moduleEnv = ASTBindingHelper.getEnvironment(transformation, QvtOperationalModuleEnv.class);
-		    	}
-		    	
-		    	Collection<CallHandler> handlers = BlackboxRegistry.INSTANCE.getBlackboxCallHandler(transformation.getTransformation(),
-						(QvtOperationalModuleEnv) moduleEnv);
+				QvtOperationalModuleEnv moduleEnv = getOperationalEnv().getAdapter(QvtOperationalModuleEnv.class);
+								    	
+		    	Collection<CallHandler> handlers = BlackboxRegistry.INSTANCE.getBlackboxCallHandler(
+		    			transformation.getTransformation(), moduleEnv);
 		    	if (handlers.isEmpty()) {
 		        	throwQVTException(new QvtRuntimeException(NLS.bind(EvaluationMessages.NoBlackboxOperationFound,
 		        			QvtOperationalParserUtil.safeGetQualifiedName(getOperationalEnv(), transformation.getTransformation()))));

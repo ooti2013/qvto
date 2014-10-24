@@ -47,6 +47,8 @@ public abstract class JavaBlackboxProvider extends AbstractBlackboxProvider {
 	static final String CLASS_NAME_SEPARATOR = "."; //$NON-NLS-1$
 
 	private final Map<JavaUnitDescriptor, CompilationUnit> fBlackboxUnits = new LinkedHashMap<JavaUnitDescriptor, CompilationUnit>();
+	
+	private final Map<JavaUnitDescriptor, BasicDiagnostic> fLoadErrors = new LinkedHashMap<JavaUnitDescriptor, BasicDiagnostic>();
 
 	static InstanceAdapterFactory createInstanceAdapterFactory(final Class<?> javaModuleClass) {
 		return new InstanceAdapterFactory() {
@@ -75,35 +77,41 @@ public abstract class JavaBlackboxProvider extends AbstractBlackboxProvider {
 		if (fBlackboxUnits.containsKey(libDescriptor)) {
 			return fBlackboxUnits.get(libDescriptor);
 		}
-
-		JavaModuleLoader javaModuleLoader = createJavaModuleLoader();
-
-		BasicDiagnostic errors = null;
+		
 		List<QvtOperationalModuleEnv> loadedModules = new LinkedList<QvtOperationalModuleEnv>();
+		BasicDiagnostic errors = null;
+		
+		if (fLoadErrors.containsKey(libDescriptor)) {
+			errors = fLoadErrors.get(libDescriptor);
+		}
+		else {
 
-		for (Map.Entry<ModuleHandle, Map<String, List<EOperation>>> nextEntry : libDescriptor.fModules.entrySet()) {
-			Diagnostic diagnostic = javaModuleLoader.loadModule(nextEntry.getKey(), nextEntry.getValue(), loadContext);
-
-			if (DiagnosticUtil.isSuccess(diagnostic)) {
-				QvtOperationalModuleEnv nextModuleEnv = javaModuleLoader.getLoadedModule();
-				nextModuleEnv.getTypeResolver().getResource().setURI(descriptor.getURI());
-				loadedModules.add(nextModuleEnv);
-
-				if (diagnostic.getSeverity() != Diagnostic.OK) {
-					QvtPlugin.logDiagnostic(diagnostic);
+			JavaModuleLoader javaModuleLoader = createJavaModuleLoader();
+		
+			for (Map.Entry<ModuleHandle, Map<String, List<EOperation>>> nextEntry : libDescriptor.fModules.entrySet()) {
+				Diagnostic diagnostic = javaModuleLoader.loadModule(nextEntry.getKey(), nextEntry.getValue(), loadContext);
+	
+				if (DiagnosticUtil.isSuccess(diagnostic)) {
+					QvtOperationalModuleEnv nextModuleEnv = javaModuleLoader.getLoadedModule();
+					nextModuleEnv.getTypeResolver().getResource().setURI(descriptor.getURI());
+					loadedModules.add(nextModuleEnv);
+	
+					if (diagnostic.getSeverity() != Diagnostic.OK) {
+						QvtPlugin.logDiagnostic(diagnostic);
+					}
+				} else {
+					if (errors == null) {
+						String message = NLS.bind(JavaBlackboxMessages.BlackboxUnitLoadFailed, descriptor.getQualifiedName());
+						errors = DiagnosticUtil.createErrorDiagnostic(message);
+						fLoadErrors.put(libDescriptor, errors);
+					}
+	
+					errors.add(diagnostic);
 				}
-			} else {
-				if (errors == null) {
-					String message = NLS.bind(JavaBlackboxMessages.BlackboxUnitLoadFailed, descriptor.getQualifiedName());
-					errors = DiagnosticUtil.createErrorDiagnostic(message);
-				}
-
-				errors.add(diagnostic);
 			}
 		}
 
 		if (errors != null) {
-			fBlackboxUnits.put(libDescriptor, null);
 			assert errors.getSeverity() == Diagnostic.ERROR;
 			throw new BlackboxException(errors);
 		}
