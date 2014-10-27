@@ -57,17 +57,20 @@ public class URIUnitResolver extends DelegatingUnitResolver {
 	}
 	
 
-	private List<URI> fBaseURIs;	
-			
+	private List<URI> fBaseURIs;
 	
-	public URIUnitResolver(List<URI> baseURL) {
-		if(baseURL == null || baseURL.contains(null)) {
+	public URIUnitResolver(URI baseURI) {
+		this(Collections.singletonList(baseURI));
+	}
+			
+	public URIUnitResolver(List<URI> baseURIs) {
+		if(baseURIs == null || baseURIs.contains(null)) {
 			throw new IllegalArgumentException();
 		}
 		
-		fBaseURIs = new ArrayList<URI>(baseURL.size());
+		fBaseURIs = new ArrayList<URI>(baseURIs.size());
 
-		for (URI uri : baseURL) {
+		for (URI uri : baseURIs) {
 			URI normalizedURI = uri;
 			if(!normalizedURI.hasTrailingPathSeparator()) {
 				// Note: URI represents the empty segment as trailing path separator
@@ -124,6 +127,6 @@ public class URIUnitResolver extends DelegatingUnitResolver {
 			baseURI = URI.createURI("/"); //$NON-NLS-1$
 		}
 		
-		return new URIUnitResolver(Collections.singletonList(baseURI)).doResolveUnit(unitURI.trimFileExtension().lastSegment());
+		return new URIUnitResolver(baseURI).resolveUnit(unitURI.trimFileExtension().lastSegment());
 	}
 }

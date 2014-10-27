@@ -110,7 +110,7 @@ public class URIUnitResolverTest extends TestCase {
 		URI baseURI = URI.createURI(bundleFile.toURI().toString());
 		assertEquals("file", baseURI.scheme());
 
-		URIUnitResolver resolver = new URIUnitResolver(Collections.singletonList(baseURI));
+		URIUnitResolver resolver = new URIUnitResolver(baseURI);
 		UnitProxy unit = resolver.resolveUnit("deployed.org.eclipse.Foo");
 		
 		assertNotNull(unit);

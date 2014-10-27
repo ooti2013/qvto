@@ -157,10 +157,6 @@ public class DeployedImportResolver extends DelegatingUnitResolver implements Le
 		return createUnit(qualifiedName, createBundFileURI(bundleFile));
 	}
 	
-	public UnitProxy resolveDeployedUnitOnly(String qualifiedName) {
-		return doResolveUnit(qualifiedName);
-	}
-
 	/**
 	 * Legacy support for imports from deployed transformations
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=240192

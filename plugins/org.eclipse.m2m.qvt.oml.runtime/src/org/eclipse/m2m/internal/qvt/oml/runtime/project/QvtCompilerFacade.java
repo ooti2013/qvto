@@ -51,16 +51,9 @@ public class QvtCompilerFacade {
         }
 
         try {
-			UnitResolverFactory factory = UnitResolverFactory.Registry.INSTANCE.getFactory(ifile);
-			UnitProxy sourceUnit = null;
-			
-			if(factory != null) {
-				URI resourceURI = URIUtils.getResourceURI(ifile);
-				if(resourceURI != null) {
-					sourceUnit = factory.findUnit(resourceURI);
-				}
-			}
-			
+        	URI resourceURI = URIUtils.getResourceURI(ifile);
+			UnitProxy sourceUnit = UnitResolverFactory.Registry.INSTANCE.getUnit(resourceURI);
+						
 			if(sourceUnit == null) {
 				throw new MdaException("Failed to resolve compilation unit: " + ifile); //$NON-NLS-1$
 			}			

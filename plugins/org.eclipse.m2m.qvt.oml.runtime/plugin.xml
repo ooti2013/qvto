@@ -73,5 +73,13 @@
 	          headless="true"
 	          library="lib/antTasks.jar"/>
 	 </extension>
+	 
+	 <extension point="org.eclipse.m2m.qvt.oml.unitResolverFactory">
+		<factory class="org.eclipse.m2m.internal.qvt.oml.runtime.project.PlatformPluginUnitResolverFactory"/>
+ 	 </extension>
+ 	 
+ 	 <extension point="org.eclipse.m2m.qvt.oml.unitResolverFactory">
+		<factory class="org.eclipse.m2m.internal.qvt.oml.runtime.project.DeployedImportResolverFactory"/>
+ 	 </extension>
 
 </plugin>

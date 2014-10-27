@@ -25,102 +25,98 @@ import org.eclipse.emf.common.EMFPlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.m2m.internal.qvt.oml.QvtPlugin;
 
+public abstract class UnitResolverFactory {
 
-public interface UnitResolverFactory {
-
-	boolean isAccepted(Object source);
+	public abstract boolean accepts(URI uri);
 	
-	UnitResolver getResolver(URI uri);
-
-	UnitProxy findUnit(URI unitURI);
+	public abstract UnitResolver getResolver(URI uri);
 	
-	interface Registry {
+	public abstract String getQualifiedName(URI uri);
+
+	final UnitProxy findUnit(URI uri) {
+		UnitResolver resolver = getResolver(uri);
+		return resolver != null ? resolver.resolveUnit(getQualifiedName(uri)) : null;
+	};
+	
+	
+	public interface Registry {
 		String POINT_ID = QvtPlugin.ID + ".unitResolverFactory"; //$NON-NLS-1$
 		String CLASS_ATTR = "class"; //$NON-NLS-1$
 		
-		UnitResolverFactory getFactory(Object source);		
+		UnitResolverFactory getFactory(URI uri);		
 		
 		UnitProxy getUnit(URI uri);
 		
 		Registry INSTANCE = EMFPlugin.IS_ECLIPSE_RUNNING ? new EclipseRegistry() : new BasicRegistry();
-	}
 	
 	
-	class EclipseRegistry extends BasicRegistry {
-
-		public EclipseRegistry() {
-			super(readFactories());		
+		class EclipseRegistry extends BasicRegistry {
+	
+			public EclipseRegistry() {
+				super(readFactories());		
+			}
+		
+			private static List<UnitResolverFactory> readFactories() {
+				ArrayList<UnitResolverFactory> factoryEntries = new ArrayList<UnitResolverFactory>();
+				if(EMFPlugin.IS_ECLIPSE_RUNNING) {
+					IExtensionRegistry pluginRegistry = Platform.getExtensionRegistry();
+					IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(POINT_ID);
+					if(extensionPoint != null) {
+						IExtension[] allExtensions = extensionPoint.getExtensions();
+						for (IExtension nextExtension : allExtensions) {
+							IConfigurationElement[] elements = nextExtension.getConfigurationElements();
+							Object factoryObj = null;
+							try {
+								factoryObj = elements[0].createExecutableExtension(CLASS_ATTR);
+								if(factoryObj instanceof UnitResolverFactory) {
+									factoryEntries.add((UnitResolverFactory)factoryObj);
+								}
+							} catch (CoreException e) {								
+								QvtPlugin.getDefault().log(e.getStatus());
+							}
+						}						
+					}
+				}
+				return factoryEntries;
+		    }
+		}
+		
+		
+		class BasicRegistry implements Registry {
+			
+				private List<UnitResolverFactory> fFactories;
+				
+				BasicRegistry() {
+					this(Collections.<UnitResolverFactory>emptyList());
+				}
+				
+				BasicRegistry(List<UnitResolverFactory> factories) {
+					assert factories != null;
+					
+					factories = new ArrayList<UnitResolverFactory>(factories);
+					factories.add(new URIUnitResolverFactory());
+										
+					this.fFactories = factories;
+				}
+				
+				public UnitResolverFactory getFactory(URI uri) {
+					for (UnitResolverFactory nextFactory : fFactories) {
+						if(nextFactory.accepts(uri)) {
+							return nextFactory;
+						}
+					}
+					return null;
+				}
+				
+				public UnitProxy getUnit(URI uri) {
+					UnitResolverFactory factory = getFactory(uri);
+					if(factory != null) {
+						return factory.findUnit(uri);
+					}
+					return null;
+				}				
 		}
 	
-		private static List<UnitResolverFactory> readFactories() {
-			ArrayList<UnitResolverFactory> factoryEntries = new ArrayList<UnitResolverFactory>();
-			if(EMFPlugin.IS_ECLIPSE_RUNNING) {
-				IExtensionRegistry pluginRegistry = Platform.getExtensionRegistry();
-				IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(POINT_ID);
-				if(extensionPoint != null) {
-					IExtension[] allExtensions = extensionPoint.getExtensions();
-					for (IExtension nextExtension : allExtensions) {
-						IConfigurationElement[] elements = nextExtension.getConfigurationElements();
-						Object factoryObj = null;
-						try {
-							factoryObj = elements[0].createExecutableExtension(CLASS_ATTR);
-							if(factoryObj instanceof UnitResolverFactory) {
-								factoryEntries.add((UnitResolverFactory)factoryObj);
-							}
-						} catch (CoreException e) {								
-							QvtPlugin.getDefault().log(e.getStatus());
-						}
-					}						
-				}
-			}
-			return factoryEntries;
-	    }
 	}
-	
-	
-	class BasicRegistry implements Registry {
 		
-			private List<UnitResolverFactory> fFactories;
-			
-			BasicRegistry() {
-				this(Collections.<UnitResolverFactory>singletonList(new UnitResolverFactory() {
-
-					public UnitProxy findUnit(URI unitURI) {
-						return URIUnitResolver.getUnit(unitURI);
-					}
-
-					public UnitResolver getResolver(URI uri) {
-						return new URIUnitResolver(Collections.singletonList(uri.trimSegments(1)));
-					}
-
-					public boolean isAccepted(Object source) {						
-						return source instanceof URI;
-					}
-					
-				}));
-			}
-			
-			BasicRegistry(List<UnitResolverFactory> factories) {
-				assert factories != null;
-				this.fFactories = factories;
-			}
-			
-			public UnitResolverFactory getFactory(Object source) {
-				for (UnitResolverFactory nextFactory : fFactories) {
-					if(nextFactory.isAccepted(source)) {
-						return nextFactory;
-					}
-				}
-				return null;
-			}
-			
-			public UnitProxy getUnit(URI uri) {
-				UnitResolverFactory factory = getFactory(uri);
-				if(factory != null) {
-					return factory.findUnit(uri);
-				}
-				return null;
-			}				
-	}
-	
 }

@@ -52,12 +52,12 @@ import org.eclipse.m2m.internal.qvt.oml.compiler.CompiledUnit;
 import org.eclipse.m2m.internal.qvt.oml.compiler.QVTOCompiler;
 import org.eclipse.m2m.internal.qvt.oml.compiler.QvtCompilerOptions;
 import org.eclipse.m2m.internal.qvt.oml.compiler.UnitProxy;
+import org.eclipse.m2m.internal.qvt.oml.compiler.UnitResolverFactory;
 import org.eclipse.m2m.internal.qvt.oml.editor.ui.Activator;
 import org.eclipse.m2m.internal.qvt.oml.editor.ui.QvtConfiguration;
 import org.eclipse.m2m.internal.qvt.oml.editor.ui.QvtDocumentSetupParticipant;
 import org.eclipse.m2m.internal.qvt.oml.editor.ui.QvtEditor;
 import org.eclipse.m2m.internal.qvt.oml.editor.ui.colorer.QVTColorManager.ColorDescriptor;
-import org.eclipse.m2m.internal.qvt.oml.project.builder.EclipseUnitResolverFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -597,7 +597,7 @@ class QVTColorsConfigurationBlock {
 		fPreviewViewer.configure(configuration);	
 		fPreviewViewer.setDocument(document);
 
-		final UnitProxy findUnit = new EclipseUnitResolverFactory().findUnit(uri);
+		final UnitProxy findUnit = UnitResolverFactory.Registry.INSTANCE.getUnit(uri);
 		assert findUnit != null;
 		try {			
 			// TODO - log error on compilation errors

@@ -175,7 +175,7 @@ public class PlatformPluginUnitResolver extends DelegatingUnitResolver {
 	    return Collections.unmodifiableMap(sourceContainers);
 	}
 	
-	private static IPath[] getSourceContainers(Bundle bundle) {
+	static IPath[] getSourceContainers(Bundle bundle) {
 		Set<IPath> containers = ourPluginSourceContainers.get(bundle.getSymbolicName());
 		if (containers != null) {
 			return containers.toArray(new IPath[containers.size()]);

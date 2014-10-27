@@ -194,7 +194,7 @@ public class QvtLauncherTab extends MdaLaunchTab {
         // FIXME - strange error condition processing
         try {
         	URI uri = URIUtils.getResourceURI(file);
-        	UnitProxy unit = UnitResolverFactory.Registry.INSTANCE.getFactory(file).findUnit(uri);
+        	UnitProxy unit = UnitResolverFactory.Registry.INSTANCE.getUnit(uri);
         	if(unit == null) {
         		return;
         	}

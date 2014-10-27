@@ -22,9 +22,9 @@
     <super type="org.eclipse.core.resources.textmarker"/>
 	<persistent value="true"/>
  </extension>
-
- <extension point="org.eclipse.m2m.qvt.oml.unitResolverFactory">
-	<factory class="org.eclipse.m2m.internal.qvt.oml.project.builder.EclipseUnitResolverFactory"/>
+ 
+  <extension point="org.eclipse.m2m.qvt.oml.unitResolverFactory">
+	<factory class="org.eclipse.m2m.internal.qvt.oml.project.builder.WorkspaceUnitResolverFactory"/>
  </extension>
 
 </plugin>
