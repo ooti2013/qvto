@@ -64,7 +64,6 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.m2m.internal.qvt.oml.common.ui.CommonPluginImages;
 import org.eclipse.m2m.internal.qvt.oml.common.ui.dialogs.ComplexClassifierProvider;
 import org.eclipse.m2m.internal.qvt.oml.common.ui.dialogs.OpenClassifierDialog;
-import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfException;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfUtil;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfUtilPlugin;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.IMetamodelDesc;
@@ -514,7 +513,7 @@ public class MetamodelBrowser  implements IAdaptable {
                 		}
                 	}
                 }
-            } catch (EmfException ignore) {
+            } catch (Throwable ignore) {
     			CommonUIPlugin.getPlugin().log(ignore);            	
             }	
         }

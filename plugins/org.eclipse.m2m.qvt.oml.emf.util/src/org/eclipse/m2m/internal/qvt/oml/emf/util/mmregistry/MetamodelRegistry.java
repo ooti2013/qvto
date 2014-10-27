@@ -155,18 +155,22 @@ public class MetamodelRegistry {
 		// FIXME - hack for #35157 
 		if(desc == null && id != null) {
             for(IMetamodelDesc d: myMetamodelProvider.getMetamodels()) {
-            	EPackage pack = d.getModel();
-            	if (pack == null) {
-            		continue;
-            	}
-            	if (id.equals(pack.getNsURI())) {
-            		desc = d;
-            		break;
-            	}
-        		pack = EmfUtil.getRootPackage(pack);
-            	if (id.equals(pack.getNsURI())) {
-            		desc = new EmfMetamodelDesc(pack, pack.getNsURI());
-            		break;
+            	try {
+            		EPackage pack = d.getModel();
+	            	if (pack == null) {
+	            		continue;
+	            	}
+	            	if (id.equals(pack.getNsURI())) {
+	            		desc = d;
+	            		break;
+	            	}
+	        		pack = EmfUtil.getRootPackage(pack);
+	            	if (id.equals(pack.getNsURI())) {
+	            		desc = new EmfMetamodelDesc(pack, pack.getNsURI());
+	            		break;
+	            	}
+            	}  catch (Throwable t) {
+            		EmfUtilPlugin.log(t);
             	}
             }
         }

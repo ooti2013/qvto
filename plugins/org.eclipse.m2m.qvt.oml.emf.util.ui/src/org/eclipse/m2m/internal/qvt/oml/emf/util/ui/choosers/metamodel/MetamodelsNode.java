@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfException;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.IMetamodelDesc;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.MetamodelRegistry;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.ui.EmfUtilUiPlugin;
@@ -67,8 +66,8 @@ public class MetamodelsNode extends ChooserNode {
                 if(descPackage.getESuperPackage() == null) {
                     nodes.add(descPackage);
                 }
-            } 
-            catch (EmfException ignore) {
+            }
+            catch (Throwable ignore) {
             	IStatus status = new Status(IStatus.ERROR, EmfUtilUiPlugin.ID, 
             			"Failed to get root EPackage:" + metamodelId, ignore); //$NON-NLS-1$
             	

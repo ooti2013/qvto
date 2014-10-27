@@ -27,7 +27,6 @@ import org.eclipse.m2m.internal.qvt.oml.editor.ui.completion.CategoryImageConsta
 import org.eclipse.m2m.internal.qvt.oml.editor.ui.completion.CompletionProposalUtil;
 import org.eclipse.m2m.internal.qvt.oml.editor.ui.completion.QvtCompletionData;
 import org.eclipse.m2m.internal.qvt.oml.editor.ui.completion.QvtCompletionProposal;
-import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfException;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfUtil;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.IMetamodelDesc;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.MetamodelRegistry;
@@ -70,7 +69,7 @@ public class RegisteredMetamodelCollector extends AbstractMetamodelCollector {
 				if (!metamodelDesc.isLoaded()) {
 					return false;
 				}
-			} catch (EmfException e) {
+			} catch (Throwable e) {
 				Activator.log(e);
 			}
 		}
@@ -102,7 +101,7 @@ public class RegisteredMetamodelCollector extends AbstractMetamodelCollector {
 				    rootPackages.add(proposalString);
 				}
 				
-			} catch (EmfException e) {
+			} catch (Throwable e) {
 				Activator.log(e);
 			}
 		}
