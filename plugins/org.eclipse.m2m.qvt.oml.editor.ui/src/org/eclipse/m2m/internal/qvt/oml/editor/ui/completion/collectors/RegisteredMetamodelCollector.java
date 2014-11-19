@@ -28,6 +28,7 @@ import org.eclipse.m2m.internal.qvt.oml.editor.ui.completion.CompletionProposalU
 import org.eclipse.m2m.internal.qvt.oml.editor.ui.completion.QvtCompletionData;
 import org.eclipse.m2m.internal.qvt.oml.editor.ui.completion.QvtCompletionProposal;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfException;
+import org.eclipse.m2m.internal.qvt.oml.emf.util.EmfUtil;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.IMetamodelDesc;
 import org.eclipse.m2m.internal.qvt.oml.emf.util.mmregistry.MetamodelRegistry;
 import org.eclipse.ui.IWorkbench;
@@ -93,11 +94,8 @@ public class RegisteredMetamodelCollector extends AbstractMetamodelCollector {
 				IMetamodelDesc metamodelDesc = metamodelRegistry.getMetamodelDesc(id);
 				monitor.worked(1);
 
-				EPackage pack = metamodelDesc.getModel	();
-				while (pack.getESuperPackage() != null) {
-                    pack = pack.getESuperPackage(); 
-                }
-				
+				EPackage pack = EmfUtil.getRootPackage(metamodelDesc.getModel());
+								
 				if (!rootPackages.contains(pack) 
 				        && (!activeMetamodelURIs.contains(pack.getNsURI()))) {
 		            String proposalString = getProposalString(data, pack);

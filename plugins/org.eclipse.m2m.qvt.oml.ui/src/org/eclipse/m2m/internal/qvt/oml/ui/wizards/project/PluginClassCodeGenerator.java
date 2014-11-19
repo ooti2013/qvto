@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.m2m.internal.qvt.oml.QvtPlugin;
+import org.eclipse.m2m.internal.qvt.oml.compiler.UnitProxy;
 import org.eclipse.m2m.internal.qvt.oml.project.QVTOProjectPlugin;
 import org.eclipse.m2m.internal.qvt.oml.ui.QVTUIPlugin;
 import org.eclipse.pde.core.plugin.IPluginReference;
@@ -56,11 +57,11 @@ class PluginClassCodeGenerator {
 	}
 
 	public IFile generate(IProgressMonitor monitor) throws CoreException {
-		int nameloc = fQualifiedClassName.lastIndexOf('.');
+		int nameloc = fQualifiedClassName.lastIndexOf(UnitProxy.NAMESPACE_SEP);
 		String packageName = (nameloc == -1) ? "" : fQualifiedClassName.substring(0, nameloc); //$NON-NLS-1$
 		String className = fQualifiedClassName.substring(nameloc + 1);
 
-		IPath path = new Path(packageName.replace('.', '/'));
+		IPath path = new Path(packageName.replace(UnitProxy.NAMESPACE_SEP, IPath.SEPARATOR));
 		if (fSourceFolderName != null && fSourceFolderName.trim().length() > 0) {
 			path = new Path(fSourceFolderName).append(path);			
 		}

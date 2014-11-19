@@ -125,8 +125,12 @@ public class ResolverUtils {
 		return result;
 	}
 	
+	public static String toQualifiedName(String path) {
+		return path.replace(IPath.SEPARATOR, UnitProxy.NAMESPACE_SEP);
+	}
+	
 	public static String toQualifiedName(IPath path) {
-		return path.toString().replace(IPath.SEPARATOR, UnitProxy.NAMESPACE_SEP);
+		return toQualifiedName(path.toString());
 	}
 	
 	public static String toQualifiedName(String[] nameSegments, int startPos, int endPos) {
@@ -155,7 +159,7 @@ public class ResolverUtils {
     }	
 	
 	public static String toNamespaceRelativeUnitFilePath(String qualifiedName) {
-		return qualifiedName.replace('.', '/') + MDAConstants.QVTO_FILE_EXTENSION_WITH_DOT;
+		return qualifiedName.replace(UnitProxy.NAMESPACE_SEP, IPath.SEPARATOR) + MDAConstants.QVTO_FILE_EXTENSION_WITH_DOT;
 	}	
 	
 	public static CSTContents createCSTContents(final String input) {

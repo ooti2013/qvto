@@ -25,6 +25,7 @@ import org.eclipse.m2m.internal.qvt.oml.common.io.CFile;
 import org.eclipse.m2m.internal.qvt.oml.common.io.eclipse.BundleFile;
 import org.eclipse.m2m.internal.qvt.oml.common.io.eclipse.BundleModuleRegistry;
 import org.eclipse.m2m.internal.qvt.oml.compiler.BlackboxUnitResolver;
+import org.eclipse.m2m.internal.qvt.oml.compiler.ResolverUtils;
 import org.eclipse.m2m.internal.qvt.oml.compiler.UnitProxy;
 import org.eclipse.m2m.internal.qvt.oml.compiler.UnitResolver;
 import org.eclipse.m2m.internal.qvt.oml.runtime.project.DeployedImportResolver;
@@ -81,7 +82,7 @@ public class TestModuleResolver implements UnitResolver {
 			@Override
 			public CFile resolveImport(String importedUnitName) {
 				CFile result = null; 
-				IPath fullPath = fBasePath.append(importedUnitName.replace('.', '/') + MDAConstants.QVTO_FILE_EXTENSION_WITH_DOT);
+				IPath fullPath = fBasePath.append(ResolverUtils.toNamespaceRelativeUnitFilePath(importedUnitName));
 				for (BundleModuleRegistry nextRegistry : getBundleModules()) {
 					if (nextRegistry.fileExists(fullPath)) {
 						result = new BundleFile(fullPath, nextRegistry);

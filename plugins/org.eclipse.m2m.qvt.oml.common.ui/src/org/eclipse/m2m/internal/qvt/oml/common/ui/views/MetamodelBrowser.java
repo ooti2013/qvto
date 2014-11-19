@@ -508,10 +508,7 @@ public class MetamodelBrowser  implements IAdaptable {
                 		// check for empty packages not registered in global EPackage.Registry
                 		// but created programmatically as containers, as EMF ignores packages with 
                 		// empty content
-                		EPackage parent = pack;                    		
-                		while(parent.getESuperPackage() != null) {
-                			parent = parent.getESuperPackage();
-                		}
+                		EPackage parent = EmfUtil.getRootPackage(pack);
                 		if(parent != pack && !rootNodes.containsKey(parent)) {                 			
                 			rootNodes.put(parent, new DelegatingDesc(parent));
                 		}

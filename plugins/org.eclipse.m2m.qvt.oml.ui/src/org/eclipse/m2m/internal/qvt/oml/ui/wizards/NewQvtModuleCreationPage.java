@@ -39,6 +39,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.m2m.internal.qvt.oml.QvtNamesChecker;
 import org.eclipse.m2m.internal.qvt.oml.common.MDAConstants;
+import org.eclipse.m2m.internal.qvt.oml.compiler.UnitProxy;
 import org.eclipse.m2m.internal.qvt.oml.project.QvtProjectUtil;
 import org.eclipse.m2m.internal.qvt.oml.project.model.IQvtCompilationUnit;
 import org.eclipse.m2m.internal.qvt.oml.project.model.IQvtElement;
@@ -664,7 +665,7 @@ public class NewQvtModuleCreationPage extends WizardPage implements Listener {
 			return null;
 		}
 		// now we can safely convert nsQname to relative path
-		IPath nsPath = new Path(namespace.replace('.', '/'));
+		IPath nsPath = new Path(namespace.replace(UnitProxy.NAMESPACE_SEP, IPath.SEPARATOR));
 		return srcContainer.getFolder(nsPath);
     }
 		

@@ -3480,14 +3480,8 @@ public class QvtOperationalVisitorCS
 		}
 		
 		// lookup nested package started from root package of package specified by URI
-		EPackage rootMetamodel = resolvedMetamodel;
-		while (true) {
-			if (rootMetamodel.getESuperPackage() == null) {
-				break;
-			}
-			rootMetamodel = rootMetamodel.getESuperPackage();
-		}
-		
+		EPackage rootMetamodel = EmfUtil.getRootPackage(resolvedMetamodel);
+				
 		if (rootMetamodel != resolvedMetamodel) {
 			localPackage = MetamodelRegistry.lookupPackage(rootMetamodel, QvtOperationalParserUtil.getSequenceOfNames(path));
 			
