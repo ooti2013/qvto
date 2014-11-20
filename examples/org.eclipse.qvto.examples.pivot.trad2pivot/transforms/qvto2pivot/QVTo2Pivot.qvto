@@ -1,0 +1,481 @@
+import m2m.qvt.oml.ExampleJavaLib;
+	
+modeltype qvtpivot "strict" uses qvtoperational('http://www.eclipse.org/qvt/pivot/1.0/QVTOperational'); //ws
+modeltype pivot "strict" uses pivot('http://www.eclipse.org/ocl/3.1.0/Pivot'); //ws
+modeltype pivotimp "strict" uses imperativeocl('http://www.eclipse.org/qvt/pivot/1.0/ImperativeOCL'); //ws
+
+modeltype qvt "strict" uses qvtoperational('http://www.eclipse.org/QVT/1.0.0/Operational'); //pl
+modeltype ecore "strict" uses ecore('http://www.eclipse.org/emf/2002/Ecore'); //pl
+modeltype oclpl "strict" uses ocl('http://www.eclipse.org/ocl/1.1.0/OCL'); //pl
+modeltype qvtimp "strict" uses ImperativeOCL('http://www.eclipse.org/qvt/1.0/ImperativeOCL'); //pl
+
+transformation QVTo2Pivot();
+
+/****************************************************************/
+/*																*/
+/*		    PIVOT QVT OPERATIONAL TRANSFORMATION				*/
+/*																*/ 
+/****************************************************************/
+
+
+/* --- 1. ResolveInExp transformation  --- */
+mapping qvt::expressions::ResolveInExp::resolveInExp2resolveInExp() : qvtpivot::ResolveInExp inherits qvt::expressions::ResolveExp::resolveExp2resolveExp
+{
+	result.inMapping := self.inMapping .xmap mappingOp2mappingOp();
+}
+
+/* --- 2. ResolveExp transformation  --- */
+//Note: The concept in the pivot also inherits from ImperativeExpression from ImperativeOCL 
+mapping qvt::expressions::ResolveExp::resolveExp2resolveExp() : qvtpivot::ResolveExp inherits oclpl::expressions::CallExp::callExp2CallExp
+{
+}
+
+/* --- 3. Constructor transformation  --- */
+mapping qvt::expressions::Constructor::constructor2constructor() : qvtpivot::Constructor inherits qvt::expressions::ImperativeOperation::imOperation2imOperation
+{
+// No attributes to transform here beside the inheritence.
+//NOTE: In qvto "accept" exists but doesn't exist in pivot.
+}
+
+
+/* --- 4. MappingCallExp transformation  --- */
+mapping qvt::expressions::MappingCallExp::mapCallExp2mapCallExp() : qvtpivot::MappingCallExp inherits qvt::expressions::ImperativeCallExp::impCallExp2impCallExp
+{
+//NOTE: In qvto "accept" exists but doesn't exist in pivot.
+}
+
+/* --- 5. ModelType transformation  --- */
+//NOTE: Traditional ModelType inherits from VisitableASTNode, but in pivot there is not such class. So, check if that
+//inheritance that is not being performed here has any effect in this tranformation. 
+mapping qvt::expressions::ModelType::modelType2modelType() : qvtpivot::ModelType inherits ecore::EClass::eClass2Class
+{
+}
+
+/* --- 6. OperationalTransformation transformation  --- */
+mapping qvt::expressions::OperationalTransformation::opTrans2opTrans() : qvtpivot::OperationalTransformation //inherits qvt::expressions::Module::module2module
+{
+	init {
+		result := self.oclAsType(ecore::EClass).getClass().oclAsType(qvtpivot::OperationalTransformation);
+	}
+	self.classAttr(result);
+	self.moduleAttr(result);
+	self.opTransAttr(result);
+	 
+}
+
+/* --- 6. OperationalTransformation transformation  --- */
+query qvt::expressions::OperationalTransformation::opTransAttr(inout res:qvtpivot::OperationalTransformation)
+{
+    res.intermediateClass += self.intermediateClass .xmap toClass();
+    res.intermediateProperty += self.intermediateProperty .xmap toProperty();
+    res.modelParameter += self.modelParameter .xmap modelParameter2modelParameter();
+}
+
+/* --- 7. Module transformation  --- */
+//NOTE: Traditional ModelType inherits from VisitableASTNode, but in pivot there is not such class. So, check if that
+//inheritance that is not being performed here has any effect in this tranformation. 
+mapping qvt::expressions::Module::module2module() : qvtpivot::Module //inherits ecore::EClass::eClass2Class , ecore::EPackage::ePackage2Package
+{
+	init {
+		result := self.oclAsType(ecore::EClass).getClass().oclAsType(qvtpivot::Module);
+	}
+	self.classAttr(result);
+	self.moduleAttr(result);
+}
+
+query ecore::EClass::classAttr(inout res:pivot::Class)
+{
+
+	//Is it neccessary?
+    //result.nestedType += self.eSuperTypes .xmap toClass();
+
+    //ownedOperation is in the parent (Type)
+    res.ownedOperation += self.eOperations .xmap toOperation();
+    //ownedAttribute is in the parent (Type)
+    res.ownedAttribute += self.eAttributes .xmap toProperty();
+
+}
+
+query qvt::expressions::Module::moduleAttr(inout res:qvtpivot::Module) {
+	
+    res.configProperty += self.configProperty .xmap toProperty();
+    res.entry := self.entry .xmap entryOperation2entryOperation();
+    res.isBlackbox := self.isBlackbox;
+    res.moduleImport += self.moduleImport .xmap moduleImport2moduleImport();
+    //TODO result.ownedtag is not the same type as self.ownedtag. Hint: Check where EAnnotatoin inherits from.
+    res.ownedVariable += self.ownedVariable .xmap toVariable();
+    res.usedModelType += self.usedModelType .xmap modelType2modelType();
+
+}
+
+/* --- 8. ModuleImport transformation --- */
+//NOTE: Inheritance from VisitableASTNode was not taken into account.
+mapping qvt::expressions::ModuleImport::moduleImport2moduleImport() : qvtpivot::ModuleImport inherits ecore::EModelElement::eModelElement2Element   
+{
+}
+
+/* --- 9. Library transformation  --- */
+mapping qvt::expressions::Library::library2library() : qvtpivot::Library inherits qvt::expressions::Module::module2module
+{
+// No attributes to transform here beside the inheritence.
+//NOTE: In qvto "accept" exists but doesn't exist in pivot.
+}
+
+/* --- 10. ContextualProperty transformation --- */
+//NOTE: How about the inheritence from VisitableASTNode?
+mapping qvt::expressions::ContextualProperty::ctProperty2ctProperty() : qvtpivot::ContextualProperty inherits ecore::EStructuralFeature::eStructuralFeature2Property
+{
+}
+
+/* --- 11. ImperativeOperation transformation  ---*/
+mapping qvt::expressions::ImperativeOperation::imOperation2imOperation() : qvtpivot::ImperativeOperation //inherits ecore::EOperation::eOperation2Operation
+{
+	init {
+		result := self.oclAsType(ecore::EOperation).getOperation().oclAsType(qvtpivot::ImperativeOperation);
+	}
+	self.operationAttr(result);
+	self.imOperationAttr(result);
+}
+
+query qvt::expressions::ImperativeOperation::imOperationAttr(inout res:qvtpivot::ImperativeOperation) {
+	
+	/* --- ImperativeOperation transformation  ---*/
+    res.body := self.body .xmap toOperationBody();
+    res._result += self._result .xmap toVarParameter();
+    res.overridden := self.overridden .xmap toImperativeOperation();
+    res.isBlackbox := self.isBlackbox;
+    res.context := self.context .xmap toVarParameter();
+
+}
+
+query ecore::EOperation::operationAttr(inout res:pivot::Operation) {
+  
+    /* --- Operation transformation  ---*/
+    res.ownedParameter += self.eParameters .xmap toParameter();
+    res.raisedException += self.eExceptions .xmap toType();  
+
+}
+
+/* --- 20. MappingOperation Transformation --- */
+mapping qvt::expressions::MappingOperation::mappingOp2mappingOp() : qvtpivot::MappingOperation //inherits qvt::expressions::ImperativeOperation::imOperation2imOperation
+{
+	init {
+		result := self.oclAsType(ecore::EOperation).getOperation().oclAsType(qvtpivot::MappingOperation);
+	}
+	self.operationAttr(result);
+	self.imOperationAttr(result);
+	self.mappingOpAttr(result);
+}
+
+query qvt::expressions::MappingOperation::mappingOpAttr(inout res: qvtpivot::MappingOperation) {
+	
+	/* --- MappingOperation Transformation --- */
+
+    res.disjunct += self.disjunct .xmap mappingOp2mappingOp();
+    res.inherited += self.inherited .xmap mappingOp2mappingOp();
+    res.merged += self.merged .xmap mappingOp2mappingOp();
+    //IMPORTANT NOTE: The input is an OrderedSet but the result is a single value
+    //result._when := QueryOclWhen(self._when); //returns only one element.
+    //result._where := self._where .xmap toOCLExpression();
+	
+}
+
+
+/* --- 12. Helper transformation  ---*/
+mapping qvt::expressions::Helper::helper2helper() : qvtpivot::Helper inherits qvt::expressions::ImperativeOperation::imOperation2imOperation
+{
+}
+
+/* ---  13. EntryOperation transformation ---*/
+mapping qvt::expressions::EntryOperation::entryOperation2entryOperation() : qvtpivot::EntryOperation inherits qvt::expressions::ImperativeOperation::imOperation2imOperation
+{
+}
+
+/* --- 14. OperationBody transformation ---*/
+//NOTE: How about VisitableASTNode?
+mapping qvt::expressions::OperationBody::opbody2opbody() : qvtpivot::OperationBody inherits ecore::EModelElement::eModelElement2Element
+{
+}
+
+/* --- 15. MapParameter transformation ---*/
+mapping qvt::expressions::MappingParameter::mapParameter2mapParameter() : qvtpivot::MappingParameter inherits qvt::expressions::VarParameter::varparameter2varparamter
+{
+	//NOTE: the attribute referredDomain exists in the pivot but ont in traditional.
+}
+
+/* --- 16. ModelParameter transformation ---*/
+mapping qvt::expressions::ModelParameter::modelParameter2modelParameter() : qvtpivot::ModelParameter inherits qvt::expressions::VarParameter::varparameter2varparamter
+{
+	//NOTE: the atribute module only exist in pivot but not in traditional.
+}
+
+/* --- 17. VarParameter transformation ---*/
+mapping qvt::expressions::VarParameter::varparameter2varparamter() : qvtpivot::VarParameter inherits oclpl::expressions::Variable::variable2Variable, ecore::EParameter::eParameter2Parameter
+{
+}
+
+/* --- 18. MapBody transformation ---*/
+mapping qvt::expressions::MappingBody::mapBody2mapBody() : qvtpivot::MappingBody inherits qvt::expressions::OperationBody::opbody2opbody
+{
+}
+
+/* --- 19. ConstructorBody transformation ---*/
+mapping qvt::expressions::ConstructorBody::constructorBody2constructorBody() : qvtpivot::ConstructorBody inherits qvt::expressions::OperationBody::opbody2opbody
+{
+// No attributes to transform here beside the inheritence.
+//NOTE: In qvto "accept" exists but doesn't exist in pivot.
+}
+
+
+
+/* --- 21. ObjectExp Transformation --- */
+mapping qvt::expressions::ObjectExp::objectExp2objectExp() : qvtpivot::ObjectExp inherits qvtimp::InstantiationExp::instantiationExp2InstantiationExp
+{
+}
+
+/* --- 22. ImperativeCallExp Transformation --- */
+mapping qvt::expressions::ImperativeCallExp::impCallExp2impCallExp() : qvtpivot::ImperativeCallExp inherits oclpl::expressions::OperationCallExp::operationCallExp2OperationCallExp, qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+}
+
+/* --- 23. DirectionKind Transformation --- */
+query QueryDirectionKind (dk: qvt::expressions::DirectionKind) : qvtpivot::DirectionKind {
+	var directionKind : qvtpivot::DirectionKind ;
+	switch{
+		//TODO:Check that this switch is working. Mainly, check if the scape character '_' is working property
+		//in order to access the enum values. The name 'in' connot be used directly since it is detected as a keyword.
+		case (dk = qvt::expressions::DirectionKind::_in) directionKind := qvtpivot::DirectionKind::_in;
+		case (dk = qvt::expressions::DirectionKind::_out) directionKind := qvtpivot::DirectionKind::_out;
+		case (dk = qvt::expressions::DirectionKind::_inout) directionKind := qvtpivot::DirectionKind::_inout;
+	};
+	return directionKind;
+}
+
+/****************************************************************/
+/*																*/
+/*				QVT OPERATIONAL DISJUNCT						*/
+/*																*/
+/****************************************************************/
+
+mapping oclpl::expressions::Variable::toVariable() : pivot::Variable disjuncts
+	qvt::expressions::MappingParameter::mapParameter2mapParameter,
+ 	qvt::expressions::ModelParameter::modelParameter2modelParameter,
+ 	qvt::expressions::VarParameter::varparameter2varparamter,
+ 	ocl::ecore::Variable::variable2Variable	
+{
+}
+
+mapping qvt::expressions::ImperativeOperation::toImperativeOperation() : qvtpivot::ImperativeOperation disjuncts 
+	qvt::expressions::MappingOperation::mappingOp2mappingOp,
+	qvt::expressions::Helper::helper2helper,
+	qvt::expressions::EntryOperation::entryOperation2entryOperation,
+	
+	qvt::expressions::ImperativeOperation::imOperation2imOperation
+{
+}
+
+mapping qvt::expressions::Module::toModule() : qvtpivot::Module disjuncts 
+	qvt::expressions::Library::library2library,
+	qvt::expressions::OperationalTransformation::opTrans2opTrans,
+	
+	qvt::expressions::Module::module2module
+{
+}
+
+mapping qvt::expressions::OperationBody::toOperationBody() : qvtpivot::OperationBody disjuncts 
+	qvt::expressions::MappingBody::mapBody2mapBody,
+	qvt::expressions::ConstructorBody::constructorBody2constructorBody,
+	qvt::expressions::OperationBody::opbody2opbody
+{
+}
+
+mapping qvt::expressions::VarParameter::toVarParameter() : qvtpivot::VarParameter disjuncts 
+	qvt::expressions::MappingParameter::mapParameter2mapParameter,
+	qvt::expressions::ModelParameter::modelParameter2modelParameter,
+	qvt::expressions::VarParameter::varparameter2varparamter 
+{
+}
+
+/****************************************************************/
+/*																*/
+/*				ECORE DISJUNCT									*/
+/*																*/
+/****************************************************************/
+
+mapping ecore::EClass::toClass() : pivot::Class disjuncts
+                                    // Direct + Leaf
+                                    qvt::expressions::ModelType::modelType2modelType,
+
+                                    // Indirect + Leaf
+                                    qvt::expressions::Library::library2library,
+                                    qvt::expressions::OperationalTransformation::opTrans2opTrans,
+
+                                    // Direct + Non Leaf
+                                    qvt::expressions::Module::module2module
+{
+}
+
+mapping ecore::EParameter::toParameter() : pivot::Parameter disjuncts
+                                            // Indirect + Leaf
+                                            qvt::expressions::MappingParameter::mapParameter2mapParameter,
+                                            qvt::expressions::ModelParameter::modelParameter2modelParameter,
+                                            // Direct + Not Leaf
+                                            qvt::expressions::VarParameter::varparameter2varparamter
+{
+}
+
+mapping ecore::EClassifier::toType() : pivot::Type disjuncts
+
+                                    // Indirect + Leaf
+                                    qvt::expressions::ModelType::modelType2modelType,
+                                    qvt::expressions::Library::library2library,
+                                    qvt::expressions::OperationalTransformation::opTrans2opTrans,
+
+                                    // Indirect + Non Leaf
+                                    qvt::expressions::Module::module2module
+{
+}
+
+mapping ecore::EStructuralFeature::toProperty () : pivot::Property disjuncts
+                                                    // Direct + Leaf
+                                                    qvt::expressions::ContextualProperty::ctProperty2ctProperty
+{
+}
+
+mapping ecore::EOperation::toOperation() : pivot::Operation disjuncts
+
+                                            // Indirectly connected + Leaf
+                                            qvt::expressions::Constructor::constructor2constructor,
+                                            qvt::expressions::EntryOperation::entryOperation2entryOperation,
+                                            qvt::expressions::Helper::helper2helper,
+                                            qvt::expressions::MappingOperation::mappingOp2mappingOp,
+
+                                            // Directly connected + Not Leaf
+                                            qvt::expressions::ImperativeOperation::imOperation2imOperation
+{
+}
+
+
+
+/****************************************************************/
+/*																*/
+/*				ECORE TRANSFORMATIONS							*/
+/*																*/
+/****************************************************************/
+
+/* --- 1. EstructuralFeature transformation---*/
+mapping ecore::EStructuralFeature::eStructuralFeature2Property () : pivot::Property 
+{
+	//TODO:	
+}
+
+/*--- 2. Eclass transformation ---*/ 
+mapping ecore::EClass::eClass2Class () : pivot::Class 
+{
+	//TODO:	
+}
+
+mapping ecore::EClass::eClass2AssosiationClass() : pivot::AssociationClass
+{
+	//TODO:
+}
+
+/* --- 3. Eclasifier transformation ---*/
+// Note: Type in Pivot also inherits from ParametereableElement and TemplateableElement
+mapping ecore::EClassifier::eClassifier2Type () : pivot::Type 
+{
+	//TODO:
+}
+
+/* --- 4. EPackage transformacion --- */
+mapping ecore::EPackage::ePackage2Package () : pivot::Package
+{
+	//TODO:
+}
+
+/* --- 5. EDataType transformacion --- */
+mapping ecore::EDataType::eDataType2DataType () : pivot::DataType
+{
+	//TODO:
+}
+
+/* --- 6. EAnnotation transformacion --- */
+mapping ecore::EAnnotation::eAnnotation2Annotation() : pivot::Annotation
+{
+	//TODO:
+}
+
+/* --- 7. EOperation transformacion --- */
+mapping ecore::EOperation::eOperation2Operation () : pivot::Operation
+{
+	//TODO:
+}
+
+/* --- 8. EParameter transformacion --- */
+mapping ecore::EParameter::eParameter2Parameter () : pivot::Parameter 
+{
+	//TODO:
+}
+
+/* --- 9. EModelElement transformacion --- */
+abstract mapping ecore::EModelElement::eModelElement2Element () : pivot::Element
+{
+	//TODO:
+}
+
+/* --- 10. ETypedElement transformacion --- */
+abstract mapping ecore::ETypedElement::eTypedElement2TypedElement () : pivot::TypedElement 
+{
+	//TODO:
+}
+
+/* --- 11. ENamedElement transformacion --- */ 
+abstract mapping ecore::ENamedElement::eNamedElement2NamedElement () : pivot::NamedElement 
+{
+	//TODO:
+}
+
+/* --- 12. CollectionKind transformacion --- */
+query QueryCollectionKind (ck: oclpl::expressions::CollectionKind) : pivot::CollectionKind {
+	var collectionKind : pivot::CollectionKind ;
+	switch{
+		case (ck = oclpl::expressions::CollectionKind::Set) collectionKind := pivot::CollectionKind::Set;
+		case (ck = oclpl::expressions::CollectionKind::OrderedSet) collectionKind := pivot::CollectionKind::OrderedSet;
+		case (ck = oclpl::expressions::CollectionKind::Bag) collectionKind := pivot::CollectionKind::Bag;
+		case (ck = oclpl::expressions::CollectionKind::Sequence) collectionKind := pivot::CollectionKind::Sequence;
+		case (ck = oclpl::expressions::CollectionKind::Collection) collectionKind := pivot::CollectionKind::Collection;
+	};
+	return collectionKind;
+}
+
+
+
+/****************************************************************/
+/*																*/
+/*				OCL	TRANSFORMATIONS								*/
+/*																*/
+/****************************************************************/
+
+mapping oclpl::expressions::Variable::variable2Variable () : pivot::Variable
+{
+}
+
+abstract mapping oclpl::expressions::CallExp::callExp2CallExp () : pivot::CallExp 
+{
+}
+
+mapping qvtimp::InstantiationExp::instantiationExp2InstantiationExp() : pivotimp::InstantiationExp 
+{
+}
+
+mapping oclpl::expressions::OperationCallExp::operationCallExp2OperationCallExp () : pivot::OperationCallExp        
+{
+}
+
+abstract mapping qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression() : pivotimp::ImperativeExpression 
+{
+}
+
+mapping ocl::ecore::Variable::variable2Variable () : pivot::Variable 
+{
+}

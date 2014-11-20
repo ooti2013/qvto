@@ -1,0 +1,12 @@
+import qvto2pivot.QVTo2Pivot;
+
+modeltype qvtpivot "strict" uses qvtoperational('http://www.eclipse.org/qvt/pivot/1.0/QVTOperational'); //ws
+modeltype qvt "strict" uses qvtoperational('http://www.eclipse.org/QVT/1.0.0/Operational'); //pl
+
+transformation Trad2Pivot(in o: qvt, out p: qvtpivot);
+
+
+main() {
+
+	o.rootObjects()[qvt::expressions::OperationalTransformation] .xmap opTrans2opTrans();
+}

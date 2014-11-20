@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:QVToPivot="QVToPivot" xmlns:qvtoperational="http://www.eclipse.org/qvt/pivot/1.0/QVTOperational" xsi:schemaLocation="QVToPivot ../../../org.eclipse.qvto.examples.pivot.qvtoperational/model/Pivot.ecore http://www.eclipse.org/qvt/pivot/1.0/QVTOperational ../../../org.eclipse.qvto.examples.pivot.qvtoperational/model/QVTOperational.ecore#QVTOperational">
+  <qvtoperational:OperationalTransformation name="Trad2Pivot" instanceClassName="org.eclipse.m2m.internal.qvt.oml.evaluator.TransformationInstance" nsPrefix="Trad2Pivot" entry="/0/@ownedOperation.0" usedModelType="/0/@ownedType.0 /0/@ownedType.1 /0/@ownedType.2 /0/@ownedType.3">
+    <ownedOperation xsi:type="qvtoperational:EntryOperation" name="main" isRequired="false">
+      <body>
+        <content xsi:type="QVToPivot:IteratorExp"/>
+      </body>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:Helper" name="QueryDirectionKind" isRequired="false">
+      <ownedParameter xsi:type="qvtoperational:VarParameter" name="dk" isRequired="false"/>
+      <body/>
+      <result name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="opTrans2opTrans" isRequired="false">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false" extent="/3"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out" extent="/2"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="toPackage1" isRequired="false" disjunct="/0/@ownedOperation.2 /0/@ownedOperation.4">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false" extent="/3"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out" extent="/2"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="module2module1" isRequired="false" inherited="/0/@ownedOperation.5">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false" extent="/3"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out" extent="/2"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="ePackage2Package1" isRequired="false">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false" extent="/3"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out" extent="/2"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="imOperation2imOperation" isRequired="false">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false" extent="/3"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out" extent="/2"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="varparameter2varparamter" isRequired="false">
+      <ownedParameter xsi:type="qvtoperational:MappingParameter" name="io" isRequired="false" type="/0" extent="/3"/>
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false" extent="/3"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out" extent="/2"/>
+    </ownedOperation>
+    <ownedType xsi:type="qvtoperational:ModelType" name="qvtpivot" instanceClassName="org.eclipse.m2m.internal.qvt.oml.evaluator.ModelInstance" conformanceKind="strict"/>
+    <ownedType xsi:type="qvtoperational:ModelType" name="qvt" instanceClassName="org.eclipse.m2m.internal.qvt.oml.evaluator.ModelInstance" conformanceKind="strict"/>
+    <ownedType xsi:type="qvtoperational:ModelType" name="eco" instanceClassName="org.eclipse.m2m.internal.qvt.oml.evaluator.ModelInstance" conformanceKind="strict"/>
+    <ownedType xsi:type="qvtoperational:ModelType" name="pivot" instanceClassName="org.eclipse.m2m.internal.qvt.oml.evaluator.ModelInstance"/>
+    <moduleImport importedModule="/4"/>
+    <ownedVariable name="this" isRequired="false" type="/0"/>
+    <ownedVariable name="this" isRequired="false" type="/0"/>
+    <ownedVariable name="this" isRequired="false" type="/0"/>
+    <ownedVariable name="this" isRequired="false" type="/0"/>
+    <ownedVariable name="this" isRequired="false" type="/0"/>
+  </qvtoperational:OperationalTransformation>
+  <qvtoperational:Library name="Stdlib" instanceClassName="org.eclipse.m2m.internal.qvt.oml.evaluator.ModuleInstance" nsURI="http://www.eclipse.org/m2m/qvt/oml/1.0.0/Stdlib">
+    <ownedOperation name="dump" isRequired="false">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <ownedParameter name="OclAny" isRequired="false"/>
+    </ownedOperation>
+    <ownedOperation name="dump" isRequired="false">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <ownedParameter name="Collection(T2)" isRequired="false"/>
+    </ownedOperation>
+    <ownedType xsi:type="QVToPivot:Class" name="Transformation" isAbstract="true">
+      <ownedOperation name="transform" isRequired="false"/>
+      <ownedOperation name="parallelTransform" isRequired="false">
+        <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      </ownedOperation>
+      <ownedOperation name="wait" isRequired="false">
+        <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+        <ownedParameter name="statusList" isRequired="false"/>
+      </ownedOperation>
+    </ownedType>
+    <ownedType xsi:type="QVToPivot:Class" name="Model" isAbstract="true">
+      <ownedOperation name="asTransformation" isRequired="false">
+        <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+        <ownedParameter name="model" isRequired="false"/>
+      </ownedOperation>
+      <ownedOperation name="copy" isRequired="false"/>
+      <ownedOperation name="createEmptyModel" isRequired="false">
+        <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      </ownedOperation>
+      <ownedOperation name="objects" isRequired="false"/>
+      <ownedOperation name="objectsOfType" isRequired="false">
+        <ownedParameter name="type" isRequired="false"/>
+      </ownedOperation>
+      <ownedOperation name="removeElement" isRequired="false">
+        <ownedParameter name="element" isRequired="false"/>
+      </ownedOperation>
+      <ownedOperation name="rootObjects" isRequired="false"/>
+    </ownedType>
+    <ownedVariable name="this" isRequired="false" type="/1"/>
+  </qvtoperational:Library>
+  <qvtoperational:ModelParameter/>
+  <qvtoperational:ModelParameter/>
+  <qvtoperational:OperationalTransformation name="OCLTrasnformations" instanceClassName="org.eclipse.m2m.internal.qvt.oml.evaluator.TransformationInstance" nsPrefix="OCLTrasnformations" usedModelType="/4/@ownedType.0 /4/@ownedType.1 /4/@ownedType.2">
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="oclExpression2OclExpression" isRequired="false">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="associationClassCallExp2AssociationClassCallExp" isRequired="false" inherited="/4/@ownedOperation.16">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="boolLiteralExp2BoolLiteralExp" isRequired="false" inherited="/4/@ownedOperation.20">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="callExp2CallExp" isRequired="false" inherited="/4/@ownedOperation.0">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="collectionLiteralExp2CollectionLiteralExp" isRequired="false" inherited="/4/@ownedOperation.13">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="enumLiteralExp2EnumLiteralExp" isRequired="false" inherited="/4/@ownedOperation.13">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="featureCallExp2FeatureCallExp" isRequired="false" inherited="/4/@ownedOperation.3">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="ifExp2ifExp" isRequired="false" inherited="/4/@ownedOperation.0">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="integerLiteralExp2IntegerLiteralExp" isRequired="false" inherited="/4/@ownedOperation.18">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="invalidLiteralExp2InvalidLiteralExp" isRequired="false" inherited="/4/@ownedOperation.13">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="iterateExp2IterateExp" isRequired="false" inherited="/4/@ownedOperation.14">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="iteratorExp2IteratorExp" isRequired="false" inherited="/4/@ownedOperation.14">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="letExp2LetExp" isRequired="false" inherited="/4/@ownedOperation.0">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="literalExp2LiteralExp" isRequired="false" inherited="/4/@ownedOperation.0">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="loopExp2LoopExp" isRequired="false" inherited="/4/@ownedOperation.3">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="messageExp2MessageExp" isRequired="false" inherited="/4/@ownedOperation.0">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="navigationCallExp2NavigationCallExp" isRequired="false" inherited="/4/@ownedOperation.6">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="nullLiteralExp2NullLiteralExp" isRequired="false" inherited="/4/@ownedOperation.13">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="numericLiteralExp2NumericLiteralExp" isRequired="false" inherited="/4/@ownedOperation.20">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="operationCallExp2OperationCallExp" isRequired="false" inherited="/4/@ownedOperation.6">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="primitiveLiteralExp2PrimitiveLiteralExp" isRequired="false" inherited="/4/@ownedOperation.13">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="propertyCallExp2PropertyCallExp" isRequired="false" inherited="/4/@ownedOperation.16">
+      <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="stateExp2StateExp" isRequired="false" inherited="/4/@ownedOperation.0">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="stringLiteralExp2StringLiteralExp" isRequired="false" inherited="/4/@ownedOperation.20">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="tupleLiteralExp2TupleLiteralExp" isRequired="false" inherited="/4/@ownedOperation.13">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="typeExp2TypeExp" isRequired="false" inherited="/4/@ownedOperation.0">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="unspecifiedValueExp2UnspecifiedValueExp" isRequired="false" inherited="/4/@ownedOperation.0">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="variableExp2VariableExp" isRequired="false" inherited="/4/@ownedOperation.0">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="toOCLExpression" isRequired="false" disjunct="/4/@ownedOperation.1 /4/@ownedOperation.21 /4/@ownedOperation.8 /4/@ownedOperation.19 /4/@ownedOperation.11 /4/@ownedOperation.10 /4/@ownedOperation.23 /4/@ownedOperation.17 /4/@ownedOperation.2 /4/@ownedOperation.24 /4/@ownedOperation.4 /4/@ownedOperation.5 /4/@ownedOperation.9 /4/@ownedOperation.7 /4/@ownedOperation.12 /4/@ownedOperation.15 /4/@ownedOperation.22 /4/@ownedOperation.25 /4/@ownedOperation.26 /4/@ownedOperation.27">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" kind="out"/>
+    </ownedOperation>
+    <nestedType name="Transformation" isAbstract="true">
+      <ownedOperation name="transform" isRequired="false"/>
+      <ownedOperation name="parallelTransform" isRequired="false">
+        <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+      </ownedOperation>
+      <ownedOperation name="wait" isRequired="false">
+        <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+        <ownedParameter name="statusList" isRequired="false"/>
+      </ownedOperation>
+    </nestedType>
+    <ownedType xsi:type="qvtoperational:ModelType" name="qvtpivot" instanceClassName="org.eclipse.m2m.internal.qvt.oml.evaluator.ModelInstance" conformanceKind="strict"/>
+    <ownedType xsi:type="qvtoperational:ModelType" name="qvt" instanceClassName="org.eclipse.m2m.internal.qvt.oml.evaluator.ModelInstance" conformanceKind="strict"/>
+    <ownedType xsi:type="qvtoperational:ModelType" name="pivot" instanceClassName="org.eclipse.m2m.internal.qvt.oml.evaluator.ModelInstance">
+      <nestedType name="Model" isAbstract="true">
+        <ownedOperation name="asTransformation" isRequired="false">
+          <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+          <ownedParameter name="model" isRequired="false"/>
+        </ownedOperation>
+        <ownedOperation name="copy" isRequired="false"/>
+        <ownedOperation name="createEmptyModel" isRequired="false">
+          <ownedAnnotation xsi:type="QVToPivot:Annotation"/>
+        </ownedOperation>
+        <ownedOperation name="objects" isRequired="false"/>
+        <ownedOperation name="objectsOfType" isRequired="false">
+          <ownedParameter name="type" isRequired="false"/>
+        </ownedOperation>
+        <ownedOperation name="removeElement" isRequired="false">
+          <ownedParameter name="element" isRequired="false"/>
+        </ownedOperation>
+        <ownedOperation name="rootObjects" isRequired="false"/>
+      </nestedType>
+    </ownedType>
+    <ownedVariable name="this" isRequired="false" type="/4"/>
+    <ownedVariable name="this" isRequired="false" type="/4"/>
+    <ownedVariable name="this" isRequired="false" type="/4"/>
+    <ownedVariable name="this" isRequired="false" type="/4"/>
+    <ownedVariable name="this" isRequired="false" type="/4"/>
+  </qvtoperational:OperationalTransformation>
+</xmi:XMI>

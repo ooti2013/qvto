@@ -1,0 +1,10 @@
+modeltype MMA uses 'MMA';
+modeltype MMB uses 'MMB';
+
+transformation QVToOld();
+
+main() {
+	
+}
+
+

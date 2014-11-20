@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trace:Trace xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:trace="http:///www.eclipse.org/m2m/qvt/operational/trace.ecore">
+  <traceRecords>
+    <mappingOperation name="opTrans2opTrans" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//opTrans2opTrans"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="OperationalTransformation">
+        <value>
+          <modelElement href="qvto-input.qvto#/"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OperationalTransformation">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="entryOperation2entryOperation" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//entryOperation2entryOperation"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="EntryOperation">
+        <value>
+          <modelElement href="qvto-input.qvto#//main"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="EntryOperation">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="imOperation2imOperation" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//imOperation2imOperation"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="ImperativeOperation">
+        <value>
+          <modelElement href="qvto-input.qvto#//main"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="ImperativeOperation">
+        <value>
+          <modelElement href="qvto-output.qvtop#/1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="opbody2opbody" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//opbody2opbody"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="OperationBody">
+        <value>
+          <modelElement href="qvto-input.qvto#//main/@body"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OperationBody">
+        <value>
+          <modelElement href="qvto-output.qvtop#/1/@body"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="eModelElement2Element" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//eModelElement2Element"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="EModelElement">
+        <value>
+          <modelElement href="qvto-input.qvto#//main/@body"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Element">
+        <value>
+          <modelElement href="qvto-output.qvtop#/1/@body"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toOperationBody" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//toOperationBody"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="OperationBody">
+        <value>
+          <modelElement href="qvto-input.qvto#//main/@body"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OperationBody">
+        <value>
+          <modelElement href="qvto-output.qvtop#/1/@body"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toOperation" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//toOperation"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="EOperation">
+        <value>
+          <modelElement href="qvto-input.qvto#//main"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Operation">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="mappingOp2mappingOp" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//mappingOp2mappingOp"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="MappingOperation">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="MappingOperation">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="mapBody2mapBody" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//mapBody2mapBody"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="MappingBody">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/@body"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="MappingBody">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@body"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="opbody2opbody" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//opbody2opbody"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="OperationBody">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/@body"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OperationBody">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@body"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="eModelElement2Element" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//eModelElement2Element"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="EModelElement">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/@body"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Element">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@body"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toOperationBody" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//toOperationBody"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="OperationBody">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/@body"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OperationBody">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@body"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="mapParameter2mapParameter" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//mapParameter2mapParameter"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="MappingParameter">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/result"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="MappingParameter">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@result.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="varparameter2varparamter" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//varparameter2varparamter"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="VarParameter">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/result"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="VarParameter">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@result.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="variable2Variable" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//variable2Variable"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Variable">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/result"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Variable">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@result.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="eParameter2Parameter" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//eParameter2Parameter"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="EParameter">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/result"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Parameter">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@result.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toVarParameter" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//toVarParameter"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="VarParameter">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/result"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="VarParameter">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@result.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="mapParameter2mapParameter" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//mapParameter2mapParameter"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="MappingParameter">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/self"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="MappingParameter">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@context"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="varparameter2varparamter" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//varparameter2varparamter"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="VarParameter">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/self"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="VarParameter">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@context"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="variable2Variable" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//variable2Variable"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Variable">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/self"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Variable">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@context"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="eParameter2Parameter" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//eParameter2Parameter"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="EParameter">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/self"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Parameter">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@context"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toVarParameter" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//toVarParameter"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="VarParameter">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model/self"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="VarParameter">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1/@context"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toOperation" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//toOperation"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="EOperation">
+        <value>
+          <modelElement href="qvto-input.qvto#//Project2Model"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Operation">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedOperation.1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="variable2Variable" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//variable2Variable.1"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Variable">
+        <value>
+          <modelElement href="qvto-input.qvto#//this.3"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Variable">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedVariable.3"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toVariable" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//toVariable"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Variable">
+        <value>
+          <modelElement href="qvto-input.qvto#//this.3"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Variable">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedVariable.3"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="variable2Variable" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//variable2Variable.1"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Variable">
+        <value>
+          <modelElement href="qvto-input.qvto#//this.2"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Variable">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedVariable.4"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toVariable" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//toVariable"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Variable">
+        <value>
+          <modelElement href="qvto-input.qvto#//this.2"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Variable">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedVariable.4"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="variable2Variable" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//variable2Variable.1"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Variable">
+        <value>
+          <modelElement href="qvto-input.qvto#//this"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Variable">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedVariable.2"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toVariable" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//toVariable"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Variable">
+        <value>
+          <modelElement href="qvto-input.qvto#//this"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Variable">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedVariable.2"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="variable2Variable" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//variable2Variable.1"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Variable">
+        <value>
+          <modelElement href="qvto-input.qvto#//this.4"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Variable">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedVariable.1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toVariable" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//toVariable"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Variable">
+        <value>
+          <modelElement href="qvto-input.qvto#//this.4"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Variable">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedVariable.1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="variable2Variable" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//variable2Variable.1"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Variable">
+        <value>
+          <modelElement href="qvto-input.qvto#//this.1"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Variable">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedVariable.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toVariable" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//toVariable"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Variable">
+        <value>
+          <modelElement href="qvto-input.qvto#//this.1"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Variable">
+        <value>
+          <modelElement href="qvto-output.qvtop#/0/@ownedVariable.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="modelType2modelType" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//modelType2modelType"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="ModelType">
+        <value>
+          <modelElement href="qvto-input.qvto#//MMA"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="ModelType">
+        <value>
+          <modelElement href="qvto-output.qvtop#/2"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="eClass2Class" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//eClass2Class"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="EClass">
+        <value>
+          <modelElement href="qvto-input.qvto#//MMA"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Class">
+        <value>
+          <modelElement href="qvto-output.qvtop#/2"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="modelType2modelType" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//modelType2modelType"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="ModelType">
+        <value>
+          <modelElement href="qvto-input.qvto#//MMB"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="ModelType">
+        <value>
+          <modelElement href="qvto-output.qvtop#/3"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="eClass2Class" package="QVTo2Pivot" module="QVTo2Pivot">
+      <runtimeMappingOperation href="qvto:/module.env#//eClass2Class"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="EClass">
+        <value>
+          <modelElement href="qvto-input.qvto#//MMB"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Class">
+        <value>
+          <modelElement href="qvto-output.qvtop#/3"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+</trace:Trace>

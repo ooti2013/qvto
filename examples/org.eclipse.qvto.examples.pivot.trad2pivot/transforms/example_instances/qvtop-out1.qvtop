@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pivot="http://www.eclipse.org/ocl/3.1.0/Pivot" xmlns:qvtoperational="http://www.eclipse.org/qvt/pivot/1.0/QVTOperational">
+  <qvtoperational:OperationalTransformation name="QVToOld" nsPrefix="QVToOld" entry="/0/@ownedOperation.0" usedModelType="/0/@ownedType.0 /0/@ownedType.1">
+    <ownedOperation xsi:type="qvtoperational:EntryOperation" name="main" isRequired="false" type="/1">
+      <body/>
+    </ownedOperation>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation" name="Project2Model" isRequired="false" type="/2">
+      <body xsi:type="qvtoperational:MappingBody">
+        <content xsi:type="qvtoperational:ObjectExp" name="result" isRequired="false" type="/2" extent="/4" instantiatedClass="/2" referredObject="/0/@ownedOperation.1/@result.0">
+          <body/>
+        </content>
+      </body>
+      <context xsi:type="qvtoperational:MappingParameter" name="self" isRequired="false" type="/5" representedParameter="/0/@ownedOperation.1/@context" extent="/6"/>
+      <result xsi:type="qvtoperational:MappingParameter" name="result" isRequired="false" type="/2" representedParameter="/0/@ownedOperation.1/@result.0" kind="out" extent="/4"/>
+    </ownedOperation>
+    <ownedType xsi:type="qvtoperational:ModelType" name="MMA"/>
+    <ownedType xsi:type="qvtoperational:ModelType" name="MMB"/>
+    <ownedVariable name="this" isRequired="false" type="/0"/>
+    <ownedVariable name="this" isRequired="false" type="/0"/>
+    <ownedVariable name="this" isRequired="false" type="/0"/>
+    <ownedVariable name="this" isRequired="false" type="/0"/>
+    <ownedVariable name="this" isRequired="false" type="/0"/>
+  </qvtoperational:OperationalTransformation>
+  <pivot:Type name="OclVoid"/>
+  <pivot:Class name="Model">
+    <ownedAttribute name="Name" isRequired="false" type="/3"/>
+  </pivot:Class>
+  <pivot:Type name="EString"/>
+  <qvtoperational:ModelParameter/>
+  <pivot:Class name="Project">
+    <ownedAttribute name="Title" isRequired="false" type="/3"/>
+  </pivot:Class>
+  <qvtoperational:ModelParameter/>
+</xmi:XMI>

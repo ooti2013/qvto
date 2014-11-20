@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:qvtoperational="http://www.eclipse.org/qvt/pivot/1.0/QVTOperational">
+  <qvtoperational:OperationalTransformation entry="/0/@ownedOperation.0" usedModelType="/2 /3">
+    <ownedOperation xsi:type="qvtoperational:EntryOperation"/>
+    <ownedOperation xsi:type="qvtoperational:MappingOperation">
+      <body xsi:type="qvtoperational:MappingBody"/>
+      <context xsi:type="qvtoperational:MappingParameter"/>
+      <result xsi:type="qvtoperational:MappingParameter"/>
+    </ownedOperation>
+    <ownedVariable/>
+    <ownedVariable/>
+    <ownedVariable/>
+    <ownedVariable/>
+    <ownedVariable/>
+  </qvtoperational:OperationalTransformation>
+  <qvtoperational:ImperativeOperation>
+    <body/>
+  </qvtoperational:ImperativeOperation>
+  <qvtoperational:ModelType/>
+  <qvtoperational:ModelType/>
+</xmi:XMI>

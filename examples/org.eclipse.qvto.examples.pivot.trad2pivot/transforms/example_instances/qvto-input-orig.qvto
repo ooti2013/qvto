@@ -1,0 +1,24 @@
+modeltype MMA uses 'MMA';
+modeltype MMB uses 'MMB';
+
+transformation QVToOld(in source:MMA, out target:MMB);
+
+main() {
+	
+	source.rootObjects()[MMA::Project] -> map Project2Model();
+}
+
+mapping MMA::Project::Project2Model() : MMB::Model {
+	
+	Name := self.Title;
+	automata := self.bodies -> map toAutomaton();	
+}
+
+mapping MMA::Automaton::toAutomaton() : MMB::Automaton {
+	Name := self.Name;
+}
+
+mapping Location::Updates() : Mode {
+	Name := self.Name;
+	InitialState := self.ISInitial.toBoolean();
+}
