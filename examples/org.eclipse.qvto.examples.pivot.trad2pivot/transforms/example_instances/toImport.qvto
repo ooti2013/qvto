@@ -1,4 +1,0 @@
-modeltype qvtpivot "strict" uses qvtoperational('http://www.eclipse.org/qvt/pivot/1.0/QVTOperational');
-modeltype qvt "strict" uses qvtoperational('http://www.eclipse.org/QVT/1.0.0/Operational');
-
-transformation ToImport(in o: qvt, out p: qvtpivot);
