@@ -4,7 +4,7 @@ modeltype qvtpivot "strict" uses qvtoperational('http://www.eclipse.org/qvt/pivo
 modeltype qvt "strict" uses qvtoperational('http://www.eclipse.org/QVT/1.0.0/Operational');
 	
 
-transformation Trad2Pivot_bb(in o: qvt, out p: qvtpivot);
+transformation Trad2Pivot_old(in o: qvt, out p: qvtpivot);
 
 
 main() {
