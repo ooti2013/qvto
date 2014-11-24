@@ -13,7 +13,6 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.m2m.internal.qvt.oml.InternalTransformationExecutor;
 import org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation;
-import org.eclipse.ocl.examples.xtext.oclinecore.OCLinEcoreStandaloneSetup;
 import org.eclipse.qvto.examples.pivot.qvtoperational.QVTOperationalFactory;
 
 public class Main {
@@ -45,7 +44,10 @@ public static void main(String[] args) throws Exception {
 		ResourceSet resourceSet2 = new ResourceSetImpl();
 		URI uri = URI.createFileURI("result.qvtop");
 		Resource outResource = resourceSet2.createResource(uri,"qvtop");
-		outResource.getContents().add(res);
+		outResource.getContents().
+		
+		
+		add(res);
 		outResource.save(Collections.emptyMap());
 	}
 
