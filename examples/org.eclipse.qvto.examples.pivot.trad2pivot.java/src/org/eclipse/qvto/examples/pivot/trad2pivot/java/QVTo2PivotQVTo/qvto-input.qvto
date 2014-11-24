@@ -1,0 +1,12 @@
+modeltype MMA uses ecore('http://www.eclipse.org/emf/2002/Ecore');
+modeltype MMB uses pivot('http://www.eclipse.org/ocl/3.1.0/Pivot');
+
+transformation QVToOld(in source:MMA, out target:MMB);
+
+main() {	
+	
+}
+
+mapping MMA::EClass::EclassToClass(): MMB::Class {
+	
+}

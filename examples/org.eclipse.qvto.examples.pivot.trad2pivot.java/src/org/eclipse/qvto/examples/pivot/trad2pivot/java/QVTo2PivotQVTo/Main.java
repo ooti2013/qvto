@@ -2,6 +2,7 @@ package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 import java.net.URL;
 import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -9,8 +10,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.m2m.internal.qvt.oml.InternalTransformationExecutor;
 import org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation;
+import org.eclipse.ocl.examples.xtext.oclinecore.OCLinEcoreStandaloneSetup;
 import org.eclipse.qvto.examples.pivot.qvtoperational.QVTOperationalFactory;
 
 public class Main {
@@ -35,9 +38,13 @@ public static void main(String[] args) throws Exception {
 		}
 		
 		// save the output
+        Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+        Map<String, Object> m = reg.getExtensionToFactoryMap();
+        // m.put("qvto", new QVTOperationalFactoryImpl());
+        m.put("qvtop", new XMIResourceFactoryImpl());
 		ResourceSet resourceSet2 = new ResourceSetImpl();
-		URI uri = URI.createFileURI("./result.xmi");
-		Resource outResource = resourceSet2.createResource(uri);
+		URI uri = URI.createFileURI("result.qvtop");
+		Resource outResource = resourceSet2.createResource(uri,"qvtop");
 		outResource.getContents().add(res);
 		outResource.save(Collections.emptyMap());
 	}
@@ -45,7 +52,7 @@ public static void main(String[] args) throws Exception {
 	static OperationalTransformation loadInputTransformation () 
 	{
 		Main m = new Main();
-		final URI transformUri = m.getUri("./qvto-input.qvto");
+		final URI transformUri = m.getUri("qvto-input.qvto");
 		InternalTransformationExecutor executor = new InternalTransformationExecutor(transformUri);
 		executor.getUnit();
 		OperationalTransformation t = executor.getTransformation();

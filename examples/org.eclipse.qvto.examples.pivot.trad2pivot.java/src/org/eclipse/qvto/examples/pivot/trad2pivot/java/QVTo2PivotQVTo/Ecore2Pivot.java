@@ -19,7 +19,7 @@ public class Ecore2Pivot {
 	{
 		//Class pivotsClass =  (Class) metamodelManager.getClass(input);
 		
-		//output.setName(pivotsClass.getName());
+		output.setName(input.getName());
 		//..so on
 	}
 }
