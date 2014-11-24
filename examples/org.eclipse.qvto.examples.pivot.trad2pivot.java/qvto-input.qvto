@@ -1,0 +1,12 @@
+modeltype MMA uses 'MMA';
+modeltype MMB uses 'MMB';
+
+transformation QVToOld(in source:MMA, out target:MMB);
+
+main() {	
+	
+}
+
+mapping MMA::Project::Project2Model() : MMB::Model {
+	
+}
