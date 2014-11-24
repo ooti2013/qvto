@@ -1,2 +1,12 @@
-<?xml version="1.0" encoding="ASCII"?>
-<ecore:EClass xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="My dummy name"/>
+modeltype MMA uses 'MMA';
+modeltype MMB uses 'MMB';
+
+transformation QVToOld(in source:MMA, out target:MMB);
+
+main() {	
+	
+}
+
+mapping MMA::Project::Project2Model() : MMB::Model {
+	
+}
