@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EClassImpl;
 import org.eclipse.emf.ecore.impl.EOperationImpl;
+import org.eclipse.emf.ecore.impl.EParameterImpl;
 import org.eclipse.m2m.internal.qvt.oml.expressions.impl.*;
 import org.eclipse.ocl.ecore.impl.VariableImpl;
 import org.eclipse.ocl.examples.pivot.Class;
@@ -47,10 +48,13 @@ public class Dispatcher {
 			return res;
 		}
 		
-		/* TODO 
-		 * The input can be also an instance of Parameter. It is not implemented here because 
-		 * ParameterImpl could not be found.
-		 */
+		if (input instanceof EParameterImpl) {
+			Parameter res = pfactory.createParameter();
+			//TODO
+			//qvto2pivot.toParameter((org.eclipse.m2m.internal.qvt.oml.expressions.Parameter)input, res);
+			return res;
+		}
+
 		
 		return null;
 	}
