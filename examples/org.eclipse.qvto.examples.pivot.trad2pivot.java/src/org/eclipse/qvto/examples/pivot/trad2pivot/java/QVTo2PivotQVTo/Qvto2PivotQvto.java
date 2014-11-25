@@ -69,6 +69,21 @@ public class Qvto2PivotQvto {
 		
 		ecoreToPivot.toOperation(input, output);
 		
+		OperationBody opbody = Dispatcher.opBodyDispatcher(input.getBody());
+		output.setBody(opbody);
+		
+		for (org.eclipse.m2m.internal.qvt.oml.expressions.VarParameter element : input.getResult()) {	
+			VarParameter varparam = Dispatcher.varParameterDispatcher(element);
+			output.getResult().add(varparam);
+		}
+
+		ImperativeOperation imop = Dispatcher.imperativeOpDispatcher(input.getOverridden());
+		output.setOverridden(imop);
+		
+		output.setIsBlackbox(input.isIsBlackbox());
+		
+		VarParameter varparam = Dispatcher.varParameterDispatcher(input.getContext());
+		output.setContext(varparam);
 		
 	}
 
@@ -191,5 +206,11 @@ public class Qvto2PivotQvto {
 	public void toVarParameter(
 			org.eclipse.m2m.internal.qvt.oml.expressions.VarParameter input,
 			VarParameter output) {
+	}
+
+	public void toConstructorBody(
+			org.eclipse.m2m.internal.qvt.oml.expressions.ConstructorBody input,
+			ConstructorBody output) {
+		
 	}
 }

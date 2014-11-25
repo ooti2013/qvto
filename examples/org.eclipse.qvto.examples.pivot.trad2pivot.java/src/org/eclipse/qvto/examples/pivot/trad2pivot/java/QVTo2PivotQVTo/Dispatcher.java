@@ -23,6 +23,53 @@ public class Dispatcher {
 	private static QVTOperationalFactory factory = QVTOperationalFactory.eINSTANCE;
 	private static PivotFactory pfactory = PivotFactory.eINSTANCE;
 
+	
+	public static VarParameter varParameterDispatcher(org.eclipse.m2m.internal.qvt.oml.expressions.VarParameter input) {
+		
+		if (input instanceof MappingParameterImpl) {
+			MappingParameter res = factory.createMappingParameter();
+			qvto2pivot.toMappingParameter((org.eclipse.m2m.internal.qvt.oml.expressions.MappingParameter)input, res);
+			return res;
+		}
+		
+		if (input instanceof ModelParameterImpl) {
+			ModelParameter res = factory.createModelParameter();
+			qvto2pivot.toModelParameter((org.eclipse.m2m.internal.qvt.oml.expressions.ModelParameter)input, res);
+			return res;
+		}
+		
+		if (input instanceof VarParameterImpl) {
+			VarParameter res = factory.createVarParameter();
+			qvto2pivot.toVarParameter((org.eclipse.m2m.internal.qvt.oml.expressions.VarParameter)input, res);
+			return res;
+		}
+		
+		return null;
+	}
+	
+	public static OperationBody opBodyDispatcher(org.eclipse.m2m.internal.qvt.oml.expressions.OperationBody input) {
+		
+		if (input instanceof MappingBodyImpl) {
+			MappingBody res = factory.createMappingBody();
+			qvto2pivot.toMappingBody((org.eclipse.m2m.internal.qvt.oml.expressions.MappingBody)input, res);
+			return res;
+		}
+		
+		if (input instanceof ConstructorBodyImpl) {
+			ConstructorBody res = factory.createConstructorBody();
+			qvto2pivot.toConstructorBody((org.eclipse.m2m.internal.qvt.oml.expressions.ConstructorBody)input, res);
+			return res;
+		}
+		
+		if (input instanceof OperationBodyImpl) {
+			OperationBody res = factory.createOperationBody();
+			qvto2pivot.toOperationBody((org.eclipse.m2m.internal.qvt.oml.expressions.OperationBody)input, res);
+			return res;
+		}
+		
+		return null;
+	}
+	
 	public static Variable variableDispatcher(org.eclipse.ocl.ecore.Variable input) {
 		
 		if (input instanceof MappingParameterImpl) {
