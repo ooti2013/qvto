@@ -4,12 +4,9 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.m2m.internal.qvt.oml.expressions.impl.EntryOperationImpl;
-import org.eclipse.m2m.internal.qvt.oml.expressions.impl.HelperImpl;
-import org.eclipse.m2m.internal.qvt.oml.expressions.impl.ImperativeOperationImpl;
-import org.eclipse.m2m.internal.qvt.oml.expressions.impl.MappingOperationImpl;
-import org.eclipse.ocl.ecore.OCLExpression;
+import org.eclipse.m2m.internal.qvt.oml.expressions.impl.*;
 import org.eclipse.ocl.examples.pivot.Class;
+import org.eclipse.ocl.examples.pivot.OCLExpression;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Variable;
 import org.eclipse.qvto.examples.pivot.qvtoperational.*;
@@ -29,11 +26,69 @@ public class Dispatcher {
 	
 	public static ImperativeOperation imperativeOpDispatcher(org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeOperation input) {
 		
+		if (input instanceof MappingOperationImpl) {
+			MappingOperation res = factory.createMappingOperation();
+			qvto2pivot.toMappingOperation((org.eclipse.m2m.internal.qvt.oml.expressions.MappingOperation)input, res);
+			return res;
+		}
+		
+		if (input instanceof HelperImpl) {
+			Helper res = factory.createHelper();
+			qvto2pivot.toHelper((org.eclipse.m2m.internal.qvt.oml.expressions.Helper)input, res);
+			return res;
+		}
+		
+		if (input instanceof EntryOperationImpl) {
+			EntryOperation res = factory.createEntryOperation();
+			qvto2pivot.toEntryOperation((org.eclipse.m2m.internal.qvt.oml.expressions.EntryOperation)input, res);
+			return res;
+		}
+		
+		if (input instanceof ImperativeOperationImpl) {
+			ImperativeOperation res = factory.createImperativeOperation();
+			qvto2pivot.toImperativeOperation((org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeOperation)input, res);
+			return res;
+		}
+		
 		return null;
 	}
 	
-	public static org.eclipse.ocl.examples.pivot.OCLExpression oclExpDispatcher(OCLExpression input) {
+	public static OCLExpression oclExpDispatcher(org.eclipse.ocl.ecore.OCLExpression input) {
 
+		if (input instanceof ObjectExpImpl) {
+			ObjectExp res = factory.createObjectExp();
+			qvto2pivot.toObjectExp((org.eclipse.m2m.internal.qvt.oml.expressions.ObjectExp)input, res);
+			return res;
+		}
+		
+		if (input instanceof MappingCallExpImpl) {
+			MappingCallExp res = factory.createMappingCallExp();
+			qvto2pivot.toMappingCallExp((org.eclipse.m2m.internal.qvt.oml.expressions.MappingCallExp)input, res);
+			return res;
+		}
+		
+		if (input instanceof ImperativeCallExpImpl) {
+			ImperativeCallExp res = factory.createImperativeCallExp();
+			qvto2pivot.toImperativeCallExp((org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeCallExp)input, res);
+			return res;
+		}
+		
+		if (input instanceof ResolveExpImpl) {
+			ResolveExp res = factory.createResolveExp();
+			qvto2pivot.toResolveExp((org.eclipse.m2m.internal.qvt.oml.expressions.ResolveExp)input, res);
+			return res;
+		}
+		
+		if (input instanceof ResolveInExpImpl) {
+			ResolveInExp res = factory.createResolveInExp();
+			qvto2pivot.toResolveInExp((org.eclipse.m2m.internal.qvt.oml.expressions.ResolveInExp)input, res);
+			return res;
+		}
+		
+		/* TODO:
+		 * Dispatch to OCLImperative and OCL concepts.
+		 */
+		
 		return null;
 	}
 	

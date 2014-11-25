@@ -170,13 +170,18 @@ public class Qvto2PivotQvto {
 			output.getVariable().add(varRes);
 		}
 		
-		
+		ecoreToPivot.toElement(input, output);
 			
 	}
 
 	public void toResolveExp(
 			org.eclipse.m2m.internal.qvt.oml.expressions.ResolveExp input,
 			ResolveExp output) {
+	}
+	
+	public void toResolveInExp(
+			org.eclipse.m2m.internal.qvt.oml.expressions.ResolveInExp input,
+			ResolveInExp output) {
 	}
 
 	public void toVarParameter(
