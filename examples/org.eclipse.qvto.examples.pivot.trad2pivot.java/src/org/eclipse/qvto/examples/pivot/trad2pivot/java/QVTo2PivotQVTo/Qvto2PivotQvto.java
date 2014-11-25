@@ -210,8 +210,9 @@ public class Qvto2PivotQvto {
 			output.getContent().add(expRes);
 		}
 		
-		ImperativeOperation res = Dispatcher.imperativeOpDispatcher(input.getOperation());
-		output.setOperation(res);
+		//TODO What to do with circular calls?
+		//ImperativeOperation res = Dispatcher.imperativeOpDispatcher(input.getOperation());
+		//output.setOperation(res);
 		
 		
 		for (org.eclipse.ocl.ecore.Variable element : input.getVariable()) {	
