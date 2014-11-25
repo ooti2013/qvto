@@ -65,7 +65,20 @@ public class Qvto2PivotQvto {
  * */
 	private Class classDispatcher(EClass input) {
 
-		if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation) {
+		if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.ModelType) {
+			ModelType res = factory
+					.createModelType();
+			toModelType((org.eclipse.m2m.internal.qvt.oml.expressions.ModelType)input, res);
+			return res;
+		}
+
+		else if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.Library) {
+			Library res = factory
+					.createLibrary();
+			toLibrary((org.eclipse.m2m.internal.qvt.oml.expressions.Library)input, res);
+		return res;
+		}
+		else if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation) {
 			OperationalTransformation res = factory
 					.createOperationalTransformation();
 			toOperationalTransformation(
