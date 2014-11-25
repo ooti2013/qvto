@@ -1,8 +1,14 @@
 package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.ocl.ecore.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Class;
+import org.eclipse.ocl.examples.pivot.Operation;
+import org.eclipse.ocl.examples.pivot.Package;
+import org.eclipse.ocl.examples.pivot.Property;
 import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
 import org.eclipse.qvto.examples.pivot.qvtoperational.Library;
 import org.eclipse.qvto.examples.pivot.qvtoperational.ModelType;
@@ -52,6 +58,17 @@ public class Dispatcher {
 					res);
 			return res;
 		}
+		return null;
+	}
+	public Operation operationDispatcher(EOperation op) {
+		return null;
+	}
+	
+	public Property propertyDispatcher(EAttribute attr) {
+		return null;
+	}
+
+	public Package packageDispatcher(EPackage ePackage) {
 		return null;
 	}
 }
