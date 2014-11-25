@@ -134,7 +134,7 @@ public class Qvto2PivotQvto {
 			org.eclipse.m2m.internal.qvt.oml.expressions.MappingOperation input,
 			MappingOperation output) {
 		
-		toImperativeOperation(input, output);
+		//toImperativeOperation(input, output);
 
 		for (org.eclipse.m2m.internal.qvt.oml.expressions.MappingOperation element : input.getDisjunct()) {	
 			MappingOperation res = null;
