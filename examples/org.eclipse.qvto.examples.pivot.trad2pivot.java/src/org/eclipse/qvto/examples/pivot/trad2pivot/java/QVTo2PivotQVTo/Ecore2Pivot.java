@@ -9,6 +9,8 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.m2m.internal.qvt.oml.expressions.EntryOperation;
+import org.eclipse.m2m.internal.qvt.oml.expressions.impl.EntryOperationImpl;
 import org.eclipse.ocl.examples.pivot.Annotation;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.Element;
@@ -16,6 +18,7 @@ import org.eclipse.ocl.examples.pivot.NamedElement;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Type;
 import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
+import org.hamcrest.core.IsInstanceOf;
 
 
 public class Ecore2Pivot {
@@ -35,17 +38,17 @@ public class Ecore2Pivot {
 		output.setIsAbstract(input.isAbstract());
 		output.setIsInterface(input.isInterface());
 
-		for (EOperation op : input.getEAllOperations()) {
+		for (EOperation op : input.getEOperations()) {
 			output.getOwnedOperation().add(Dispatcher.operationDispatcher (op));
 		}
 		
-		for (EClass cl: input.getEAllSuperTypes()) {
+		/*for (EClass cl: input.getEAllSuperTypes()) {
 			output.getNestedType().add(Dispatcher.classDispatcher(cl));
 		}
 		
 		for (EAttribute attr : input.getEAllAttributes()) {
 			output.getOwnedAttribute().add(Dispatcher.propertyDispatcher (attr));
-		}
+		}*/
 
 		toType(input, output);
 	}

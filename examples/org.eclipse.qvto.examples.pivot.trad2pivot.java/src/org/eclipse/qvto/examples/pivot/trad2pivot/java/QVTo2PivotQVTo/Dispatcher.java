@@ -4,24 +4,23 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.m2m.internal.qvt.oml.expressions.impl.EntryOperationImpl;
+import org.eclipse.m2m.internal.qvt.oml.expressions.impl.HelperImpl;
+import org.eclipse.m2m.internal.qvt.oml.expressions.impl.ImperativeOperationImpl;
+import org.eclipse.m2m.internal.qvt.oml.expressions.impl.MappingOperationImpl;
 import org.eclipse.ocl.ecore.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Variable;
 import org.eclipse.qvto.examples.pivot.qvtoperational.*;
+import org.eclipse.qvto.examples.pivot.qvtoperational.impl.ConstructorImpl;
 
 public class Dispatcher {
 
-	private static Qvto2PivotQvto qvto2pivot;
-	private static Ecore2Pivot ecore2pivot;
+	private static Qvto2PivotQvto qvto2pivot = new Qvto2PivotQvto();
+	private static Ecore2Pivot ecore2pivot = new Ecore2Pivot();
 	private static QVTOperationalFactory factory = QVTOperationalFactory.eINSTANCE;
 	private static PivotFactory pfactory = PivotFactory.eINSTANCE;
-
-	/*
- * 
- * 
- * 
- * */
 
 	public static Variable variableDispatcher(org.eclipse.ocl.ecore.Variable input) {
 		
@@ -78,6 +77,32 @@ public class Dispatcher {
 	
 	
 	public static org.eclipse.ocl.examples.pivot.Operation operationDispatcher(EOperation op) {
+		if (op instanceof EntryOperationImpl){
+			org.eclipse.qvto.examples.pivot.qvtoperational.EntryOperation entry = factory.createEntryOperation();
+			qvto2pivot.toEntryOperation((org.eclipse.m2m.internal.qvt.oml.expressions.EntryOperation)op, entry);
+			return entry;
+		}
+		if (op instanceof MappingOperationImpl){
+			org.eclipse.qvto.examples.pivot.qvtoperational.MappingOperation mapp = factory.createMappingOperation();
+			qvto2pivot.toMappingOperation((org.eclipse.m2m.internal.qvt.oml.expressions.MappingOperation)op, mapp);
+			return mapp;
+		}
+		if (op instanceof ConstructorImpl){
+			org.eclipse.qvto.examples.pivot.qvtoperational.Constructor constr = factory.createConstructor();
+			//qvto2pivot.toConstructor((org.eclipse.m2m.internal.qvt.oml.expressions.Constructor)op, constr);
+			return constr;
+		}
+		if (op instanceof HelperImpl){
+			org.eclipse.qvto.examples.pivot.qvtoperational.Helper helper= factory.createHelper();
+			qvto2pivot.toHelper((org.eclipse.m2m.internal.qvt.oml.expressions.Helper)op, helper);
+			return helper;
+		}
+		if (op instanceof ImperativeOperationImpl){
+			org.eclipse.qvto.examples.pivot.qvtoperational.ImperativeOperation imperative= factory.createImperativeOperation();
+			qvto2pivot.toImperativeOperation((org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeOperation)op, imperative);
+			return imperative;
+		}
+		
 		return null;
 	}
 	
