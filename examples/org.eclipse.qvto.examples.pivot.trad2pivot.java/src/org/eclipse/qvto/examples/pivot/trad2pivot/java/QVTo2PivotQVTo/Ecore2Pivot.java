@@ -9,6 +9,8 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.ETypedElement;
+import org.eclipse.ocl.examples.pivot.TypedElement;
 import org.eclipse.ocl.examples.pivot.Variable;
 import org.eclipse.ocl.examples.pivot.Annotation;
 import org.eclipse.ocl.examples.pivot.Class;
@@ -92,7 +94,20 @@ public class Ecore2Pivot {
 	
 	void toOperation (EOperation input, Operation output)
 	{
-		//TODO
+		toTypedElement(input, output);
+		
+		
+		
+	}
+	
+	void toTypedElement (ETypedElement input, TypedElement output)
+	{
+		toNamedElement(input, output);
+		
+		output.setIsRequired(input.isRequired());
+		
+		Type type = Dispatcher.typeDispatcher(input.getEType());
+		output.setType(type);
 	}
 	
 }

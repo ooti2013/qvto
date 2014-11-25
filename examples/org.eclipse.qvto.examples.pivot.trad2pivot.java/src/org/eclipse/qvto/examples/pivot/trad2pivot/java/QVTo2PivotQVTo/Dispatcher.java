@@ -2,6 +2,7 @@ package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EClassImpl;
@@ -238,6 +239,10 @@ public class Dispatcher {
 			return operation;
 		}
 		
+		return null;
+	}
+
+	public static org.eclipse.ocl.examples.pivot.Type typeDispatcher(EClassifier eClassifier) {
 		return null;
 	}
 	
