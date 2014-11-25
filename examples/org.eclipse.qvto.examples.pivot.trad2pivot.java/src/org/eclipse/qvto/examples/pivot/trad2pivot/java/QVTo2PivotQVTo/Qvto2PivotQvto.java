@@ -34,6 +34,7 @@ import org.eclipse.qvto.examples.pivot.qvtoperational.OperationalTransformation;
 import org.eclipse.qvto.examples.pivot.qvtoperational.QVTOperationalFactory;
 import org.eclipse.qvto.examples.pivot.qvtoperational.ResolveExp;
 import org.eclipse.qvto.examples.pivot.qvtoperational.VarParameter;
+import org.eclipse.ocl.ecore.OCLExpression;
 import org.eclipse.ocl.examples.pivot.*;
 import org.eclipse.ocl.examples.pivot.Class;
 
@@ -97,6 +98,21 @@ public class Qvto2PivotQvto {
 	public void toMappingBody(
 			org.eclipse.m2m.internal.qvt.oml.expressions.MappingBody input,
 			MappingBody output) {
+		
+		for (OCLExpression element : input.getInitSection()) {	
+			org.eclipse.ocl.examples.pivot.OCLExpression res = null;
+			res = dispatcher.oclDispatcher(element);
+			output.getInitSection().add(res);
+		}
+		
+		for (OCLExpression element : input.getEndSection()) {	
+			org.eclipse.ocl.examples.pivot.OCLExpression res = null;
+			res = dispatcher.oclDispatcher(element);
+			output.getEndSection().add(res);
+		}
+		
+		toOperationBody(input, output);
+		
 	}
 
 	public void toMappingCallExp(
@@ -126,9 +142,12 @@ public class Qvto2PivotQvto {
 			output.getMerged().add(res);
 		}
 		
+		//IMPORTANT NOTE: The input is a set but the result is a single value
 		output.setWhen( dispatcher.oclDispatcher(input.getWhen().get(0)));
 		
 		output.setWhere( dispatcher.oclDispatcher(input.getWhere()) );
+		
+		toImperativeOperation(input, output);
 	}
 
 	public void toMappingParameter(
