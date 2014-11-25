@@ -2,10 +2,12 @@ package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EcoreFactory;
+import org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeOperation;
 import org.eclipse.m2m.internal.qvt.oml.expressions.Module;
 import org.eclipse.ocl.ecore.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
+import org.eclipse.ocl.examples.pivot.Variable;
 import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
 import org.eclipse.qvto.examples.pivot.qvtoperational.Library;
 import org.eclipse.qvto.examples.pivot.qvtoperational.ModelType;
@@ -30,6 +32,16 @@ public class Dispatcher {
  * 
  * 
  * */
+
+	public Variable variableDispatcher(org.eclipse.ocl.ecore.Variable input) {
+		
+		return null;
+	}
+	
+	public org.eclipse.qvto.examples.pivot.qvtoperational.ImperativeOperation imperativeOpDispatcher(ImperativeOperation input) {
+		
+		return null;
+	}
 	public org.eclipse.ocl.examples.pivot.OCLExpression oclExpDispatcher(OCLExpression input) {
 
 		return null;
