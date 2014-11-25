@@ -1,8 +1,11 @@
 package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EcoreFactory;
+import org.eclipse.m2m.internal.qvt.oml.expressions.Module;
 import org.eclipse.ocl.ecore.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Class;
+import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
 import org.eclipse.qvto.examples.pivot.qvtoperational.Library;
 import org.eclipse.qvto.examples.pivot.qvtoperational.ModelType;
@@ -13,11 +16,14 @@ import org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo.Qvto2Pivot
 public class Dispatcher {
 
 	private Qvto2PivotQvto qvto2pivot;
+	private Ecore2Pivot ecore2pivot;
 	private QVTOperationalFactory factory = QVTOperationalFactory.eINSTANCE;
+	private PivotFactory pfactory = PivotFactory.eINSTANCE;
 	
 	Dispatcher ()
 	{
 		qvto2pivot = new Qvto2PivotQvto();
+		ecore2pivot = new Ecore2Pivot();
 	}
 	/*
  * 
@@ -29,7 +35,7 @@ public class Dispatcher {
 		return null;
 	}
 	
-	private Class classDispatcher(EClass input) {
+	public Class classDispatcher(EClass input) {
 
 		if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.ModelType) {
 			ModelType res = factory
@@ -37,7 +43,6 @@ public class Dispatcher {
 			qvto2pivot.toModelType((org.eclipse.m2m.internal.qvt.oml.expressions.ModelType)input, res);
 			return res;
 		}
-
 		else if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.Library) {
 			Library res = factory
 					.createLibrary();
@@ -52,6 +57,19 @@ public class Dispatcher {
 					res);
 			return res;
 		}
+		else if (input instanceof Module) {
+			org.eclipse.qvto.examples.pivot.qvtoperational.Module res = factory
+					.createModule();
+			qvto2pivot.toModule((Module)input, res);
+			return res;
+		}
+		else if (input instanceof EClass) {
+			Class res = pfactory
+					.createClass();
+			ecore2pivot.toClass(input, res);
+			return res;
+		}		
+		
 		return null;
 	}
 }
