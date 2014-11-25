@@ -168,6 +168,8 @@ public class Qvto2PivotQvto {
 			Variable varRes = dispatcher.variableDispatcher(element);
 			output.getVariable().add(varRes);
 		}
+		
+		
 			
 	}
 

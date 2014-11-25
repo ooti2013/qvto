@@ -1,19 +1,14 @@
 package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EcoreFactory;
-import org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeOperation;
-import org.eclipse.m2m.internal.qvt.oml.expressions.Module;
+import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.ocl.ecore.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Variable;
-import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
-import org.eclipse.qvto.examples.pivot.qvtoperational.Library;
-import org.eclipse.qvto.examples.pivot.qvtoperational.ModelType;
-import org.eclipse.qvto.examples.pivot.qvtoperational.OperationalTransformation;
-import org.eclipse.qvto.examples.pivot.qvtoperational.QVTOperationalFactory;
-import org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo.Qvto2PivotQvto;
+import org.eclipse.qvto.examples.pivot.qvtoperational.*;
 
 public class Dispatcher {
 
@@ -38,10 +33,11 @@ public class Dispatcher {
 		return null;
 	}
 	
-	public org.eclipse.qvto.examples.pivot.qvtoperational.ImperativeOperation imperativeOpDispatcher(ImperativeOperation input) {
+	public ImperativeOperation imperativeOpDispatcher(org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeOperation input) {
 		
 		return null;
 	}
+	
 	public org.eclipse.ocl.examples.pivot.OCLExpression oclExpDispatcher(OCLExpression input) {
 
 		return null;
@@ -70,9 +66,9 @@ public class Dispatcher {
 			return res;
 		}
 		else if (input instanceof Module) {
-			org.eclipse.qvto.examples.pivot.qvtoperational.Module res = factory
+			Module res = factory
 					.createModule();
-			qvto2pivot.toModule((Module)input, res);
+			qvto2pivot.toModule((org.eclipse.m2m.internal.qvt.oml.expressions.Module)input, res);
 			return res;
 		}
 		else if (input instanceof EClass) {
@@ -82,6 +78,19 @@ public class Dispatcher {
 			return res;
 		}		
 		
+		return null;
+	}
+	
+	
+	public org.eclipse.ocl.examples.pivot.Operation operationDispatcher(EOperation op) {
+		return null;
+	}
+	
+	public org.eclipse.ocl.examples.pivot.Property propertyDispatcher(EAttribute attr) {
+		return null;
+	}
+
+	public org.eclipse.ocl.examples.pivot.Package packageDispatcher(EPackage ePackage) {
 		return null;
 	}
 }
