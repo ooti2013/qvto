@@ -10,39 +10,17 @@
  *******************************************************************************/
 package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.m2m.internal.qvt.oml.ast.parser.QvtOperationalValidationVisitor;
-import org.eclipse.m2m.internal.qvt.oml.ast.parser.QvtOperationalVisitorCS;
-import org.eclipse.m2m.internal.qvt.oml.compiler.QvtCompilerOptions;
-import org.eclipse.m2m.internal.qvt.oml.cst.parser.AbstractQVTParser;
-import org.eclipse.m2m.internal.qvt.oml.expressions.ContextualProperty;
-import org.eclipse.qvto.examples.pivot.qvtoperational.EntryOperation;
-import org.eclipse.qvto.examples.pivot.qvtoperational.Helper;
-import org.eclipse.qvto.examples.pivot.qvtoperational.ImperativeCallExp;
-import org.eclipse.qvto.examples.pivot.qvtoperational.ImperativeOperation;
-import org.eclipse.qvto.examples.pivot.qvtoperational.Library;
-import org.eclipse.qvto.examples.pivot.qvtoperational.MappingBody;
-import org.eclipse.qvto.examples.pivot.qvtoperational.MappingCallExp;
-import org.eclipse.qvto.examples.pivot.qvtoperational.MappingOperation;
-import org.eclipse.qvto.examples.pivot.qvtoperational.MappingParameter;
-import org.eclipse.qvto.examples.pivot.qvtoperational.ModelParameter;
-import org.eclipse.qvto.examples.pivot.qvtoperational.ModelType;
-import org.eclipse.qvto.examples.pivot.qvtoperational.Module;
-import org.eclipse.qvto.examples.pivot.qvtoperational.ModuleImport;
-import org.eclipse.qvto.examples.pivot.qvtoperational.ObjectExp;
-import org.eclipse.qvto.examples.pivot.qvtoperational.OperationBody;
-import org.eclipse.qvto.examples.pivot.qvtoperational.OperationalTransformation;
-import org.eclipse.qvto.examples.pivot.qvtoperational.QVTOperationalFactory;
-import org.eclipse.qvto.examples.pivot.qvtoperational.ResolveExp;
-import org.eclipse.qvto.examples.pivot.qvtoperational.VarParameter;
-import org.eclipse.ocl.ecore.OCLExpression;
-import org.eclipse.ocl.examples.pivot.*;
-import org.eclipse.ocl.examples.pivot.Class;
+import org.eclipse.qvto.examples.pivot.qvtoperational.*;
+import org.eclipse.qvto.examples.pivot.qvtoperational.impl.EntryOperationImpl;
+import org.eclipse.ocl.examples.pivot.OCLExpression;
+import org.eclipse.ocl.examples.pivot.Operation;
+import org.eclipse.ocl.examples.pivot.Variable;
 
 public class Qvto2PivotQvto {
 
-	private Dispatcher dispatcher;
 	private Ecore2Pivot ecoreToPivot;
 	QVTOperationalFactory factory = QVTOperationalFactory.eINSTANCE;
 
@@ -60,12 +38,12 @@ public class Qvto2PivotQvto {
 			OperationalTransformation output) {
 		for (EClass element : input.getIntermediateClass()) {
 
-			output.getIntermediateClass().add(dispatcher.classDispatcher(element));
+			output.getIntermediateClass().add(Dispatcher.classDispatcher(element));
 		}
 		
 		for (EStructuralFeature element : input.getIntermediateProperty()) {
 
-			output.getIntermediateProperty().add(dispatcher.propertyDispatcher(element));
+			output.getIntermediateProperty().add(Dispatcher.propertyDispatcher(element));
 		}
 		
 		for (org.eclipse.m2m.internal.qvt.oml.expressions.ModelParameter element : input.getModelParameter()) {
@@ -76,13 +54,12 @@ public class Qvto2PivotQvto {
 		toModule(input, output);
 	}
 
-	public void toModule(
-			org.eclipse.m2m.internal.qvt.oml.expressions.Module input,
-			Module output) {
-		output.setEntry(factory.createEntryOperation());
-		toEntryOperation(input.getEntry(), output.getEntry());
-		ecoreToPivot.toClass(input, output);
-		output.getOwnedOperation().add(output.getEntry());
+	public void toModule(org.eclipse.m2m.internal.qvt.oml.expressions.Module input, Module output) {
+		ecoreToPivot.toClass(input, output);		
+		for (Operation op :output.getOwnedOperation() ) {
+			if (op instanceof EntryOperationImpl)
+				output.setEntry((EntryOperation)op);
+		}
 	}
 
 	public void toEntryOperation(
@@ -104,6 +81,25 @@ public class Qvto2PivotQvto {
 	public void toImperativeOperation(
 			org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeOperation input,
 			ImperativeOperation output) {
+		
+		ecoreToPivot.toOperation(input, output);
+		
+		OperationBody opbody = Dispatcher.opBodyDispatcher(input.getBody());
+		output.setBody(opbody);
+		
+		for (org.eclipse.m2m.internal.qvt.oml.expressions.VarParameter element : input.getResult()) {	
+			VarParameter varparam = Dispatcher.varParameterDispatcher(element);
+			output.getResult().add(varparam);
+		}
+
+		ImperativeOperation imop = Dispatcher.imperativeOpDispatcher(input.getOverridden());
+		output.setOverridden(imop);
+		
+		output.setIsBlackbox(input.isIsBlackbox());
+		
+		VarParameter varparam = Dispatcher.varParameterDispatcher(input.getContext());
+		output.setContext(varparam);
+		
 	}
 
 	public void toLibrary(
@@ -115,15 +111,13 @@ public class Qvto2PivotQvto {
 			org.eclipse.m2m.internal.qvt.oml.expressions.MappingBody input,
 			MappingBody output) {
 		
-		for (OCLExpression element : input.getInitSection()) {	
-			org.eclipse.ocl.examples.pivot.OCLExpression res = null;
-			res = dispatcher.oclExpDispatcher(element);
+		for (org.eclipse.ocl.ecore.OCLExpression element : input.getInitSection()) {	
+			OCLExpression res = Dispatcher.oclExpDispatcher(element);
 			output.getInitSection().add(res);
 		}
 		
-		for (OCLExpression element : input.getEndSection()) {	
-			org.eclipse.ocl.examples.pivot.OCLExpression res = null;
-			res = dispatcher.oclExpDispatcher(element);
+		for (org.eclipse.ocl.ecore.OCLExpression element : input.getEndSection()) {	
+			OCLExpression res = Dispatcher.oclExpDispatcher(element);
 			output.getEndSection().add(res);
 		}
 		
@@ -159,9 +153,10 @@ public class Qvto2PivotQvto {
 		}
 		
 		//IMPORTANT NOTE: The input is a set but the result is a single value
-		output.setWhen( dispatcher.oclExpDispatcher(input.getWhen().get(0)));
+		if (!input.getWhen().isEmpty())
+			output.setWhen( Dispatcher.oclExpDispatcher(input.getWhen().get(0)));
 		
-		output.setWhere( dispatcher.oclExpDispatcher(input.getWhere()) );
+		output.setWhere( Dispatcher.oclExpDispatcher(input.getWhere()));
 		
 		toImperativeOperation(input, output);
 	}
@@ -194,15 +189,43 @@ public class Qvto2PivotQvto {
 	public void toOperationBody(
 			org.eclipse.m2m.internal.qvt.oml.expressions.OperationBody input,
 			OperationBody output) {
+		
+		for (org.eclipse.ocl.ecore.OCLExpression element : input.getContent()) {	
+			OCLExpression expRes = Dispatcher.oclExpDispatcher(element);
+			output.getContent().add(expRes);
+		}
+		
+		ImperativeOperation res = Dispatcher.imperativeOpDispatcher(input.getOperation());
+		output.setOperation(res);
+		
+		
+		for (org.eclipse.ocl.ecore.Variable element : input.getVariable()) {	
+			Variable varRes = Dispatcher.variableDispatcher(element);
+			output.getVariable().add(varRes);
+		}
+		
+		ecoreToPivot.toElement(input, output);
+			
 	}
 
 	public void toResolveExp(
 			org.eclipse.m2m.internal.qvt.oml.expressions.ResolveExp input,
 			ResolveExp output) {
 	}
+	
+	public void toResolveInExp(
+			org.eclipse.m2m.internal.qvt.oml.expressions.ResolveInExp input,
+			ResolveInExp output) {
+	}
 
 	public void toVarParameter(
 			org.eclipse.m2m.internal.qvt.oml.expressions.VarParameter input,
 			VarParameter output) {
+	}
+
+	public void toConstructorBody(
+			org.eclipse.m2m.internal.qvt.oml.expressions.ConstructorBody input,
+			ConstructorBody output) {
+		
 	}
 }
