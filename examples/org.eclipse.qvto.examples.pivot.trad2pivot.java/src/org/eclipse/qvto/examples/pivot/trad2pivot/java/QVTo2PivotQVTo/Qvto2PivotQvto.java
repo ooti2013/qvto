@@ -66,6 +66,10 @@ public class Qvto2PivotQvto {
 	public void toImperativeOperation(
 			org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeOperation input,
 			ImperativeOperation output) {
+		
+		ecoreToPivot.toOperation(input, output);
+		
+		
 	}
 
 	public void toLibrary(

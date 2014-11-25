@@ -90,7 +90,7 @@ public class Ecore2Pivot {
 		//TODO
 	}
 	
-	void toOperation (EOperation input, Operation outout)
+	void toOperation (EOperation input, Operation output)
 	{
 		//TODO
 	}
