@@ -31,6 +31,30 @@ public class Dispatcher {
 	
 	public static ImperativeOperation imperativeOpDispatcher(org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeOperation input) {
 		
+		if (input instanceof MappingOperationImpl) {
+			MappingOperation res = factory.createMappingOperation();
+			qvto2pivot.toMappingOperation((org.eclipse.m2m.internal.qvt.oml.expressions.MappingOperation)input, res);
+			return res;
+		}
+		
+		if (input instanceof HelperImpl) {
+			Helper res = factory.createHelper();
+			qvto2pivot.toHelper((org.eclipse.m2m.internal.qvt.oml.expressions.Helper)input, res);
+			return res;
+		}
+		
+		if (input instanceof EntryOperationImpl) {
+			EntryOperation res = factory.createEntryOperation();
+			qvto2pivot.toEntryOperation((org.eclipse.m2m.internal.qvt.oml.expressions.EntryOperation)input, res);
+			return res;
+		}
+		
+		if (input instanceof ImperativeOperationImpl) {
+			ImperativeOperation res = factory.createImperativeOperation();
+			qvto2pivot.toImperativeOperation((org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeOperation)input, res);
+			return res;
+		}
+		
 		return null;
 	}
 	
