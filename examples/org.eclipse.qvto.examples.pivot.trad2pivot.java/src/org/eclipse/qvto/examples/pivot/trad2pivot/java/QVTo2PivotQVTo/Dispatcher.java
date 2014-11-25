@@ -5,6 +5,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.m2m.internal.qvt.oml.expressions.impl.*;
+import org.eclipse.ocl.ecore.impl.VariableImpl;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.OCLExpression;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
@@ -25,6 +26,30 @@ public class Dispatcher {
  * */
 
 	public static Variable variableDispatcher(org.eclipse.ocl.ecore.Variable input) {
+		
+		if (input instanceof MappingParameterImpl) {
+			MappingParameter res = factory.createMappingParameter();
+			qvto2pivot.toMappingParameter((org.eclipse.m2m.internal.qvt.oml.expressions.MappingParameter)input, res);
+			return res;
+		}
+		
+		if (input instanceof ModelParameterImpl) {
+			ModelParameter res = factory.createModelParameter();
+			qvto2pivot.toModelParameter((org.eclipse.m2m.internal.qvt.oml.expressions.ModelParameter)input, res);
+			return res;
+		}
+		
+		if (input instanceof VarParameterImpl) {
+			VarParameter res = factory.createVarParameter();
+			qvto2pivot.toVarParameter((org.eclipse.m2m.internal.qvt.oml.expressions.VarParameter)input, res);
+			return res;
+		}
+		
+		if (input instanceof VariableImpl) {
+			Variable res = pfactory.createVariable();
+			ecore2pivot.toVariable((org.eclipse.ocl.ecore.Variable)input, res);
+			return res;
+		}
 		
 		return null;
 	}

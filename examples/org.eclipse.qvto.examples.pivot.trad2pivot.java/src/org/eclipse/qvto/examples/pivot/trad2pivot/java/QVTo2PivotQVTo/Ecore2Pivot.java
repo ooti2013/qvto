@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.ocl.examples.pivot.Variable;
 import org.eclipse.ocl.examples.pivot.Annotation;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.Element;
@@ -75,6 +76,11 @@ public class Ecore2Pivot {
 	}
 	
 	void toAnnotation (EAnnotation input, Annotation outout)
+	{
+		//TODO
+	}
+	
+	void toVariable (org.eclipse.ocl.ecore.Variable input, Variable outout)
 	{
 		//TODO
 	}
