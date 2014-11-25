@@ -39,6 +39,7 @@ import org.eclipse.ocl.examples.pivot.Class;
 
 public class Qvto2PivotQvto {
 
+	private Dispatcher dispatcher;
 	private Ecore2Pivot ecoreToPivot;
 	QVTOperationalFactory factory = QVTOperationalFactory.eINSTANCE;
 
@@ -107,12 +108,6 @@ public class Qvto2PivotQvto {
 			org.eclipse.m2m.internal.qvt.oml.expressions.MappingOperation input,
 			MappingOperation output) {
 		
-
-
-		//IMPORTANT NOTE: The input is an OrderedSet but the result is a single value
-		//result._when := QueryOclWhen(self._when); //returns only one element.
-		//result._where := self._where .xmap toOCLExpression();
-		
 		for (org.eclipse.m2m.internal.qvt.oml.expressions.MappingOperation element : input.getDisjunct()) {	
 			MappingOperation res = null;
 			toMappingOperation(element, res);
@@ -130,6 +125,10 @@ public class Qvto2PivotQvto {
 			toMappingOperation(element, res);
 			output.getMerged().add(res);
 		}
+		
+		output.setWhen( dispatcher.oclDispatcher(input.getWhen().get(0)));
+		
+		output.setWhere( dispatcher.oclDispatcher(input.getWhere()) );
 	}
 
 	public void toMappingParameter(
