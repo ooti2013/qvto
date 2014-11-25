@@ -176,6 +176,11 @@ public class Qvto2PivotQvto {
 			org.eclipse.m2m.internal.qvt.oml.expressions.ResolveExp input,
 			ResolveExp output) {
 	}
+	
+	public void toResolveInExp(
+			org.eclipse.m2m.internal.qvt.oml.expressions.ResolveInExp input,
+			ResolveInExp output) {
+	}
 
 	public void toVarParameter(
 			org.eclipse.m2m.internal.qvt.oml.expressions.VarParameter input,

@@ -48,6 +48,28 @@ public class Dispatcher {
 			return res;
 		}
 		
+		if (input instanceof ImperativeCallExpImpl) {
+			ImperativeCallExp res = factory.createImperativeCallExp();
+			qvto2pivot.toImperativeCallExp((org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeCallExp)input, res);
+			return res;
+		}
+		
+		if (input instanceof ResolveExpImpl) {
+			ResolveExp res = factory.createResolveExp();
+			qvto2pivot.toResolveExp((org.eclipse.m2m.internal.qvt.oml.expressions.ResolveExp)input, res);
+			return res;
+		}
+		
+		if (input instanceof ResolveInExpImpl) {
+			ResolveInExp res = factory.createResolveInExp();
+			qvto2pivot.toResolveInExp((org.eclipse.m2m.internal.qvt.oml.expressions.ResolveInExp)input, res);
+			return res;
+		}
+		
+		/* TODO:
+		 * Dispatch to OCLImperative and OCL concepts.
+		 */
+		
 		return null;
 	}
 	
