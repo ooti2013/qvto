@@ -4,23 +4,34 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.m2m.internal.qvt.oml.expressions.Module;
 import org.eclipse.ocl.ecore.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Class;
-import org.eclipse.ocl.examples.pivot.Operation;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
-import org.eclipse.ocl.examples.pivot.Property;
-import org.eclipse.qvto.examples.pivot.qvtoperational.Library;
-import org.eclipse.qvto.examples.pivot.qvtoperational.ModelType;
-import org.eclipse.qvto.examples.pivot.qvtoperational.OperationalTransformation;
-import org.eclipse.qvto.examples.pivot.qvtoperational.QVTOperationalFactory;
+import org.eclipse.ocl.examples.pivot.Variable;
+import org.eclipse.qvto.examples.pivot.qvtoperational.*;
 
 public class Dispatcher {
 
-	private static Qvto2PivotQvto qvto2pivot = new Qvto2PivotQvto();
-	private static Ecore2Pivot ecore2pivot = new Ecore2Pivot();
+	private static Qvto2PivotQvto qvto2pivot;
+	private static Ecore2Pivot ecore2pivot;
 	private static QVTOperationalFactory factory = QVTOperationalFactory.eINSTANCE;
 	private static PivotFactory pfactory = PivotFactory.eINSTANCE;
+
+	/*
+ * 
+ * 
+ * 
+ * */
+
+	public static Variable variableDispatcher(org.eclipse.ocl.ecore.Variable input) {
+		
+		return null;
+	}
+	
+	public static ImperativeOperation imperativeOpDispatcher(org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeOperation input) {
+		
+		return null;
+	}
 	
 	public static org.eclipse.ocl.examples.pivot.OCLExpression oclExpDispatcher(OCLExpression input) {
 
@@ -50,9 +61,9 @@ public class Dispatcher {
 			return res;
 		}
 		else if (input instanceof Module) {
-			org.eclipse.qvto.examples.pivot.qvtoperational.Module res = factory
+			Module res = factory
 					.createModule();
-			qvto2pivot.toModule((Module)input, res);
+			qvto2pivot.toModule((org.eclipse.m2m.internal.qvt.oml.expressions.Module)input, res);
 			return res;
 		}
 		else if (input instanceof EClass) {
