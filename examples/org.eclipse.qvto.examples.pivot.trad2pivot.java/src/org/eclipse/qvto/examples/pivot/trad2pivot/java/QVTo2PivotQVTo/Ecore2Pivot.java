@@ -2,34 +2,32 @@ package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.ocl.examples.pivot.Annotation;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.Element;
 import org.eclipse.ocl.examples.pivot.NamedElement;
+import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Type;
 import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
-import org.eclipse.ocl.examples.pivot.PivotFactory;
 
 
 public class Ecore2Pivot {
 
-	private MetaModelManager metamodelManager;
+	//private MetaModelManager metamodelManager;
 	private Dispatcher dispatcher;
 	private PivotFactory pivotFactory;
 	
 	
 	Ecore2Pivot ()
 	{
-		metamodelManager = new MetaModelManager();
+		//metamodelManager = new MetaModelManager();
 		dispatcher = new Dispatcher();
 		pivotFactory = PivotFactory.eINSTANCE;
 	}
