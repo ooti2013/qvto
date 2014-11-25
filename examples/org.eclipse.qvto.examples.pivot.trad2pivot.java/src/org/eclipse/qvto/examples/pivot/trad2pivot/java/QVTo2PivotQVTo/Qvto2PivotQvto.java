@@ -13,8 +13,10 @@ package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.qvto.examples.pivot.qvtoperational.*;
 import org.eclipse.qvto.examples.pivot.qvtoperational.impl.EntryOperationImpl;
+import org.eclipse.m2m.internal.qvt.oml.expressions.DirectionKind;
 import org.eclipse.ocl.examples.pivot.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Operation;
 import org.eclipse.ocl.examples.pivot.Variable;
@@ -37,18 +39,17 @@ public class Qvto2PivotQvto {
 			org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation input,
 			OperationalTransformation output) {
 		for (EClass element : input.getIntermediateClass()) {
-
 			output.getIntermediateClass().add(Dispatcher.classDispatcher(element));
 		}
 		
 		for (EStructuralFeature element : input.getIntermediateProperty()) {
-
 			output.getIntermediateProperty().add(Dispatcher.propertyDispatcher(element));
 		}
 		
 		for (org.eclipse.m2m.internal.qvt.oml.expressions.ModelParameter element : input.getModelParameter()) {
-
-			//output.getIntermediateProperty().add(dispatcher.m(element));
+			ModelParameter modelPar = factory.createModelParameter();
+			toModelParameter(element, modelPar);
+			output.getModelParameter().add(modelPar);
 		}
 				
 		toModule(input, output);
@@ -167,11 +168,24 @@ public class Qvto2PivotQvto {
 			MappingParameter output) {
 	}
 
-	public void toModelParameter(
-			org.eclipse.m2m.internal.qvt.oml.expressions.ModelParameter input,
-			ModelParameter output) {
+	public void toModelParameter(org.eclipse.m2m.internal.qvt.oml.expressions.ModelParameter input, ModelParameter output) 
+	{
+		toVarParameter(input, output);
 	}
 
+	public org.eclipse.qvto.examples.pivot.qvtoperational.DirectionKind toDirectionKing (DirectionKind input)
+	{
+		org.eclipse.qvto.examples.pivot.qvtoperational.DirectionKind res;
+		if (input.getValue() == DirectionKind.IN_VALUE){
+			res = org.eclipse.qvto.examples.pivot.qvtoperational.DirectionKind.IN;
+		}else if (input.getValue() == DirectionKind.OUT_VALUE){
+			res = org.eclipse.qvto.examples.pivot.qvtoperational.DirectionKind.OUT;
+		}else{
+			res = org.eclipse.qvto.examples.pivot.qvtoperational.DirectionKind.INOUT;
+		}
+		return res;
+	}
+	
 	public void toModelType(
 			org.eclipse.m2m.internal.qvt.oml.expressions.ModelType input,
 			ModelType output) {
@@ -219,9 +233,12 @@ public class Qvto2PivotQvto {
 			ResolveInExp output) {
 	}
 
-	public void toVarParameter(
-			org.eclipse.m2m.internal.qvt.oml.expressions.VarParameter input,
-			VarParameter output) {
+	public void toVarParameter( org.eclipse.m2m.internal.qvt.oml.expressions.VarParameter input, VarParameter output) {
+		ecoreToPivot.toVariable(input, output);
+		ecoreToPivot.toParameter(input, output);
+		output.setKind(toDirectionKing(input.getKind()));
+		output.setCtxOwner(Dispatcher.imperativeOpDispatcher(input.getCtxOwner()));
+		output.setResOwner(Dispatcher.imperativeOpDispatcher(input.getResOwner()));
 	}
 
 	public void toConstructorBody(

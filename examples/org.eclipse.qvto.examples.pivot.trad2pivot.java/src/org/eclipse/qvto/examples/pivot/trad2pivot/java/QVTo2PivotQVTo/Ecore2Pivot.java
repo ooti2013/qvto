@@ -130,4 +130,10 @@ public class Ecore2Pivot {
 		output.setType(type);
 	}
 	
+	void toParameter (EParameter input, Parameter output)
+	{
+		toTypedElement(input, output);
+		output.setOperation(Dispatcher.operationDispatcher(input.getEOperation()));
+	}
+	
 }
