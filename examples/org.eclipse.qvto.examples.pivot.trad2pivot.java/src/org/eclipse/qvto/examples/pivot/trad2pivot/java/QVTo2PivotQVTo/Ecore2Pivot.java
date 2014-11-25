@@ -9,8 +9,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EOperation;
-import org.eclipse.m2m.internal.qvt.oml.expressions.EntryOperation;
-import org.eclipse.m2m.internal.qvt.oml.expressions.impl.EntryOperationImpl;
+import org.eclipse.ocl.examples.pivot.Variable;
 import org.eclipse.ocl.examples.pivot.Annotation;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.Element;
@@ -18,8 +17,6 @@ import org.eclipse.ocl.examples.pivot.NamedElement;
 import org.eclipse.ocl.examples.pivot.Operation;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Type;
-import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
-import org.hamcrest.core.IsInstanceOf;
 
 
 public class Ecore2Pivot {
@@ -84,6 +81,11 @@ public class Ecore2Pivot {
 	}
 	
 	void toAnnotation (EAnnotation input, Annotation outout)
+	{
+		//TODO
+	}
+	
+	void toVariable (org.eclipse.ocl.ecore.Variable input, Variable outout)
 	{
 		//TODO
 	}
