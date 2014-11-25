@@ -51,43 +51,11 @@ public class Qvto2PivotQvto {
 			OperationalTransformation output) {
 		for (EClass element : input.getIntermediateClass()) {
 
-			output.getIntermediateClass().add(classDispatcher(element));
+			//output.getIntermediateClass().add(classDispatcher(element));
 		}
 		// output.getIntermediateClass().add(.......)
 		// here all the attributs of OperationalTransformation
 		toModule(input, output);
-	}
-
-	/*
- * 
- * 
- * 
- * */
-	private Class classDispatcher(EClass input) {
-
-		if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.ModelType) {
-			ModelType res = factory
-					.createModelType();
-			toModelType((org.eclipse.m2m.internal.qvt.oml.expressions.ModelType)input, res);
-			return res;
-		}
-
-		else if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.Library) {
-			Library res = factory
-					.createLibrary();
-			toLibrary((org.eclipse.m2m.internal.qvt.oml.expressions.Library)input, res);
-		return res;
-		}
-		else if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation) {
-			OperationalTransformation res = factory
-					.createOperationalTransformation();
-			toOperationalTransformation(
-					(org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation) input,
-					res);
-			return res;
-		}
-
-		return null;
 	}
 
 	public void toModule(
