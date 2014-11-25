@@ -53,7 +53,7 @@ public class Qvto2PivotQvto {
 			OperationalTransformation output) {
 		for (EClass element : input.getIntermediateClass()) {
 
-			//output.getIntermediateClass().add(classDispatcher(element));
+			output.getIntermediateClass().add(dispatcher.classDispatcher(element));
 		}
 		// output.getIntermediateClass().add(.......)
 		// here all the attributs of OperationalTransformation
