@@ -138,6 +138,30 @@ public class Qvto2PivotQvto {
 	public void toMappingOperation(
 			org.eclipse.m2m.internal.qvt.oml.expressions.MappingOperation input,
 			MappingOperation output) {
+		
+
+
+		//IMPORTANT NOTE: The input is an OrderedSet but the result is a single value
+		//result._when := QueryOclWhen(self._when); //returns only one element.
+		//result._where := self._where .xmap toOCLExpression();
+		
+		for (org.eclipse.m2m.internal.qvt.oml.expressions.MappingOperation element : input.getDisjunct()) {	
+			MappingOperation res = null;
+			toMappingOperation(element, res);
+			output.getDisjunct().add(res);
+		}
+
+		for (org.eclipse.m2m.internal.qvt.oml.expressions.MappingOperation element : input.getInherited()) {	
+			MappingOperation res = null;
+			toMappingOperation(element, res);
+			output.getInherited().add(res);
+		}
+		
+		for (org.eclipse.m2m.internal.qvt.oml.expressions.MappingOperation element : input.getMerged()) {	
+			MappingOperation res = null;
+			toMappingOperation(element, res);
+			output.getMerged().add(res);
+		}
 	}
 
 	public void toMappingParameter(
