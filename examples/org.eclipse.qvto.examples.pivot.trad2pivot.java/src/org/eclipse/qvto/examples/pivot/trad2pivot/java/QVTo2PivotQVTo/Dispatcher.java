@@ -1,6 +1,7 @@
 package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.ocl.ecore.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
 import org.eclipse.qvto.examples.pivot.qvtoperational.OperationalTransformation;
@@ -15,6 +16,11 @@ public class Dispatcher {
 	Dispatcher ()
 	{
 
+	}
+	
+	public org.eclipse.ocl.examples.pivot.OCLExpression oclDispatcher(OCLExpression input) {
+
+		return null;
 	}
 	
 	private Class classDispatcher(EClass input) {
