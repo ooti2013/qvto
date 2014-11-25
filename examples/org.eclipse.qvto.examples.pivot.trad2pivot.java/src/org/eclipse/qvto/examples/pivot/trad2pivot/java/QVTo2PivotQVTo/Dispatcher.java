@@ -4,8 +4,9 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.ocl.ecore.OCLExpression;
+import org.eclipse.m2m.internal.qvt.oml.expressions.impl.*;
 import org.eclipse.ocl.examples.pivot.Class;
+import org.eclipse.ocl.examples.pivot.OCLExpression;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Variable;
 import org.eclipse.qvto.examples.pivot.qvtoperational.*;
@@ -33,8 +34,20 @@ public class Dispatcher {
 		return null;
 	}
 	
-	public static org.eclipse.ocl.examples.pivot.OCLExpression oclExpDispatcher(OCLExpression input) {
+	public static OCLExpression oclExpDispatcher(org.eclipse.ocl.ecore.OCLExpression input) {
 
+		if (input instanceof ObjectExpImpl) {
+			ObjectExp res = factory.createObjectExp();
+			qvto2pivot.toObjectExp((org.eclipse.m2m.internal.qvt.oml.expressions.ObjectExp)input, res);
+			return res;
+		}
+		
+		if (input instanceof MappingCallExpImpl) {
+			MappingCallExp res = factory.createMappingCallExp();
+			qvto2pivot.toMappingCallExp((org.eclipse.m2m.internal.qvt.oml.expressions.MappingCallExp)input, res);
+			return res;
+		}
+		
 		return null;
 	}
 	
