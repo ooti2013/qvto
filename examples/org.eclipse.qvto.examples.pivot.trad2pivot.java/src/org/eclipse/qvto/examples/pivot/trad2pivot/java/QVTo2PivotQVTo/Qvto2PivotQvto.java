@@ -168,7 +168,7 @@ public class Qvto2PivotQvto {
 			output.getVariable().add(varRes);
 		}
 		
-		
+		ecoreToPivot.toElement(input, output);
 			
 	}
 
