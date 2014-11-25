@@ -5,6 +5,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EClassImpl;
 import org.eclipse.emf.ecore.impl.EOperationImpl;
@@ -13,11 +14,11 @@ import org.eclipse.ocl.ecore.impl.VariableImpl;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Operation;
+import org.eclipse.ocl.examples.pivot.Parameter;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Property;
 import org.eclipse.ocl.examples.pivot.Variable;
 import org.eclipse.qvto.examples.pivot.qvtoperational.*;
-import org.eclipse.qvto.examples.pivot.qvtoperational.impl.ConstructorImpl;
 
 public class Dispatcher {
 
@@ -26,6 +27,33 @@ public class Dispatcher {
 	private static QVTOperationalFactory factory = QVTOperationalFactory.eINSTANCE;
 	private static PivotFactory pfactory = PivotFactory.eINSTANCE;
 
+	public static Parameter parameterDispatcher(EParameter input) {
+		
+		if (input instanceof MappingParameterImpl) {
+			MappingParameter res = factory.createMappingParameter();
+			qvto2pivot.toMappingParameter((org.eclipse.m2m.internal.qvt.oml.expressions.MappingParameter)input, res);
+			return res;
+		}
+		
+		if (input instanceof ModelParameterImpl) {
+			ModelParameter res = factory.createModelParameter();
+			qvto2pivot.toModelParameter((org.eclipse.m2m.internal.qvt.oml.expressions.ModelParameter)input, res);
+			return res;
+		}
+		
+		if (input instanceof VarParameterImpl) {
+			VarParameter res = factory.createVarParameter();
+			qvto2pivot.toVarParameter((org.eclipse.m2m.internal.qvt.oml.expressions.VarParameter)input, res);
+			return res;
+		}
+		
+		/* TODO 
+		 * The input can be also an instance of Parameter. It is not implemented here because 
+		 * ParameterImpl could not be found.
+		 */
+		
+		return null;
+	}
 	
 	public static VarParameter varParameterDispatcher(org.eclipse.m2m.internal.qvt.oml.expressions.VarParameter input) {
 		

@@ -5,12 +5,14 @@ package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.ETypedElement;
+import org.eclipse.ocl.examples.pivot.Parameter;
 import org.eclipse.ocl.examples.pivot.TypedElement;
 import org.eclipse.ocl.examples.pivot.Variable;
 import org.eclipse.ocl.examples.pivot.Annotation;
@@ -106,7 +108,15 @@ public class Ecore2Pivot {
 	{
 		toTypedElement(input, output);
 		
+		for (EParameter element : input.getEParameters()) {	
+			Parameter p = Dispatcher.parameterDispatcher(element);
+			output.getOwnedParameter().add(p);
+		}
 		
+		for (EClassifier element : input.getEExceptions()) {	
+			Type t = Dispatcher.typeDispatcher(element);
+			output.getRaisedException().add(t);
+		}
 		
 	}
 	
