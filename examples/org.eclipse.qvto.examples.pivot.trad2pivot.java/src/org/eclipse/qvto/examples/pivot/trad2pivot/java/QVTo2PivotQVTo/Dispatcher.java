@@ -4,9 +4,12 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.impl.EClassImpl;
+import org.eclipse.emf.ecore.impl.EOperationImpl;
 import org.eclipse.m2m.internal.qvt.oml.expressions.impl.*;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.OCLExpression;
+import org.eclipse.ocl.examples.pivot.Operation;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Variable;
 import org.eclipse.qvto.examples.pivot.qvtoperational.*;
@@ -94,19 +97,19 @@ public class Dispatcher {
 	
 	public static Class classDispatcher(EClass input) {
 
-		if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.ModelType) {
+		if (input instanceof ModelTypeImpl) {
 			ModelType res = factory
 					.createModelType();
 			qvto2pivot.toModelType((org.eclipse.m2m.internal.qvt.oml.expressions.ModelType)input, res);
 			return res;
 		}
-		else if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.Library) {
+		else if (input instanceof LibraryImpl) {
 			Library res = factory
 					.createLibrary();
 			qvto2pivot.toLibrary((org.eclipse.m2m.internal.qvt.oml.expressions.Library)input, res);
 		return res;
 		}
-		else if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation) {
+		else if (input instanceof OperationalTransformationImpl) {
 			OperationalTransformation res = factory
 					.createOperationalTransformation();
 			qvto2pivot.toOperationalTransformation(
@@ -114,13 +117,13 @@ public class Dispatcher {
 					res);
 			return res;
 		}
-		else if (input instanceof Module) {
+		else if (input instanceof ModuleImpl) {
 			Module res = factory
 					.createModule();
 			qvto2pivot.toModule((org.eclipse.m2m.internal.qvt.oml.expressions.Module)input, res);
 			return res;
 		}
-		else if (input instanceof EClass) {
+		else if (input instanceof EClassImpl) {
 			Class res = pfactory
 					.createClass();
 			ecore2pivot.toClass(input, res);
@@ -156,6 +159,11 @@ public class Dispatcher {
 			org.eclipse.qvto.examples.pivot.qvtoperational.ImperativeOperation imperative= factory.createImperativeOperation();
 			qvto2pivot.toImperativeOperation((org.eclipse.m2m.internal.qvt.oml.expressions.ImperativeOperation)op, imperative);
 			return imperative;
+		}
+		if (op instanceof EOperationImpl){
+			Operation operation= pfactory.createOperation();
+			ecore2pivot.toOperation((EOperation)op, operation);
+			return operation;
 		}
 		
 		return null;

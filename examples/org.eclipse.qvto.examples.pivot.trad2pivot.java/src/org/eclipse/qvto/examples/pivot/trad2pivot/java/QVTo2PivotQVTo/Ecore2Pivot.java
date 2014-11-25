@@ -15,6 +15,7 @@ import org.eclipse.ocl.examples.pivot.Annotation;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.Element;
 import org.eclipse.ocl.examples.pivot.NamedElement;
+import org.eclipse.ocl.examples.pivot.Operation;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Type;
 import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
@@ -42,13 +43,16 @@ public class Ecore2Pivot {
 			output.getOwnedOperation().add(Dispatcher.operationDispatcher (op));
 		}
 		
-		/*for (EClass cl: input.getEAllSuperTypes()) {
-			output.getNestedType().add(Dispatcher.classDispatcher(cl));
+		for (EClass cl: input.getESuperTypes()) {
+			Class c = Dispatcher.classDispatcher(cl);
+			output.getNestedType().add(c);
+			output.getSuperClass().add (c);
 		}
+		
 		
 		for (EAttribute attr : input.getEAllAttributes()) {
 			output.getOwnedAttribute().add(Dispatcher.propertyDispatcher (attr));
-		}*/
+		}
 
 		toType(input, output);
 	}
@@ -58,6 +62,8 @@ public class Ecore2Pivot {
 	{
 		output.setInstanceClassName(input.getInstanceClassName());
 		output.setPackage(Dispatcher.packageDispatcher (input.getEPackage()));
+		
+		
 		
 		toNamedElement(input, output);
 	}
@@ -78,6 +84,11 @@ public class Ecore2Pivot {
 	}
 	
 	void toAnnotation (EAnnotation input, Annotation outout)
+	{
+		//TODO
+	}
+	
+	void toOperation (EOperation input, Operation outout)
 	{
 		//TODO
 	}
