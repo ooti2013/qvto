@@ -17,27 +17,17 @@ import org.eclipse.qvto.examples.pivot.qvtoperational.QVTOperationalFactory;
 
 public class Dispatcher {
 
-	private Qvto2PivotQvto qvto2pivot;
-	private Ecore2Pivot ecore2pivot;
-	private QVTOperationalFactory factory = QVTOperationalFactory.eINSTANCE;
-	private PivotFactory pfactory = PivotFactory.eINSTANCE;
+	private static Qvto2PivotQvto qvto2pivot = new Qvto2PivotQvto();
+	private static Ecore2Pivot ecore2pivot = new Ecore2Pivot();
+	private static QVTOperationalFactory factory = QVTOperationalFactory.eINSTANCE;
+	private static PivotFactory pfactory = PivotFactory.eINSTANCE;
 	
-	Dispatcher ()
-	{
-		qvto2pivot = new Qvto2PivotQvto();
-		ecore2pivot = new Ecore2Pivot();
-	}
-	/*
- * 
- * 
- * 
- * */
-	public org.eclipse.ocl.examples.pivot.OCLExpression oclExpDispatcher(OCLExpression input) {
+	public static org.eclipse.ocl.examples.pivot.OCLExpression oclExpDispatcher(OCLExpression input) {
 
 		return null;
 	}
 	
-	public Class classDispatcher(EClass input) {
+	public static Class classDispatcher(EClass input) {
 
 		if (input instanceof org.eclipse.m2m.internal.qvt.oml.expressions.ModelType) {
 			ModelType res = factory
@@ -76,15 +66,15 @@ public class Dispatcher {
 	}
 	
 	
-	public org.eclipse.ocl.examples.pivot.Operation operationDispatcher(EOperation op) {
+	public static org.eclipse.ocl.examples.pivot.Operation operationDispatcher(EOperation op) {
 		return null;
 	}
 	
-	public org.eclipse.ocl.examples.pivot.Property propertyDispatcher(EAttribute attr) {
+	public static org.eclipse.ocl.examples.pivot.Property propertyDispatcher(EAttribute attr) {
 		return null;
 	}
 
-	public org.eclipse.ocl.examples.pivot.Package packageDispatcher(EPackage ePackage) {
+	public static org.eclipse.ocl.examples.pivot.Package packageDispatcher(EPackage ePackage) {
 		return null;
 	}
 }

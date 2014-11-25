@@ -17,6 +17,7 @@ import org.eclipse.qvto.examples.pivot.qvtoperational.QVTOperationalFactory;
 
 public class Main {
 	
+@SuppressWarnings("restriction")
 public static void main(String[] args) throws Exception {
 
 		Qvto2PivotQvto transformations = new Qvto2PivotQvto();

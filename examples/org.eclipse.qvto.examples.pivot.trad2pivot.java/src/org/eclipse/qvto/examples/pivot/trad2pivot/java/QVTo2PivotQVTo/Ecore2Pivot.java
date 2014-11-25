@@ -21,14 +21,12 @@ import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
 public class Ecore2Pivot {
 
 	//private MetaModelManager metamodelManager;
-	private Dispatcher dispatcher;
-	private PivotFactory pivotFactory;
+	//private static Dispatcher dispatcher = new Dispatcher();
+	private static PivotFactory pivotFactory;
 	
 	
 	Ecore2Pivot ()
 	{
-		//metamodelManager = new MetaModelManager();
-		dispatcher = new Dispatcher();
 		pivotFactory = PivotFactory.eINSTANCE;
 	}
 	
@@ -38,15 +36,15 @@ public class Ecore2Pivot {
 		output.setIsInterface(input.isInterface());
 
 		for (EOperation op : input.getEAllOperations()) {
-			output.getOwnedOperation().add(dispatcher.operationDispatcher (op));
+			output.getOwnedOperation().add(Dispatcher.operationDispatcher (op));
 		}
 		
 		for (EClass cl: input.getEAllSuperTypes()) {
-			output.getNestedType().add(dispatcher.classDispatcher(cl));
+			output.getNestedType().add(Dispatcher.classDispatcher(cl));
 		}
 		
 		for (EAttribute attr : input.getEAllAttributes()) {
-			output.getOwnedAttribute().add(dispatcher.propertyDispatcher (attr));
+			output.getOwnedAttribute().add(Dispatcher.propertyDispatcher (attr));
 		}
 
 		toType(input, output);
@@ -56,7 +54,7 @@ public class Ecore2Pivot {
 	void toType (EClassifier input, Type output)
 	{
 		output.setInstanceClassName(input.getInstanceClassName());
-		output.setPackage(dispatcher.packageDispatcher (input.getEPackage()));
+		output.setPackage(Dispatcher.packageDispatcher (input.getEPackage()));
 		
 		toNamedElement(input, output);
 	}

@@ -40,7 +40,6 @@ import org.eclipse.ocl.examples.pivot.Class;
 
 public class Qvto2PivotQvto {
 
-	private Dispatcher dispatcher;
 	private Ecore2Pivot ecoreToPivot;
 	QVTOperationalFactory factory = QVTOperationalFactory.eINSTANCE;
 
@@ -53,7 +52,7 @@ public class Qvto2PivotQvto {
 			OperationalTransformation output) {
 		for (EClass element : input.getIntermediateClass()) {
 
-			output.getIntermediateClass().add(dispatcher.classDispatcher(element));
+			output.getIntermediateClass().add(Dispatcher.classDispatcher(element));
 		}
 		// output.getIntermediateClass().add(.......)
 		// here all the attributs of OperationalTransformation
@@ -101,13 +100,13 @@ public class Qvto2PivotQvto {
 		
 		for (OCLExpression element : input.getInitSection()) {	
 			org.eclipse.ocl.examples.pivot.OCLExpression res = null;
-			res = dispatcher.oclExpDispatcher(element);
+			res = Dispatcher.oclExpDispatcher(element);
 			output.getInitSection().add(res);
 		}
 		
 		for (OCLExpression element : input.getEndSection()) {	
 			org.eclipse.ocl.examples.pivot.OCLExpression res = null;
-			res = dispatcher.oclExpDispatcher(element);
+			res = Dispatcher.oclExpDispatcher(element);
 			output.getEndSection().add(res);
 		}
 		
@@ -143,9 +142,9 @@ public class Qvto2PivotQvto {
 		}
 		
 		//IMPORTANT NOTE: The input is a set but the result is a single value
-		output.setWhen( dispatcher.oclExpDispatcher(input.getWhen().get(0)));
+		output.setWhen( Dispatcher.oclExpDispatcher(input.getWhen().get(0)));
 		
-		output.setWhere( dispatcher.oclExpDispatcher(input.getWhere()) );
+		output.setWhere( Dispatcher.oclExpDispatcher(input.getWhere()) );
 		
 		toImperativeOperation(input, output);
 	}
