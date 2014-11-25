@@ -30,7 +30,7 @@ public class Dispatcher {
  * 
  * 
  * */
-	public org.eclipse.ocl.examples.pivot.OCLExpression oclDispatcher(OCLExpression input) {
+	public org.eclipse.ocl.examples.pivot.OCLExpression oclExpDispatcher(OCLExpression input) {
 
 		return null;
 	}

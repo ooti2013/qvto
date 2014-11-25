@@ -101,13 +101,13 @@ public class Qvto2PivotQvto {
 		
 		for (OCLExpression element : input.getInitSection()) {	
 			org.eclipse.ocl.examples.pivot.OCLExpression res = null;
-			res = dispatcher.oclDispatcher(element);
+			res = dispatcher.oclExpDispatcher(element);
 			output.getInitSection().add(res);
 		}
 		
 		for (OCLExpression element : input.getEndSection()) {	
 			org.eclipse.ocl.examples.pivot.OCLExpression res = null;
-			res = dispatcher.oclDispatcher(element);
+			res = dispatcher.oclExpDispatcher(element);
 			output.getEndSection().add(res);
 		}
 		
@@ -143,9 +143,9 @@ public class Qvto2PivotQvto {
 		}
 		
 		//IMPORTANT NOTE: The input is a set but the result is a single value
-		output.setWhen( dispatcher.oclDispatcher(input.getWhen().get(0)));
+		output.setWhen( dispatcher.oclExpDispatcher(input.getWhen().get(0)));
 		
-		output.setWhere( dispatcher.oclDispatcher(input.getWhere()) );
+		output.setWhere( dispatcher.oclExpDispatcher(input.getWhere()) );
 		
 		toImperativeOperation(input, output);
 	}
