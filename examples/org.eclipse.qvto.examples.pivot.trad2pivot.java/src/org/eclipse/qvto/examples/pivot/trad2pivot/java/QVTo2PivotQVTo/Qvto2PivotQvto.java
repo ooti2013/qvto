@@ -11,10 +11,12 @@
 package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.m2m.internal.qvt.oml.ast.parser.QvtOperationalValidationVisitor;
 import org.eclipse.m2m.internal.qvt.oml.ast.parser.QvtOperationalVisitorCS;
 import org.eclipse.m2m.internal.qvt.oml.compiler.QvtCompilerOptions;
 import org.eclipse.m2m.internal.qvt.oml.cst.parser.AbstractQVTParser;
+import org.eclipse.m2m.internal.qvt.oml.expressions.ContextualProperty;
 import org.eclipse.qvto.examples.pivot.qvtoperational.EntryOperation;
 import org.eclipse.qvto.examples.pivot.qvtoperational.Helper;
 import org.eclipse.qvto.examples.pivot.qvtoperational.ImperativeCallExp;
@@ -47,7 +49,12 @@ public class Qvto2PivotQvto {
 	Qvto2PivotQvto() {
 		ecoreToPivot = new Ecore2Pivot();
 	}
-
+	
+	public void toContextualProperty(
+			ContextualProperty input,
+			org.eclipse.qvto.examples.pivot.qvtoperational.ContextualProperty output) {
+	}
+	
 	public void toOperationalTransformation(
 			org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation input,
 			OperationalTransformation output) {
@@ -55,8 +62,17 @@ public class Qvto2PivotQvto {
 
 			output.getIntermediateClass().add(dispatcher.classDispatcher(element));
 		}
-		// output.getIntermediateClass().add(.......)
-		// here all the attributs of OperationalTransformation
+		
+		for (EStructuralFeature element : input.getIntermediateProperty()) {
+
+			output.getIntermediateProperty().add(dispatcher.propertyDispatcher(element));
+		}
+		
+		for (org.eclipse.m2m.internal.qvt.oml.expressions.ModelParameter element : input.getModelParameter()) {
+
+			//output.getIntermediateProperty().add(dispatcher.m(element));
+		}
+				
 		toModule(input, output);
 	}
 

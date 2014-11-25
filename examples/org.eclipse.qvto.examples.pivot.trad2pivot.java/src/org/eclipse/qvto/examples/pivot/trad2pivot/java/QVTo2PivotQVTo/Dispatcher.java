@@ -1,11 +1,14 @@
 package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
+import org.eclipse.m2m.internal.qvt.oml.expressions.ContextualProperty;
 import org.eclipse.m2m.internal.qvt.oml.expressions.Module;
 import org.eclipse.ocl.ecore.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
+import org.eclipse.ocl.examples.pivot.Property;
 import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
 import org.eclipse.qvto.examples.pivot.qvtoperational.Library;
 import org.eclipse.qvto.examples.pivot.qvtoperational.ModelType;
@@ -70,6 +73,28 @@ public class Dispatcher {
 			return res;
 		}		
 		
+		return null;
+	}
+	
+	
+	public Property propertyDispatcher(EStructuralFeature input) {
+
+		if (input instanceof ContextualProperty) {
+			org.eclipse.qvto.examples.pivot.qvtoperational.ContextualProperty res = factory
+					.createContextualProperty();
+			qvto2pivot.toContextualProperty((ContextualProperty)input, res);
+			return res;
+		}
+		
+		else if (input instanceof EStructuralFeature) {
+			Property res = pfactory
+					.createProperty();
+			ecore2pivot.toProperty(input, res);
+		return res;
+		}
+		
+	    //TODO: One possible inheritance is "EAttribute" but we dont know how to map it
+	    //TODO::Here Ereference should be also disjuncted, but there is no equivalent class in pivot yet. 
 		return null;
 	}
 }
