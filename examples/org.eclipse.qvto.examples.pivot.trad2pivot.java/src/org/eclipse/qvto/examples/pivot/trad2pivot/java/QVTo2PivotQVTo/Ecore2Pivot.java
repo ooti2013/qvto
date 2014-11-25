@@ -3,7 +3,6 @@ package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 
 import org.eclipse.emf.ecore.EAnnotation;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EModelElement;
@@ -16,7 +15,6 @@ import org.eclipse.ocl.examples.pivot.Element;
 import org.eclipse.ocl.examples.pivot.NamedElement;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Type;
-import org.eclipse.ocl.examples.pivot.manager.MetaModelManager;
 
 
 public class Ecore2Pivot {
@@ -36,17 +34,17 @@ public class Ecore2Pivot {
 		output.setIsAbstract(input.isAbstract());
 		output.setIsInterface(input.isInterface());
 
-		for (EOperation op : input.getEAllOperations()) {
+		for (EOperation op : input.getEOperations()) {
 			output.getOwnedOperation().add(Dispatcher.operationDispatcher (op));
 		}
 		
-		for (EClass cl: input.getEAllSuperTypes()) {
+		/*for (EClass cl: input.getEAllSuperTypes()) {
 			output.getNestedType().add(Dispatcher.classDispatcher(cl));
 		}
 		
 		for (EAttribute attr : input.getEAllAttributes()) {
 			output.getOwnedAttribute().add(Dispatcher.propertyDispatcher (attr));
-		}
+		}*/
 
 		toType(input, output);
 	}

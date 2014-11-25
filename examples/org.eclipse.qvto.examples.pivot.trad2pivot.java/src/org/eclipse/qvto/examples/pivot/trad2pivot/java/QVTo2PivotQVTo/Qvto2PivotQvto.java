@@ -13,7 +13,9 @@ package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.qvto.examples.pivot.qvtoperational.*;
+import org.eclipse.qvto.examples.pivot.qvtoperational.impl.EntryOperationImpl;
 import org.eclipse.ocl.examples.pivot.OCLExpression;
+import org.eclipse.ocl.examples.pivot.Operation;
 import org.eclipse.ocl.examples.pivot.Variable;
 
 public class Qvto2PivotQvto {
@@ -37,13 +39,12 @@ public class Qvto2PivotQvto {
 		toModule(input, output);
 	}
 
-	public void toModule(
-			org.eclipse.m2m.internal.qvt.oml.expressions.Module input,
-			Module output) {
-		output.setEntry(factory.createEntryOperation());
-		toEntryOperation(input.getEntry(), output.getEntry());
-		ecoreToPivot.toClass(input, output);
-		output.getOwnedOperation().add(output.getEntry());
+	public void toModule(org.eclipse.m2m.internal.qvt.oml.expressions.Module input, Module output) {
+		ecoreToPivot.toClass(input, output);		
+		for (Operation op :output.getOwnedOperation() ) {
+			if (op instanceof EntryOperationImpl)
+				output.setEntry((EntryOperation)op);
+		}
 	}
 
 	public void toEntryOperation(
@@ -118,9 +119,10 @@ public class Qvto2PivotQvto {
 		}
 		
 		//IMPORTANT NOTE: The input is a set but the result is a single value
-		output.setWhen( Dispatcher.oclExpDispatcher(input.getWhen().get(0)));
+		if (!input.getWhen().isEmpty())
+			output.setWhen( Dispatcher.oclExpDispatcher(input.getWhen().get(0)));
 		
-		output.setWhere( Dispatcher.oclExpDispatcher(input.getWhere()) );
+		output.setWhere( Dispatcher.oclExpDispatcher(input.getWhere()));
 		
 		toImperativeOperation(input, output);
 	}
