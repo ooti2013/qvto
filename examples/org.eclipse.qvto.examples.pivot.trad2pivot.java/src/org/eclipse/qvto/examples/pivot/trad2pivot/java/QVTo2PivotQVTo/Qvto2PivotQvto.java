@@ -11,6 +11,8 @@
 package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 
+import javax.xml.ws.Dispatch;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -65,20 +67,20 @@ public class Qvto2PivotQvto {
 			if (op instanceof EntryOperationImpl)
 				output.setEntry((EntryOperation)op);
 		}
-		
-		for (org.eclipse.m2m.internal.qvt.oml.expressions.ModelType model :input.getUsedModelType() ) {
+		for (org.eclipse.ocl.ecore.Variable element : input.getOwnedVariable()) {
+			Variable res = Dispatcher.variableDispatcher(element);
+			output.getOwnedVariable().add(res);
+		}for (org.eclipse.m2m.internal.qvt.oml.expressions.ModelType model :input.getUsedModelType() ) {
 			ModelType pivotModel = factory.createModelType();
 			toModelType(model, pivotModel);
 			output.getUsedModelType().add(pivotModel);
 			output.getOwnedType().add(pivotModel);
-		}
-	}
+		}	}
 
 	public void toEntryOperation(
 			org.eclipse.m2m.internal.qvt.oml.expressions.EntryOperation input,
 			EntryOperation output) {
 		toImperativeOperation(input, output);
-		output.setName(input.getName());
 	}
 
 	public void toHelper(
@@ -178,6 +180,11 @@ public class Qvto2PivotQvto {
 	public void toMappingParameter(
 			org.eclipse.m2m.internal.qvt.oml.expressions.MappingParameter input,
 			MappingParameter output) {
+
+		toVarParameter(input, output);
+
+		// TODO: This is a late resolve.
+		//output.setExtent(...);
 	}
 
 	public void toModelParameter(org.eclipse.m2m.internal.qvt.oml.expressions.ModelParameter input, ModelParameter output) 
@@ -198,6 +205,7 @@ public class Qvto2PivotQvto {
 		return res;
 	}
 	
+
 	public void toModelType( org.eclipse.m2m.internal.qvt.oml.expressions.ModelType input, ModelType output) {
 		ecoreToPivot.toClass(input, output);
 		output.setConformanceKind(input.getConformanceKind());
@@ -234,10 +242,8 @@ public class Qvto2PivotQvto {
 			output.getContent().add(expRes);
 		}
 		
-		//TODO What to do with circular calls?
-		//ImperativeOperation res = Dispatcher.imperativeOpDispatcher(input.getOperation());
-		//output.setOperation(res);
-		
+		// TODO: The reference int the output is set
+		//output.setOperation(...);
 		
 		for (org.eclipse.ocl.ecore.Variable element : input.getVariable()) {	
 			Variable varRes = Dispatcher.variableDispatcher(element);
@@ -262,8 +268,12 @@ public class Qvto2PivotQvto {
 		ecoreToPivot.toVariable(input, output);
 		ecoreToPivot.toParameter(input, output);
 		output.setKind(toDirectionKing(input.getKind()));
-		output.setCtxOwner(Dispatcher.imperativeOpDispatcher(input.getCtxOwner()));
-		output.setResOwner(Dispatcher.imperativeOpDispatcher(input.getResOwner()));
+		//output.setCtxOwner(Dispatcher.imperativeOpDispatcher(input.getCtxOwner()));
+		//output.setResOwner(Dispatcher.imperativeOpDispatcher(input.getResOwner()));
+		
+		// The references in the output are set.
+		//output.setCtxOwner(...);
+		//output.setResOwner(...);
 	}
 
 	public void toConstructorBody(

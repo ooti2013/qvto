@@ -164,7 +164,7 @@ public class Dispatcher {
 		return null;
 	}
 	
-	public static OCLExpression oclExpDispatcher(org.eclipse.ocl.ecore.OCLExpression input) {
+	public static OCLExpression oclExpDispatcher(org.eclipse.ocl.expressions.OCLExpression<EClassifier> input) {
 
 		if (input instanceof ObjectExpImpl) {
 			ObjectExp res = factory.createObjectExp();
