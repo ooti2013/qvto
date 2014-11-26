@@ -3,5 +3,11 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="./libs/org.antlr.runtime_3.2.0.v201101311130.jar"/>
+	<classpathentry kind="lib" path="./libs/org.eclipse.ocl.examples.xtext.base_3.4.2.v20140725-1916.jar"/>
+	<classpathentry kind="lib" path="./libs/org.eclipse.ocl.examples.xtext.completeocl_3.4.2.v20140819-1601.jar"/>
+	<classpathentry kind="lib" path="./libs/org.eclipse.ocl.examples.xtext.essentialocl_3.4.2.v20140819-1601.jar"/>
+	<classpathentry kind="lib" path="./libs/org.eclipse.xtext.util_2.7.2.v201409160908.jar"/>
+	<classpathentry kind="lib" path="./libs/org.eclipse.xtext_2.7.2.v201409160908.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
