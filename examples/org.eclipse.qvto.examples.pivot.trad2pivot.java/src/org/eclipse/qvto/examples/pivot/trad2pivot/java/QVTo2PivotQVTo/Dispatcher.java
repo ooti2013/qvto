@@ -277,7 +277,7 @@ public class Dispatcher {
 		}
 		if (op instanceof ConstructorImpl){
 			org.eclipse.qvto.examples.pivot.qvtoperational.Constructor constr = factory.createConstructor();
-			//qvto2pivot.toConstructor((org.eclipse.m2m.internal.qvt.oml.expressions.Constructor)op, constr);
+			qvto2pivot.toConstructor((org.eclipse.m2m.internal.qvt.oml.expressions.Constructor)op, constr);
 			return constr;
 		}
 		if (op instanceof HelperImpl){

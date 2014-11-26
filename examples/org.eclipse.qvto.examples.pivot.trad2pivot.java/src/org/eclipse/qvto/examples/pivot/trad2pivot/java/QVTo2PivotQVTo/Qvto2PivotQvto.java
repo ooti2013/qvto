@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.qvto.examples.pivot.qvtoperational.*;
 import org.eclipse.qvto.examples.pivot.qvtoperational.impl.EntryOperationImpl;
+import org.eclipse.m2m.internal.qvt.oml.expressions.Constructor;
 import org.eclipse.m2m.internal.qvt.oml.expressions.DirectionKind;
 import org.eclipse.ocl.examples.pivot.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Operation;
@@ -279,6 +280,12 @@ public class Qvto2PivotQvto {
 	public void toConstructorBody(
 			org.eclipse.m2m.internal.qvt.oml.expressions.ConstructorBody input,
 			ConstructorBody output) {
+		
+	}
+
+	public void toConstructor(Constructor input,
+			org.eclipse.qvto.examples.pivot.qvtoperational.Constructor output) {
+		toImperativeOperation(input, output);
 		
 	}
 }
