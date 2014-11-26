@@ -51,8 +51,7 @@ public class Dispatcher {
 		
 		if (input instanceof EParameterImpl) {
 			Parameter res = pfactory.createParameter();
-			//TODO
-			//qvto2pivot.toParameter((org.eclipse.m2m.internal.qvt.oml.expressions.Parameter)input, res);
+			ecore2pivot.toParameter((EParameter)input, res);
 			return res;
 		}
 

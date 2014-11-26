@@ -145,7 +145,9 @@ public class Ecore2Pivot {
 	void toParameter (EParameter input, Parameter output)
 	{
 		toTypedElement(input, output);
-		output.setOperation(Dispatcher.operationDispatcher(input.getEOperation()));
+		
+		// TODO: Check if the reference is set.
+		// output.setOperation(...);
 	}
 
 	public void toPackage(EPackage input, Package output) {
