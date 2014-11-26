@@ -70,12 +70,12 @@ public class Ecore2Pivot {
 	
 	void toType (EClassifier input, Type output)
 	{
-		output.setInstanceClassName(input.getInstanceClassName());
-		output.setPackage(Dispatcher.packageDispatcher (input.getEPackage()));
-		
-		
-		
 		toNamedElement(input, output);
+		
+		output.setInstanceClassName(input.getInstanceClassName());
+		
+		// Find the reference
+		//output.setPackage(...);
 	}
 	
 	void toNamedElement (ENamedElement input, NamedElement output)
@@ -86,9 +86,14 @@ public class Ecore2Pivot {
 	
 	void toProperty (EStructuralFeature input, Property output)
 	{
-		//TODO may call metaModelManager
-		output.setName(input.getName());
-		//..so on
+		toTypedElement(input, output);
+		
+		output.setIsReadOnly(!input.isChangeable());
+		output.setIsVolatile(input.isVolatile());
+		output.setIsTransient(input.isTransient());
+		output.setDefault(input.getDefaultValueLiteral());
+		output.setIsUnsettable(input.isUnsettable());
+		output.setIsDerived(input.isDerived());
 	}
 	
 	void toElement (EModelElement input, Element output)

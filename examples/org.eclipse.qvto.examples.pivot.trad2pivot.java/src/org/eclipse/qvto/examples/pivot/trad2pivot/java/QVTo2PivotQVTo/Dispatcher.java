@@ -302,18 +302,25 @@ public class Dispatcher {
 		return null;
 	}
 	
-	public static org.eclipse.ocl.examples.pivot.Property propertyDispatcher(EAttribute attr) {
-		return null;
-	}
 
 	public static org.eclipse.ocl.examples.pivot.Package packageDispatcher(EPackage ePackage) {
 		if (ePackage instanceof org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation)
 		{
-			//TODO
+			OperationalTransformation optrans = factory.createOperationalTransformation();
+			qvto2pivot.toOperationalTransformation((org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation)ePackage, optrans);
+			return optrans;
+		}
+		if (ePackage instanceof org.eclipse.m2m.internal.qvt.oml.expressions.Library)
+		{
+			Library lib = factory.createLibrary();
+			qvto2pivot.toLibrary((org.eclipse.m2m.internal.qvt.oml.expressions.Library)ePackage, lib);
+			return lib;
 		}
 		if (ePackage instanceof org.eclipse.m2m.internal.qvt.oml.expressions.Module)
 		{
-			//TODO
+			Module module = factory.createModule();
+			qvto2pivot.toModule((org.eclipse.m2m.internal.qvt.oml.expressions.Module)ePackage, module);
+			return module;
 		}
 		if (ePackage instanceof EPackage)
 		{

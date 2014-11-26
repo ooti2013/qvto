@@ -45,6 +45,9 @@ public class Qvto2PivotQvto {
 	public void toOperationalTransformation(
 			org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation input,
 			OperationalTransformation output) {
+		
+		toModule(input, output);
+		
 		for (EClass element : input.getIntermediateClass()) {
 			output.getIntermediateClass().add(Dispatcher.classDispatcher(element));
 		}
@@ -58,8 +61,6 @@ public class Qvto2PivotQvto {
 			toModelParameter(element, modelPar);
 			output.getModelParameter().add(modelPar);
 		}
-				
-		toModule(input, output);
 	}
 
 	public void toModule(org.eclipse.m2m.internal.qvt.oml.expressions.Module input, Module output) {
