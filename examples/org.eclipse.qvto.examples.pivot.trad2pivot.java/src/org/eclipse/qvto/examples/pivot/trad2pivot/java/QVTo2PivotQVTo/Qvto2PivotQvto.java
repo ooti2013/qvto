@@ -178,10 +178,8 @@ public class Qvto2PivotQvto {
 
 		toVarParameter(input, output);
 
-		// TODO: Find the reference!
-		//ModelParameter mp = null;
-		//toModelParameter(input.getExtent(), mp);
-		//output.setExtent(mp);
+		// TODO: This is a late resolve.
+		//output.setExtent(...);
 	}
 
 	public void toModelParameter(org.eclipse.m2m.internal.qvt.oml.expressions.ModelParameter input, ModelParameter output) 
@@ -226,8 +224,8 @@ public class Qvto2PivotQvto {
 			output.getContent().add(expRes);
 		}
 		
-		// TODO: Find the reference!
-		//output.setOperation(res);
+		// TODO: The reference int the output is set
+		//output.setOperation(...);
 		
 		for (org.eclipse.ocl.ecore.Variable element : input.getVariable()) {	
 			Variable varRes = Dispatcher.variableDispatcher(element);
@@ -253,9 +251,9 @@ public class Qvto2PivotQvto {
 		ecoreToPivot.toParameter(input, output);
 		output.setKind(toDirectionKing(input.getKind()));
 		
-		// TODO: Find the reference!
-		//output.setCtxOwner(Dispatcher.imperativeOpDispatcher(input.getCtxOwner()));
-		//output.setResOwner(Dispatcher.imperativeOpDispatcher(input.getResOwner()));
+		// The references in the output are set.
+		//output.setCtxOwner(...);
+		//output.setResOwner(...);
 	}
 
 	public void toConstructorBody(
