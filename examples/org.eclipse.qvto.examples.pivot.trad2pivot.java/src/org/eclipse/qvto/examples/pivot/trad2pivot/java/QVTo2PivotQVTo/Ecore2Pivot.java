@@ -5,6 +5,7 @@ package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EClassifier;
@@ -12,6 +13,7 @@ import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.ETypedElement;
+import org.eclipse.ocl.examples.pivot.Package;
 import org.eclipse.ocl.examples.pivot.Parameter;
 import org.eclipse.ocl.examples.pivot.TypedElement;
 import org.eclipse.ocl.examples.pivot.Variable;
@@ -123,9 +125,7 @@ public class Ecore2Pivot {
 	void toTypedElement (ETypedElement input, TypedElement output)
 	{
 		toNamedElement(input, output);
-		
 		output.setIsRequired(input.isRequired());
-		
 		Type type = Dispatcher.typeDispatcher(input.getEType());
 		output.setType(type);
 	}
@@ -134,6 +134,13 @@ public class Ecore2Pivot {
 	{
 		toTypedElement(input, output);
 		output.setOperation(Dispatcher.operationDispatcher(input.getEOperation()));
+	}
+
+	public void toPackage(EPackage input, Package output) {
+		output.setNsPrefix(input.getNsPrefix());
+		output.setNsURI(input.getNsURI());
+		toNamedElement(input, output);
+		//TODO: Complete other attributes
 	}
 	
 }

@@ -12,7 +12,11 @@ package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.qvto.examples.pivot.qvtoperational.*;
 import org.eclipse.qvto.examples.pivot.qvtoperational.impl.EntryOperationImpl;
@@ -61,11 +65,19 @@ public class Qvto2PivotQvto {
 			if (op instanceof EntryOperationImpl)
 				output.setEntry((EntryOperation)op);
 		}
+		
+		for (org.eclipse.m2m.internal.qvt.oml.expressions.ModelType model :input.getUsedModelType() ) {
+			ModelType pivotModel = factory.createModelType();
+			toModelType(model, pivotModel);
+			output.getUsedModelType().add(pivotModel);
+			output.getOwnedType().add(pivotModel);
+		}
 	}
 
 	public void toEntryOperation(
 			org.eclipse.m2m.internal.qvt.oml.expressions.EntryOperation input,
 			EntryOperation output) {
+		toImperativeOperation(input, output);
 		output.setName(input.getName());
 	}
 
@@ -186,9 +198,21 @@ public class Qvto2PivotQvto {
 		return res;
 	}
 	
-	public void toModelType(
-			org.eclipse.m2m.internal.qvt.oml.expressions.ModelType input,
-			ModelType output) {
+	public void toModelType( org.eclipse.m2m.internal.qvt.oml.expressions.ModelType input, ModelType output) {
+		ecoreToPivot.toClass(input, output);
+		output.setConformanceKind(input.getConformanceKind());
+		
+		for (EPackage pack : input.getMetamodel()) {
+			org.eclipse.ocl.examples.pivot.Package pivotPack = Dispatcher.packageDispatcher(pack);
+			output.getMetamodel().add(pivotPack);
+			//TODO: FIX ME. I added the package to the owned annotations in order not to have a 
+			// hanging element exception. But the container for the package should be somewherelse.
+			output.getOwnedAnnotation().add(pivotPack);
+		}
+		
+		for (org.eclipse.ocl.ecore.OCLExpression exp : input.getAdditionalCondition()) {
+			output.getAdditionalCondition().add(Dispatcher.oclExpDispatcher(exp));
+		}
 	}
 
 	public void toModuleImport(

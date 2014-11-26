@@ -15,6 +15,7 @@ import org.eclipse.ocl.ecore.impl.VariableImpl;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Operation;
+import org.eclipse.ocl.examples.pivot.Package;
 import org.eclipse.ocl.examples.pivot.Parameter;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Property;
@@ -307,6 +308,20 @@ public class Dispatcher {
 	}
 
 	public static org.eclipse.ocl.examples.pivot.Package packageDispatcher(EPackage ePackage) {
+		if (ePackage instanceof org.eclipse.m2m.internal.qvt.oml.expressions.OperationalTransformation)
+		{
+			//TODO
+		}
+		if (ePackage instanceof org.eclipse.m2m.internal.qvt.oml.expressions.Module)
+		{
+			//TODO
+		}
+		if (ePackage instanceof EPackage)
+		{
+			Package pack = pfactory.createPackage();
+			ecore2pivot.toPackage (ePackage, pack);
+			return pack;
+		}
 		return null;
 	}
 }

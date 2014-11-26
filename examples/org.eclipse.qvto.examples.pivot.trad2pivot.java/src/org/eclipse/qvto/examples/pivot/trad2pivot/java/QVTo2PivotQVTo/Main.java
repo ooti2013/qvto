@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -20,6 +21,9 @@ public class Main {
 @SuppressWarnings("restriction")
 public static void main(String[] args) throws Exception {
 
+	 org.eclipse.ocl.examples.xtext.completeocl.CompleteOCLStandaloneSetup.doSetup();
+
+     
 		Qvto2PivotQvto transformations = new Qvto2PivotQvto();
 		OperationalTransformation input = loadInputTransformation();
 		QVTOperationalFactory factory = QVTOperationalFactory.eINSTANCE;
