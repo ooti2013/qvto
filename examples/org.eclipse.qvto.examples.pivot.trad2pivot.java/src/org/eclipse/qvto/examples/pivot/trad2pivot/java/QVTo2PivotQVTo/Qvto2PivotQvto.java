@@ -176,9 +176,9 @@ public class Qvto2PivotQvto {
 			org.eclipse.m2m.internal.qvt.oml.expressions.MappingParameter input,
 			MappingParameter output) {
 
-		//TODO: What to do with circular calls?
-		//toVarParameter(input, output);
+		toVarParameter(input, output);
 
+		// TODO: Find the reference!
 		//ModelParameter mp = null;
 		//toModelParameter(input.getExtent(), mp);
 		//output.setExtent(mp);
@@ -226,10 +226,8 @@ public class Qvto2PivotQvto {
 			output.getContent().add(expRes);
 		}
 		
-		//TODO What to do with circular calls?
-		//ImperativeOperation res = Dispatcher.imperativeOpDispatcher(input.getOperation());
+		// TODO: Find the reference!
 		//output.setOperation(res);
-		
 		
 		for (org.eclipse.ocl.ecore.Variable element : input.getVariable()) {	
 			Variable varRes = Dispatcher.variableDispatcher(element);
@@ -254,8 +252,10 @@ public class Qvto2PivotQvto {
 		ecoreToPivot.toVariable(input, output);
 		ecoreToPivot.toParameter(input, output);
 		output.setKind(toDirectionKing(input.getKind()));
-		output.setCtxOwner(Dispatcher.imperativeOpDispatcher(input.getCtxOwner()));
-		output.setResOwner(Dispatcher.imperativeOpDispatcher(input.getResOwner()));
+		
+		// TODO: Find the reference!
+		//output.setCtxOwner(Dispatcher.imperativeOpDispatcher(input.getCtxOwner()));
+		//output.setResOwner(Dispatcher.imperativeOpDispatcher(input.getResOwner()));
 	}
 
 	public void toConstructorBody(
