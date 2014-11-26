@@ -173,6 +173,13 @@ public class Qvto2PivotQvto {
 	public void toMappingParameter(
 			org.eclipse.m2m.internal.qvt.oml.expressions.MappingParameter input,
 			MappingParameter output) {
+
+		//TODO: What to do with circular calls?
+		//toVarParameter(input, output);
+
+		//ModelParameter mp = null;
+		//toModelParameter(input.getExtent(), mp);
+		//output.setExtent(mp);
 	}
 
 	public void toModelParameter(org.eclipse.m2m.internal.qvt.oml.expressions.ModelParameter input, ModelParameter output) 
