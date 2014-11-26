@@ -74,7 +74,8 @@ public class Qvto2PivotQvto {
 	public void toEntryOperation(
 			org.eclipse.m2m.internal.qvt.oml.expressions.EntryOperation input,
 			EntryOperation output) {
-		output.setName(input.getName());
+
+		toImperativeOperation(input, output);
 	}
 
 	public void toHelper(
