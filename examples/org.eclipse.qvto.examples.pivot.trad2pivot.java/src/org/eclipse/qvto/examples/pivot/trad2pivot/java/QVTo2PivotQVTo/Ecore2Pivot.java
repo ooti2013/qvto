@@ -104,12 +104,17 @@ public class Ecore2Pivot {
 		//TODO
 	}
 	
-	void toVariable (org.eclipse.ocl.ecore.Variable input, Variable outout)
+	void toVariable (org.eclipse.ocl.ecore.Variable input, Variable output)
 	{
-		Parameter res = pivotFactory.createParameter();
-		toParameter(input.getRepresentedParameter(), res);
-		outout.setRepresentedParameter(res);
-		outout.setInitExpression(Dispatcher.oclExpDispatcher( input.getInitExpression()));
+		toTypedElement(input, output);
+		if (input.getRepresentedParameter() != null) {
+			// Find out the reference!
+			//Parameter res = pivotFactory.createParameter();
+			//toParameter(input.getRepresentedParameter(), res);
+			//output.setRepresentedParameter(res);
+		}
+
+		output.setInitExpression(Dispatcher.oclExpDispatcher( input.getInitExpression()));
 	}
 	
 	void toOperation (EOperation input, Operation output)

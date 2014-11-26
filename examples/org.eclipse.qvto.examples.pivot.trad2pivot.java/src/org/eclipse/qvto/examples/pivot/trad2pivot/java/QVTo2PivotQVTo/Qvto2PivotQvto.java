@@ -11,6 +11,8 @@
 package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 
+import javax.xml.ws.Dispatch;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.SetCommand;
@@ -63,8 +65,7 @@ public class Qvto2PivotQvto {
 		}
 		
 		for (org.eclipse.ocl.ecore.Variable element : input.getOwnedVariable()) {
-			Variable res = factory.createModelParameter();
-			ecoreToPivot.toVariable(element, res);
+			Variable res = Dispatcher.variableDispatcher(element);
 			output.getOwnedVariable().add(res);
 		}
 			
