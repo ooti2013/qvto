@@ -2,6 +2,8 @@ package org.eclipse.qvto.examples.pivot.trad2pivot.java.QVTo2PivotQVTo;
 
 
 
+import javax.print.attribute.standard.OutputDeviceAssigned;
+
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -12,6 +14,7 @@ import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.ETypedElement;
+import org.eclipse.ocl.ecore.OCLExpression;
 import org.eclipse.ocl.examples.pivot.Parameter;
 import org.eclipse.ocl.examples.pivot.TypedElement;
 import org.eclipse.ocl.examples.pivot.Variable;
@@ -24,6 +27,8 @@ import org.eclipse.ocl.examples.pivot.NamedElement;
 import org.eclipse.ocl.examples.pivot.Operation;
 import org.eclipse.ocl.examples.pivot.PivotFactory;
 import org.eclipse.ocl.examples.pivot.Type;
+import org.eclipse.qvto.examples.pivot.qvtoperational.ModelParameter;
+import org.eclipse.qvto.examples.pivot.qvtoperational.OperationalTransformation;
 
 
 public class Ecore2Pivot {
@@ -101,7 +106,10 @@ public class Ecore2Pivot {
 	
 	void toVariable (org.eclipse.ocl.ecore.Variable input, Variable outout)
 	{
-		//TODO
+		Parameter res = pivotFactory.createParameter();
+		toParameter(input.getRepresentedParameter(), res);
+		outout.setRepresentedParameter(res);
+		outout.setInitExpression(Dispatcher.oclExpDispatcher( input.getInitExpression()));
 	}
 	
 	void toOperation (EOperation input, Operation output)

@@ -61,6 +61,13 @@ public class Qvto2PivotQvto {
 			if (op instanceof EntryOperationImpl)
 				output.setEntry((EntryOperation)op);
 		}
+		
+		for (org.eclipse.ocl.ecore.Variable element : input.getOwnedVariable()) {
+			Variable res = factory.createModelParameter();
+			ecoreToPivot.toVariable(element, res);
+			output.getOwnedVariable().add(res);
+		}
+			
 	}
 
 	public void toEntryOperation(
