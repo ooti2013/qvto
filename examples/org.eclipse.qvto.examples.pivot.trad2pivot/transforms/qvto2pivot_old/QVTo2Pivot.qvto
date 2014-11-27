@@ -339,7 +339,7 @@ mapping ecore::EClass::eClass2Class () : pivot::Class inherits ecore::EClassifie
 	result.isInterface := self.interface;
 	
 	//TODO: there are also self.SuperTypes and result.superClass
-	result.nestedType += self.eSuperTypes .xmap toClass();
+	result.superClass += self.eAllSuperTypes .late resolve(pivot::Type);
 	
 	//ownedOperation is in the parent (Type) 
 	result.ownedOperation += self.eOperations .xmap toOperation();
@@ -1366,7 +1366,7 @@ mapping qvtimp::InstantiationExp::instantiationExp2InstantiationExp() : pivotimp
 {
 	result.argument += self.argument .xmap toOCLExpression();
 	result.extent := self.extent .xmap toVariable();
-	result.instantiatedClass := self.instantiatedClass .xmap toClass();
+	result.instantiatedClass := self.instantiatedClass .late resolveone(pivot::Class);
 }
 
 /* --- 17. ListLiteralExp transformation --- */
