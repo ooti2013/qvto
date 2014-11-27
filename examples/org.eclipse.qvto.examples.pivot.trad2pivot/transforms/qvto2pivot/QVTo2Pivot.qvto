@@ -9,7 +9,7 @@ modeltype ecore "strict" uses ecore('http://www.eclipse.org/emf/2002/Ecore');
 modeltype pivot "strict" uses pivot('http://www.eclipse.org/ocl/3.1.0/Pivot');
 
 
-transformation QVTo2Pivot_old();
+transformation QVTo2Pivot();
 
 /****************************************************************/
 /*																*/
