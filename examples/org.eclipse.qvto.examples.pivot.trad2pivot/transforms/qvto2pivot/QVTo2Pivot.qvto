@@ -1,4 +1,4 @@
-import m2m.qvt.oml.ExampleJavaLib;
+//import m2m.qvt.oml.ExampleJavaLib;
 	
 modeltype qvtpivot "strict" uses qvtoperational('http://www.eclipse.org/qvt/pivot/1.0/QVTOperational'); //ws
 modeltype pivot "strict" uses pivot('http://www.eclipse.org/ocl/3.1.0/Pivot'); //ws
@@ -55,7 +55,7 @@ mapping qvt::expressions::ModelType::modelType2modelType() : qvtpivot::ModelType
 mapping qvt::expressions::OperationalTransformation::opTrans2opTrans() : qvtpivot::OperationalTransformation //inherits qvt::expressions::Module::module2module
 {
 	init {
-		result := self.oclAsType(ecore::EClass).getClass().oclAsType(qvtpivot::OperationalTransformation);
+		//result := self.oclAsType(ecore::EClass).getClass().oclAsType(qvtpivot::OperationalTransformation);
 	}
 	self.classAttr(result);
 	self.moduleAttr(result);
@@ -77,7 +77,7 @@ query qvt::expressions::OperationalTransformation::opTransAttr(inout res:qvtpivo
 mapping qvt::expressions::Module::module2module() : qvtpivot::Module //inherits ecore::EClass::eClass2Class , ecore::EPackage::ePackage2Package
 {
 	init {
-		result := self.oclAsType(ecore::EClass).getClass().oclAsType(qvtpivot::Module);
+		//result := self.oclAsType(ecore::EClass).getClass().oclAsType(qvtpivot::Module);
 	}
 	self.classAttr(result);
 	self.moduleAttr(result);
@@ -131,7 +131,7 @@ mapping qvt::expressions::ContextualProperty::ctProperty2ctProperty() : qvtpivot
 mapping qvt::expressions::ImperativeOperation::imOperation2imOperation() : qvtpivot::ImperativeOperation //inherits ecore::EOperation::eOperation2Operation
 {
 	init {
-		result := self.oclAsType(ecore::EOperation).getOperation().oclAsType(qvtpivot::ImperativeOperation);
+		//result := self.oclAsType(ecore::EOperation).getOperation().oclAsType(qvtpivot::ImperativeOperation);
 	}
 	self.operationAttr(result);
 	self.imOperationAttr(result);
@@ -160,7 +160,7 @@ query ecore::EOperation::operationAttr(inout res:pivot::Operation) {
 mapping qvt::expressions::MappingOperation::mappingOp2mappingOp() : qvtpivot::MappingOperation //inherits qvt::expressions::ImperativeOperation::imOperation2imOperation
 {
 	init {
-		result := self.oclAsType(ecore::EOperation).getOperation().oclAsType(qvtpivot::MappingOperation);
+		//result := self.oclAsType(ecore::EOperation).getOperation().oclAsType(qvtpivot::MappingOperation);
 	}
 	self.operationAttr(result);
 	self.imOperationAttr(result);
