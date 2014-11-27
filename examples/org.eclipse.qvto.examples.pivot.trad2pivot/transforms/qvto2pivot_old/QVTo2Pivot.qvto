@@ -927,7 +927,7 @@ abstract mapping ocl::expressions::PrimitiveLiteralExp::primitiveLiteralExp2Prim
 mapping ocl::expressions::PropertyCallExp::propertyCallExp2PropertyCallExp () : pivot::PropertyCallExp inherits ocl::expressions::NavigationCallExp::navigationCallExp2NavigationCallExp
 {
 	//TODO: Verify the mapping between ocl::expression::EStructuralFeature->EObject and pivot::Property
-	result.referredProperty := self.referredProperty.oclAsType(ecore::EStructuralFeature) .xmap toProperty();
+	result.referredProperty := self.referredProperty.oclAsType(ecore::EStructuralFeature) .late resolveone (pivot::Property);
 }
 
 /* --- 23. StateExp transformation  --- */
