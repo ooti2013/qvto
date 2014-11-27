@@ -59,7 +59,6 @@ mapping qvt::expressions::ModelType::modelType2modelType() : qvtpivot::ModelType
 	result.conformanceKind := self.conformanceKind;
 
 	result._metamodel += self._metamodel ->late resolve(pivot::Package);
-
 	
 }
 
@@ -80,45 +79,26 @@ mapping qvt::expressions::OperationalTransformation::opTrans2opTrans() : qvtpivo
 //inheritance that is not being performed here has any effect in this tranformation. 
 mapping qvt::expressions::Module::module2module() : qvtpivot::Module inherits ecore::EClass::eClass2Class , ecore::EPackage::ePackage2Package
 {
-	result.configProperty += self.configProperty ->resolve(pivot::Property); 
-	
-	if (result.configProperty = null) {
-		result.configProperty += self.configProperty ->late resolve(pivot::Property); 
-	};
+	result.configProperty += self.configProperty ->late resolve(pivot::Property); 
 		
-	result.entry := self.entry .resolveone(qvtpivot::EntryOperation);
-	
-	if (result.entry = null) {
-		result.entry := self.entry .late resolveone(qvtpivot::EntryOperation);
-	};
+	result.entry := self.entry .late resolveone(qvtpivot::EntryOperation);
 	
 	result.isBlackbox := self.isBlackbox;
 	result.moduleImport += self.moduleImport .xmap moduleImport2moduleImport();
 	//TODO result.ownedtag is not the same type as self.ownedtag. Hint: Check where EAnnotatoin inherits from.
 	result.ownedVariable += self.ownedVariable .xmap toVariable();
 	
-	result.usedModelType += self.usedModelType ->resolve(qvtpivot::ModelType);
-	
-	if (result.usedModelType = null) {
-		result.usedModelType += self.usedModelType ->late resolve(qvtpivot::ModelType);		
-	};
+	result.usedModelType += self.usedModelType ->late resolve(qvtpivot::ModelType);
+
 }
 
 /* --- 8. ModuleImport transformation --- */
 //NOTE: Inheritance from VisitableASTNode was not taken into account.
 mapping qvt::expressions::ModuleImport::moduleImport2moduleImport() : qvtpivot::ModuleImport inherits ecore::EModelElement::eModelElement2Element   
 {
-	result.binding += self.binding ->resolve(qvtpivot::ModelType);
+	result.binding += self.binding ->late resolve(qvtpivot::ModelType);
 	
-	if (result.binding = null) {
-		result.binding += self.binding ->late resolve(qvtpivot::ModelType);
-	};
-	
-	result.importedModule := self.importedModule .resolveone(qvtpivot::Module); 
-	
-	if (result.importedModule = null) {
-		result.importedModule := self.importedModule .late resolveone(qvtpivot::Module); 
-	};
+	result.importedModule := self.importedModule .late resolveone(qvtpivot::Module); 
 	
 	switch {
 		case (self.kind = qvt::expressions::ImportKind::_extension) result.kind := qvtpivot::ImportKind::_extension;
@@ -127,9 +107,6 @@ mapping qvt::expressions::ModuleImport::moduleImport2moduleImport() : qvtpivot::
 	
 	result.module := self.module .resolveone(qvtpivot::Module);
 	
-	if (result.module = null) {
-		result.module := self.module .late resolveone(qvtpivot::Module);
-	}
 }
 
 /* --- 9. Library transformation  --- */
@@ -143,19 +120,12 @@ mapping qvt::expressions::Library::library2library() : qvtpivot::Library inherit
 //NOTE: How about the inheritence from VisitableASTNode?
 mapping qvt::expressions::ContextualProperty::ctProperty2ctProperty() : qvtpivot::ContextualProperty inherits ecore::EStructuralFeature::eStructuralFeature2Property
 {
-	result.context := self.context .resolveone(pivot::Class);
-	
-	if (result.context = null) {
-		result.context := self.context .late resolveone(pivot::Class);
-	};
+	result.context := self.context .late resolveone(pivot::Class);
 	
 	result.initExpression := self.initExpression .xmap toOCLExpression();
 	
-	result.overridden := self.overridden .resolveone(pivot::Property);
+	result.overridden := self.overridden .late resolveone(pivot::Property);
 	
-	if (result.overridden = null) {
-		result.overridden := self.overridden .late resolveone(pivot::Property);
-	}
 }
 
 /* --- 11. ImperativeOperation transformation  ---*/
@@ -164,11 +134,7 @@ mapping qvt::expressions::ImperativeOperation::imOperation2imOperation() : qvtpi
 {
 	result.body := self.body .xmap toOperationBody();
 	result._result += self._result .xmap toVarParameter();
-	result.overridden := self.overridden .resolveone(qvtpivot::ImperativeOperation); 
-	
-	if (result.overridden = null) {
-		result.overridden := self.overridden .late resolveone(qvtpivot::ImperativeOperation); 
-	};
+	result.overridden := self.overridden .late resolveone(qvtpivot::ImperativeOperation); 
 	
 	result.isBlackbox := self.isBlackbox;
 	result.context := self.context .xmap toVarParameter(); 
@@ -195,20 +161,14 @@ mapping qvt::expressions::OperationBody::opbody2opbody() : qvtpivot::OperationBo
 	result.content += self.content .xmap toOCLExpression();
 	result.operation := self.operation .resolveone(qvtpivot::ImperativeOperation); 
 	
-	if (result.operation = null) {
-		result.operation := self.operation .late resolveone(qvtpivot::ImperativeOperation); 		
-	};
 	result.variable := self.variable .xmap toVariable(); 	
 }
 
 /* --- 15. MapParameter transformation ---*/
 mapping qvt::expressions::MappingParameter::mapParameter2mapParameter() : qvtpivot::MappingParameter inherits qvt::expressions::VarParameter::varparameter2varparamter
 {
-	result.extent := self.extent .resolveone(qvtpivot::ModelParameter);
+	result.extent := self.extent .late resolveone(qvtpivot::ModelParameter);
 	
-	if (result.extent = null) {
-		result.extent := self.extent .late resolveone(qvtpivot::ModelParameter);
-	}
 	//NOTE: the attribute referredDomain exists in the pivot but ont in traditional.
 }
 
@@ -225,15 +185,8 @@ mapping qvt::expressions::VarParameter::varparameter2varparamter() : qvtpivot::V
 
 	result.ctxOwner := self.ctxOwner .resolveone(qvtpivot::ImperativeOperation);
 	
-	if (result.ctxOwner = null) {
-		result.ctxOwner := self.ctxOwner .late resolveone(qvtpivot::ImperativeOperation);
-	};
-	
 	result.resOwner := self.resOwner .resolveone(qvtpivot::ImperativeOperation);
-	
-	if (result.resOwner = null) {
-		result.resOwner := self.resOwner .late resolveone(qvtpivot::ImperativeOperation);
-	};
+
 }
 
 
@@ -255,22 +208,13 @@ mapping qvt::expressions::ConstructorBody::constructorBody2constructorBody() : q
 /* --- 20. MappingOperation Transformation --- */
 mapping qvt::expressions::MappingOperation::mappingOp2mappingOp() : qvtpivot::MappingOperation inherits qvt::expressions::ImperativeOperation::imOperation2imOperation
 {
-	result.disjunct += self.disjunct .resolve(qvtpivot::MappingOperation);
+	result.disjunct += self.disjunct ->late resolve(qvtpivot::MappingOperation);
 	
-	if (result.disjunct = null) {
-		result.disjunct += self.disjunct .late resolve(qvtpivot::MappingOperation);
-	};
 	
-	result.inherited += self.inherited .resolve(qvtpivot::MappingOperation);
+	result.inherited += self.inherited ->late resolve(qvtpivot::MappingOperation);
 	
-	if (result.inherited = null) {
-		result.inherited += self.inherited .late resolve(qvtpivot::MappingOperation);
-	};
-	result.merged += self.merged .resolve(qvtpivot::MappingOperation);
+	result.merged += self.merged ->late resolve(qvtpivot::MappingOperation);
 	
-	if (result.merged) {
-		result.merged += self.merged .late resolve(qvtpivot::MappingOperation);
-	};
 	
 	//IMPORTANT NOTE: The input is an OrderedSet but the result is a single value
 	result._when := QueryOclWhen(self._when); //returns only one element.
@@ -291,11 +235,8 @@ query QueryOclWhen( eco:OrderedSet(ocl::ecore::OCLExpression)) : pivot::OCLExpre
 mapping qvt::expressions::ObjectExp::objectExp2objectExp() : qvtpivot::ObjectExp inherits qvtimp::InstantiationExp::instantiationExp2InstantiationExp
 {
 	result.body := self.body .xmap constructorBody2constructorBody();
-	result.referredObject := self.referredObject .resolveone(pivot::Variable);
+	result.referredObject := self.referredObject .late resolveone(pivot::Variable);
 	
-	if (result.referredObject = null) {
-		result.referredObject := self.referredObject .late resolveone(pivot::Variable);
-	};
 }
 
 /* --- 22. ImperativeCallExp Transformation --- */
@@ -416,9 +357,6 @@ mapping ecore::EClassifier::eClassifier2Type () : pivot::Type inherits ecore::EN
 	
 	result.package := self.ePackage .resolveone(pivot::Package);
 	
-	if (result.package = null) {
-		//result.package := self.ePackage .late resolveone(pivot::Package);
-	}
 }
 
 /* --- 4. EPackage transformacion --- */
@@ -429,11 +367,6 @@ mapping ecore::EPackage::ePackage2Package () : pivot::Package inherits ecore::EN
 	
 	result.nestingPackage := self.eSuperPackage .resolveone(pivot::Package);
 	
-	if (result.nestingPackage = null) {
-		result.nestingPackage := self.eSuperPackage .resolveone(pivot::Package);
-	};
-
-
 	result.nestedPackage +=  self.eSubpackages .xmap ePackage2Package();
 
 	result.ownedType += self.eClassifiers .xmap toType();
@@ -458,11 +391,8 @@ mapping ecore::EOperation::eOperation2Operation () : pivot::Operation inherits e
 {
 	result.ownedParameter += self.eParameters .xmap toParameter();
 	
-	result.raisedException += self.eExceptions .resolve(pivot::Type);
+	result.raisedException += self.eExceptions .late resolve(pivot::Type);
 	
-	if (result.raisedException = null) {
-		result.raisedException += self.eExceptions .late resolve(pivot::Type);
-	}
 }
 
 
@@ -471,9 +401,6 @@ mapping ecore::EParameter::eParameter2Parameter () : pivot::Parameter inherits e
 {
 	result.operation := self.eOperation .resolveone(pivot::Operation);
 	
-	if (result.operation = null) {
-		result.operation := self.eOperation .late resolveone(pivot::Operation);
-	}
 }
 
 /* --- 9. EModelElement transformacion --- */
@@ -486,11 +413,8 @@ abstract mapping ecore::EModelElement::eModelElement2Element () : pivot::Element
 abstract mapping ecore::ETypedElement::eTypedElement2TypedElement () : pivot::TypedElement inherits ecore::ENamedElement::eNamedElement2NamedElement
 {
 	result.isRequired := self.required;
-	result.type := self.eType .resolveone(pivot::Type);
+	result.type := self.eType .late resolveone(pivot::Type);
 	
-	if (result.type = null) {
-		result.type := self.eType .late resolveone(pivot::Type);		
-	}
 }
 
 /* --- 11. ENamedElement transformacion --- */
