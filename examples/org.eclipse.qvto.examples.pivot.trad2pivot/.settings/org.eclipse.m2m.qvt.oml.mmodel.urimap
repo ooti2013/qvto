@@ -2,10 +2,7 @@
 <uriMap:MappingContainer xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:uriMap="http:///www.eclipse.org/m2m/qvt/oml/MModelUriMap/1.0.0">
   <mapping sourceURI="MMA" targetURI="platform:/resource/org.eclipse.qvto.examples.pivot.trad2pivot/example/MMA.ecore"/>
   <mapping sourceURI="MMB" targetURI="platform:/resource/org.eclipse.qvto.examples.pivot.trad2pivot/example/MMB.ecore"/>
-  <mapping sourceURI="http://www.eclipse.org/qvt/1.0.0/Operational" targetURI="platform:/resource/org.eclipse.m2m.qvt.oml/model/QVTOperational.ecore"/>
   <mapping sourceURI="http://www.eclipse.org/qvt/pivot/1.0/QVTOperational" targetURI="platform:/resource/org.eclipse.qvto.examples.pivot.qvtoperational/model/QVTOperational.ecore"/>
-  <mapping sourceURI="http://www.eclipse.org/ocl/3.1.0/Pivot" targetURI="platform:/resource/org.eclipse.ocl.examples.pivot/model/Pivot.ecore"/>
   <mapping sourceURI="http://www.eclipse.org/qvt/pivot/1.0/ImperativeOCL" targetURI="platform:/resource/org.eclipse.qvto.examples.pivot.imperativeocl/model/ImperativeOCL.ecore"/>
-  <mapping sourceURI="http://www.eclipse.org/ocl/1.1.0/OCL" targetURI="platform:/resource/org.eclipse.ocl/model/OCL.ecore"/>
-  <mapping sourceURI="http://www.eclipse.org/ocl/1.1.0/OCLEcore" targetURI="platform:/resource/org.eclipse.ocl.ecore/model/OCLEcore.ecore"/>
+  <mapping sourceURI="http://www.eclipse.org/ocl/3.1.0/Pivot" targetURI="platform:/resource/org.eclipse.ocl.examples.pivot/model/Pivot.ecore"/>
 </uriMap:MappingContainer>

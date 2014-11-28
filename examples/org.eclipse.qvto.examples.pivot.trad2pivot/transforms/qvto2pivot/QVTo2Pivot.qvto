@@ -1,12 +1,11 @@
+modeltype qvtpivot "strict" uses qvtoperational('http://www.eclipse.org/qvt/pivot/1.0/QVTOperational');//ws
+modeltype pivot "strict" uses pivot('http://www.eclipse.org/ocl/3.1.0/Pivot');//ws
+modeltype pivotimp "strict" uses imperativeocl('http://www.eclipse.org/qvt/pivot/1.0/ImperativeOCL');//ws
 
-modeltype pivotimp "strict" uses imperativeocl('http://www.eclipse.org/qvt/pivot/1.0/ImperativeOCL');
-modeltype qvtimp "strict" uses ImperativeOCL('http://www.eclipse.org/qvt/1.0/ImperativeOCL');
-
-modeltype qvtpivot "strict" uses qvtoperational('http://www.eclipse.org/qvt/pivot/1.0/QVTOperational');
-modeltype qvt "strict" uses qvtoperational('http://www.eclipse.org/QVT/1.0.0/Operational');
-
-modeltype ecore "strict" uses ecore('http://www.eclipse.org/emf/2002/Ecore');
-modeltype pivot "strict" uses pivot('http://www.eclipse.org/ocl/3.1.0/Pivot');
+modeltype qvt "strict" uses qvtoperational('http://www.eclipse.org/QVT/1.0.0/Operational');//pl
+modeltype ecore "strict" uses ecore('http://www.eclipse.org/emf/2002/Ecore');//pl
+modeltype oclpl "strict" uses ocl('http://www.eclipse.org/ocl/1.1.0/OCL');//pl
+modeltype qvtimp "strict" uses ImperativeOCL('http://www.eclipse.org/qvt/1.0/ImperativeOCL');//pl
 
 
 transformation QVTo2Pivot();
