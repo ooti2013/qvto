@@ -1,12 +1,1477 @@
-import qvto2pivot.QVTo2Pivot;
+modeltype qvtpivot "strict" uses qvtoperational('http://www.eclipse.org/qvt/pivot/1.0/QVTOperational');//ws
+modeltype pivot "strict" uses pivot('http://www.eclipse.org/ocl/3.1.0/Pivot');//ws
+modeltype pivotimp "strict" uses imperativeocl('http://www.eclipse.org/qvt/pivot/1.0/ImperativeOCL');//ws
 
-modeltype qvtpivot "strict" uses qvtoperational('http://www.eclipse.org/qvt/pivot/1.0/QVTOperational');
-modeltype qvt "strict" uses qvtoperational('http://www.eclipse.org/QVT/1.0.0/Operational');
-	
+modeltype qvt "strict" uses qvtoperational('http://www.eclipse.org/QVT/1.0.0/Operational');//pl
+modeltype ecore "strict" uses ecore('http://www.eclipse.org/emf/2002/Ecore');//pl
+modeltype oclpl "strict" uses ocl('http://www.eclipse.org/ocl/1.1.0/OCL');//pl
+modeltype qvtimp "strict" uses ImperativeOCL('http://www.eclipse.org/qvt/1.0/ImperativeOCL');//pl
 
-transformation Trad2Pivot_old(in o: qvt, out p: qvtpivot);
+
+transformation Trad2Pivot(in o: qvt, out p: qvtpivot);
 
 
 main() {
 	o.rootObjects()[qvt::expressions::OperationalTransformation] .xmap opTrans2opTrans();
 }
+
+
+/****************************************************************/
+/*																*/
+/*		    PIVOT QVT OPERATIONAL TRANSFORMATION				*/
+/*																*/
+/****************************************************************/
+
+
+/* --- 1. ResolveInExp transformation  --- */
+mapping qvt::expressions::ResolveInExp::resolveInExp2resolveInExp() : qvtpivot::ResolveInExp inherits qvt::expressions::ResolveExp::resolveExp2resolveExp
+{
+	result.inMapping := self.inMapping .late resolveone(qvtpivot::MappingOperation);
+}
+
+/* --- 2. ResolveExp transformation  --- */
+//Note: The concept in the pivot also inherits from ImperativeExpression from ImperativeOCL 
+mapping qvt::expressions::ResolveExp::resolveExp2resolveExp() : qvtpivot::ResolveExp inherits ocl::ecore::CallExp::callExp2CallExp
+{
+	result.condition := self.condition .xmap toOCLExpression();
+	result.isDeferred := self.isDeferred;
+	result.isInverse := self.isInverse;
+	result.one := self.one;
+	result.target := self.target .xmap toVariable();
+}
+
+/* --- 3. Constructor transformation  --- */
+mapping qvt::expressions::Constructor::constructor2constructor() : qvtpivot::Constructor inherits qvt::expressions::ImperativeOperation::imOperation2imOperation
+{
+// No attributes to transform here beside the inheritence.
+//NOTE: In qvto "accept" exists but doesn't exist in pivot.
+}
+
+
+/* --- 4. MappingCallExp transformation  --- */
+mapping qvt::expressions::MappingCallExp::mapCallExp2mapCallExp() : qvtpivot::MappingCallExp inherits qvt::expressions::ImperativeCallExp::impCallExp2impCallExp
+{
+result.isStrict := self.isStrict;
+//NOTE: In qvto "accept" exists but doesn't exist in pivot.
+}
+
+/* --- 5. ModelType transformation  --- */
+//NOTE: Traditional ModelType inherits from VisitableASTNode, but in pivot there is not such class. So, check if that
+//inheritance that is not being performed here has any effect in this tranformation. 
+mapping qvt::expressions::ModelType::modelType2modelType() : qvtpivot::ModelType inherits ecore::EClass::eClass2Class
+{
+	result.additionalCondition += self.additionalCondition .xmap toOCLExpression();
+	result.conformanceKind := self.conformanceKind;
+
+	result._metamodel += self._metamodel ->late resolve(pivot::Package);
+	
+}
+
+/* --- 6. OperationalTransformation transformation  --- */
+mapping qvt::expressions::OperationalTransformation::opTrans2opTrans() : qvtpivot::OperationalTransformation inherits qvt::expressions::Module::module2module
+{
+	//NOTE: There are two attributes in pivot that dont match with any concept in traditional. 
+	//They are: result.refined (DummyRelationalTransformation) and result.relation (DummyRelation)
+	result.intermediateClass += self.intermediateClass ->late resolve(pivot::Class);		
+	
+	result.intermediateProperty += self.intermediateProperty ->late resolve(pivot::Property);
+	
+	result.modelParameter += self.modelParameter .xmap modelParameter2modelParameter();
+}
+
+/* --- 7. Module transformation  --- */
+//NOTE: Traditional ModelType inherits from VisitableASTNode, but in pivot there is not such class. So, check if that
+//inheritance that is not being performed here has any effect in this tranformation. 
+mapping qvt::expressions::Module::module2module() : qvtpivot::Module inherits ecore::EClass::eClass2Class , ecore::EPackage::ePackage2Package
+{
+	result.configProperty += self.configProperty ->late resolve(pivot::Property); 
+		
+	result.entry := self.entry .late resolveone(qvtpivot::EntryOperation);
+	
+	result.isBlackbox := self.isBlackbox;
+	result.moduleImport += self.moduleImport .xmap moduleImport2moduleImport();
+	//TODO result.ownedtag is not the same type as self.ownedtag. Hint: Check where EAnnotatoin inherits from.
+	result.ownedVariable += self.ownedVariable .xmap toVariable();
+	
+	result.usedModelType += self.usedModelType ->late resolve(qvtpivot::ModelType);
+
+}
+
+/* --- 8. ModuleImport transformation --- */
+//NOTE: Inheritance from VisitableASTNode was not taken into account.
+mapping qvt::expressions::ModuleImport::moduleImport2moduleImport() : qvtpivot::ModuleImport inherits ecore::EModelElement::eModelElement2Element   
+{
+	result.binding += self.binding ->late resolve(qvtpivot::ModelType);
+	
+	result.importedModule := self.importedModule .late resolveone(qvtpivot::Module); 
+	
+	switch {
+		case (self.kind = qvt::expressions::ImportKind::_extension) result.kind := qvtpivot::ImportKind::_extension;
+		case (self.kind = qvt::expressions::ImportKind::_access) result.kind := qvtpivot::ImportKind::_access;
+	};
+	
+	result.module := self.module .resolveone(qvtpivot::Module);
+	
+}
+
+/* --- 9. Library transformation  --- */
+mapping qvt::expressions::Library::library2library() : qvtpivot::Library inherits qvt::expressions::Module::module2module
+{
+// No attributes to transform here beside the inheritence.
+//NOTE: In qvto "accept" exists but doesn't exist in pivot.
+}
+
+/* --- 10. ContextualProperty transformation --- */
+//NOTE: How about the inheritence from VisitableASTNode?
+mapping qvt::expressions::ContextualProperty::ctProperty2ctProperty() : qvtpivot::ContextualProperty inherits ecore::EStructuralFeature::eStructuralFeature2Property
+{
+	result.context := self.context .late resolveone(pivot::Class);
+	
+	result.initExpression := self.initExpression .xmap toOCLExpression();
+	
+	result.overridden := self.overridden .late resolveone(pivot::Property);
+	
+}
+
+/* --- 11. ImperativeOperation transformation  ---*/
+//NOTE: How about VisitableASTNode?
+mapping qvt::expressions::ImperativeOperation::imOperation2imOperation() : qvtpivot::ImperativeOperation inherits ecore::EOperation::eOperation2Operation
+{
+	result.body := self.body .xmap toOperationBody();
+	result._result += self._result .xmap toVarParameter();
+	result.overridden := self.overridden .late resolveone(qvtpivot::ImperativeOperation); 
+	
+	result.isBlackbox := self.isBlackbox;
+	result.context := self.context .xmap toVarParameter(); 
+
+}
+
+/* --- 12. Helper transformation  ---*/
+mapping qvt::expressions::Helper::helper2helper() : qvtpivot::Helper inherits qvt::expressions::ImperativeOperation::imOperation2imOperation
+{
+	result.isQuery := self.isQuery;
+}
+
+/* ---  13. EntryOperation transformation ---*/
+mapping qvt::expressions::EntryOperation::entryOperation2entryOperation() : qvtpivot::EntryOperation inherits qvt::expressions::ImperativeOperation::imOperation2imOperation
+{
+	//There is no attribute to transform here beside the inheritence.
+	//NOTE: In qvto "accept" exists but doesn't exist in pivot.
+}
+
+/* --- 14. OperationBody transformation ---*/
+//NOTE: How about VisitableASTNode?
+mapping qvt::expressions::OperationBody::opbody2opbody() : qvtpivot::OperationBody inherits ecore::EModelElement::eModelElement2Element
+{
+	result.content += self.content .xmap toOCLExpression();
+	result.operation := self.operation .resolveone(qvtpivot::ImperativeOperation); 
+	
+	result.variable := self.variable .xmap toVariable(); 	
+}
+
+/* --- 15. MapParameter transformation ---*/
+mapping qvt::expressions::MappingParameter::mapParameter2mapParameter() : qvtpivot::MappingParameter inherits qvt::expressions::VarParameter::varparameter2varparamter
+{
+	result.extent := self.extent .late resolveone(qvtpivot::ModelParameter);
+	
+	//NOTE: the attribute referredDomain exists in the pivot but ont in traditional.
+}
+
+/* --- 16. ModelParameter transformation ---*/
+mapping qvt::expressions::ModelParameter::modelParameter2modelParameter() : qvtpivot::ModelParameter inherits qvt::expressions::VarParameter::varparameter2varparamter
+{
+	//NOTE: the atribute module only exist in pivot but not in traditional.
+}
+
+/* --- 17. VarParameter transformation ---*/
+mapping qvt::expressions::VarParameter::varparameter2varparamter() : qvtpivot::VarParameter inherits ocl::ecore::Variable::variable2Variable, ecore::EParameter::eParameter2Parameter
+{
+	result.kind:= QueryDirectionKind(self.kind);
+
+	result.ctxOwner := self.ctxOwner .resolveone(qvtpivot::ImperativeOperation);
+	
+	result.resOwner := self.resOwner .resolveone(qvtpivot::ImperativeOperation);
+
+}
+
+
+/* --- 18. MapBody transformation ---*/
+mapping qvt::expressions::MappingBody::mapBody2mapBody() : qvtpivot::MappingBody inherits qvt::expressions::OperationBody::opbody2opbody
+{
+	result.initSection += self.initSection .xmap toOCLExpression();
+	result.endSection += self.endSection .xmap toOCLExpression();
+}
+
+/* --- 19. ConstructorBody transformation ---*/
+mapping qvt::expressions::ConstructorBody::constructorBody2constructorBody() : qvtpivot::ConstructorBody inherits qvt::expressions::OperationBody::opbody2opbody
+{
+// No attributes to transform here beside the inheritence.
+//NOTE: In qvto "accept" exists but doesn't exist in pivot.
+}
+
+
+/* --- 20. MappingOperation Transformation --- */
+mapping qvt::expressions::MappingOperation::mappingOp2mappingOp() : qvtpivot::MappingOperation inherits qvt::expressions::ImperativeOperation::imOperation2imOperation
+{
+	result.disjunct += self.disjunct ->late resolve(qvtpivot::MappingOperation);
+	
+	
+	result.inherited += self.inherited ->late resolve(qvtpivot::MappingOperation);
+	
+	result.merged += self.merged ->late resolve(qvtpivot::MappingOperation);
+	
+	
+	//IMPORTANT NOTE: The input is an OrderedSet but the result is a single value
+	result._when := QueryOclWhen(self._when); //returns only one element.
+	result._where := self._where .xmap toOCLExpression();
+}
+
+
+query QueryOclWhen( eco:OrderedSet(ocl::ecore::OCLExpression)) : pivot::OCLExpression {
+	//Returns the transformation of the last element in the input set.
+	var queryWhen: pivot::OCLExpression;
+ 	eco->forEach(old) {
+ 		queryWhen :=  old .xmap toOCLExpression();
+	};
+	return queryWhen;
+}
+
+/* --- 21. ObjectExp Transformation --- */
+mapping qvt::expressions::ObjectExp::objectExp2objectExp() : qvtpivot::ObjectExp inherits qvtimp::InstantiationExp::instantiationExp2InstantiationExp
+{
+	result.body := self.body .xmap constructorBody2constructorBody();
+	result.referredObject := self.referredObject .late resolveone(pivot::Variable);
+	
+}
+
+/* --- 22. ImperativeCallExp Transformation --- */
+mapping qvt::expressions::ImperativeCallExp::impCallExp2impCallExp() : qvtpivot::ImperativeCallExp inherits ocl::ecore::OperationCallExp::operationCallExp2OperationCallExp, qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.isVirtual := self.isVirtual;
+}
+
+/* --- 23. DirectionKind Transformation --- */
+query QueryDirectionKind (dk: qvt::expressions::DirectionKind) : qvtpivot::DirectionKind {
+	var directionKind : qvtpivot::DirectionKind ;
+	switch{
+		//TODO:Check that this switch is working. Mainly, check if the scape character '_' is working property
+		//in order to access the enum values. The name 'in' connot be used directly since it is detected as a keyword.
+		case (dk = qvt::expressions::DirectionKind::_in) directionKind := qvtpivot::DirectionKind::_in;
+		case (dk = qvt::expressions::DirectionKind::_out) directionKind := qvtpivot::DirectionKind::_out;
+		case (dk = qvt::expressions::DirectionKind::_inout) directionKind := qvtpivot::DirectionKind::_inout;
+	};
+	return directionKind;
+}
+
+/****************************************************************/
+/*																*/
+/*				QVT OPERATIONAL DISJUNCT						*/
+/*																*/
+/****************************************************************/
+
+mapping ocl::expressions::Variable::toVariable() : pivot::Variable disjuncts
+	qvt::expressions::MappingParameter::mapParameter2mapParameter,
+ 	qvt::expressions::ModelParameter::modelParameter2modelParameter,
+ 	
+ 	qvt::expressions::VarParameter::varparameter2varparamter,
+ 	
+ 	ocl::ecore::Variable::variable2Variable	
+
+{
+}
+
+mapping qvt::expressions::ImperativeOperation::toImperativeOperation() : qvtpivot::ImperativeOperation disjuncts 
+	qvt::expressions::MappingOperation::mappingOp2mappingOp,
+	qvt::expressions::Helper::helper2helper,
+	qvt::expressions::EntryOperation::entryOperation2entryOperation,
+	
+	qvt::expressions::ImperativeOperation::imOperation2imOperation
+	
+{
+}
+
+mapping qvt::expressions::Module::toModule() : qvtpivot::Module disjuncts 
+	qvt::expressions::Library::library2library,
+	qvt::expressions::OperationalTransformation::opTrans2opTrans,
+	
+	qvt::expressions::Module::module2module
+{
+}
+
+mapping qvt::expressions::OperationBody::toOperationBody() : qvtpivot::OperationBody disjuncts 
+	qvt::expressions::MappingBody::mapBody2mapBody,
+	qvt::expressions::ConstructorBody::constructorBody2constructorBody,
+	
+	qvt::expressions::OperationBody::opbody2opbody
+
+{
+}
+
+mapping qvt::expressions::VarParameter::toVarParameter() : qvtpivot::VarParameter disjuncts 
+	qvt::expressions::MappingParameter::mapParameter2mapParameter,
+	qvt::expressions::ModelParameter::modelParameter2modelParameter,
+	qvt::expressions::VarParameter::varparameter2varparamter 
+{
+}
+
+
+
+
+/****************************************************************/
+/*																*/
+/*				ECORE TRANSFORMATIONS							*/
+/*																*/
+/****************************************************************/
+
+
+/* --- 1. EstructuralFeature transformation---*/
+mapping ecore::EStructuralFeature::eStructuralFeature2Property () : pivot::Property inherits ecore::ETypedElement::eTypedElement2TypedElement
+{
+	result.isReadOnly := not self.changeable;
+	result.isVolatile := self.volatile;
+	result.isTransient := self.transient;
+	result._default := self.defaultValueLiteral;
+	result.isUnsettable := self.unsettable;
+	result.isDerived := self._derived;
+	
+}
+
+
+/*--- 2. Eclass transformation ---*/ 
+mapping ecore::EClass::eClass2Class () : pivot::Class inherits ecore::EClassifier::eClassifier2Type 
+{
+	result.isAbstract := self._abstract;
+	result.isInterface := self.interface;
+	
+	//TODO: there are also self.SuperTypes and result.superClass
+	result.superClass += self.eAllSuperTypes .late resolve(pivot::Type);
+	
+	//ownedOperation is in the parent (Type) 
+	result.ownedOperation += self.eOperations .xmap toOperation();
+	//ownedAttribute is in the parent (Type) 	
+	result.ownedAttribute += self.eAttributes .xmap toProperty();
+	
+}
+
+
+/* --- 3. Eclasifier transformation ---*/
+// Note: Type in Pivot also inherits from ParametereableElement and TemplateableElement
+mapping ecore::EClassifier::eClassifier2Type () : pivot::Type inherits ecore::ENamedElement::eNamedElement2NamedElement
+{
+	result.instanceClassName := self.instanceClassName;
+	
+	result.package := self.ePackage .resolveone(pivot::Package);
+	
+}
+
+/* --- 4. EPackage transformacion --- */
+mapping ecore::EPackage::ePackage2Package () : pivot::Package inherits ecore::ENamedElement::eNamedElement2NamedElement
+{
+	result.nsPrefix := self.nsPrefix;
+	result.nsURI := self.nsURI;
+	
+	result.nestingPackage := self.eSuperPackage .resolveone(pivot::Package);
+	
+	result.nestedPackage +=  self.eSubpackages .xmap ePackage2Package();
+
+	result.ownedType += self.eClassifiers .xmap toType();
+	
+}
+
+/* --- 5. EDataType transformacion --- */
+mapping ecore::EDataType::eDataType2DataType () : pivot::DataType inherits ecore::EClassifier::eClassifier2Type
+{
+	result.isSerializable := self.serializable;
+}
+
+
+/* --- 6. EAnnotation transformacion --- */
+mapping ecore::EAnnotation::eAnnotation2Annotation() : pivot::Annotation
+{
+
+}
+
+/* --- 7. EOperation transformacion --- */
+mapping ecore::EOperation::eOperation2Operation () : pivot::Operation inherits ecore::ETypedElement::eTypedElement2TypedElement
+{
+	result.ownedParameter += self.eParameters .xmap toParameter();
+	
+	result.raisedException += self.eExceptions .late resolve(pivot::Type);
+	
+}
+
+
+/* --- 8. EParameter transformacion --- */
+mapping ecore::EParameter::eParameter2Parameter () : pivot::Parameter inherits ecore::ETypedElement::eTypedElement2TypedElement
+{
+	result.operation := self.eOperation .resolveone(pivot::Operation);
+	
+}
+
+/* --- 9. EModelElement transformacion --- */
+abstract mapping ecore::EModelElement::eModelElement2Element () : pivot::Element
+{
+	result.ownedAnnotation += self.eAnnotations .xmap toAnnotation();
+}
+
+/* --- 10. ETypedElement transformacion --- */
+abstract mapping ecore::ETypedElement::eTypedElement2TypedElement () : pivot::TypedElement inherits ecore::ENamedElement::eNamedElement2NamedElement
+{
+	result.isRequired := self.required;
+	result.type := self.eType .late resolveone(pivot::Type);
+	
+}
+
+/* --- 11. ENamedElement transformacion --- */
+// Note: NamedElement in Pivot also inherits from Nameable 
+abstract mapping ecore::ENamedElement::eNamedElement2NamedElement () : pivot::NamedElement inherits ecore::EModelElement::eModelElement2Element
+{
+	result.name := self.name;
+}
+
+/* --- 12. CollectionKind transformacion --- */
+query QueryCollectionKind (ck: ocl::expressions::CollectionKind) : pivot::CollectionKind {
+	var collectionKind : pivot::CollectionKind ;
+	switch{
+		case (ck = ocl::expressions::CollectionKind::Set) collectionKind := pivot::CollectionKind::Set;
+		case (ck = ocl::expressions::CollectionKind::OrderedSet) collectionKind := pivot::CollectionKind::OrderedSet;
+		case (ck = ocl::expressions::CollectionKind::Bag) collectionKind := pivot::CollectionKind::Bag;
+		case (ck = ocl::expressions::CollectionKind::Sequence) collectionKind := pivot::CollectionKind::Sequence;
+		case (ck = ocl::expressions::CollectionKind::Collection) collectionKind := pivot::CollectionKind::Collection;
+	};
+	return collectionKind;
+}
+/****************************************************************/
+/*																*/
+/*				ECORE DISJUNCTS									*/
+/*																*/
+/****************************************************************/
+
+
+
+mapping ecore::EModelElement::toElement() : pivot::Element disjuncts
+											
+											// Directly conneted + Leaf
+											qvt::expressions::ModuleImport::moduleImport2moduleImport,
+																			
+											// Indirectly connected + Leaf
+											qvt::expressions::Constructor::constructor2constructor,
+											qvt::expressions::ConstructorBody::constructorBody2constructorBody,
+											qvt::expressions::ContextualProperty::ctProperty2ctProperty,
+											qvt::expressions::EntryOperation::entryOperation2entryOperation,
+											qvt::expressions::Helper::helper2helper,
+											qvt::expressions::Library::library2library,
+											qvt::expressions::MappingBody::mapBody2mapBody,
+											qvt::expressions::MappingCallExp::mapCallExp2mapCallExp,
+											qvt::expressions::MappingOperation::mappingOp2mappingOp,
+											qvt::expressions::MappingParameter::mapParameter2mapParameter,
+											qvt::expressions::ModelParameter::modelParameter2modelParameter,
+											qvt::expressions::ModelType::modelType2modelType,
+											qvt::expressions::ObjectExp::objectExp2objectExp,
+											qvt::expressions::OperationalTransformation::opTrans2opTrans,
+											qvt::expressions::ResolveInExp::resolveInExp2resolveInExp,
+											
+											// Directly connected + Not leaf
+											qvt::expressions::OperationBody::opbody2opbody,
+											
+											// Indirectly connected + Not Leaf
+											qvt::expressions::ResolveExp::resolveExp2resolveExp,
+											qvt::expressions::ImperativeCallExp::impCallExp2impCallExp,
+											qvt::expressions::ImperativeOperation::imOperation2imOperation,
+											qvt::expressions::VarParameter::varparameter2varparamter,
+											qvt::expressions::Module::module2module,
+											
+											//ECore
+											ecore::EClass::eClass2Class,
+											ecore::EPackage::ePackage2Package,
+											ecore::EDataType::eDataType2DataType,
+											ecore::EAnnotation::eAnnotation2Annotation,
+											ecore::EOperation::eOperation2Operation,
+											ecore::EParameter::eParameter2Parameter,
+											ecore::EStructuralFeature::eStructuralFeature2Property,
+											ecore::EClassifier::eClassifier2Type
+	
+{ 
+}
+
+mapping ecore::ENamedElement::toNamedElementElement() : pivot::NamedElement disjuncts
+											
+											// Indirectly connected + Leaf
+											qvt::expressions::Constructor::constructor2constructor,
+											qvt::expressions::ContextualProperty::ctProperty2ctProperty,
+											qvt::expressions::EntryOperation::entryOperation2entryOperation,
+											qvt::expressions::Helper::helper2helper,
+											qvt::expressions::Library::library2library,
+											qvt::expressions::MappingCallExp::mapCallExp2mapCallExp,
+											qvt::expressions::MappingOperation::mappingOp2mappingOp,
+											qvt::expressions::MappingParameter::mapParameter2mapParameter,
+											qvt::expressions::ModelParameter::modelParameter2modelParameter,
+											qvt::expressions::ModelType::modelType2modelType,
+											qvt::expressions::ObjectExp::objectExp2objectExp,
+											qvt::expressions::OperationalTransformation::opTrans2opTrans,
+											qvt::expressions::ResolveInExp::resolveInExp2resolveInExp,
+											
+											// Indirectly connected + Not Leaf
+											qvt::expressions::ResolveExp::resolveExp2resolveExp,
+											qvt::expressions::ImperativeCallExp::impCallExp2impCallExp,
+											qvt::expressions::ImperativeOperation::imOperation2imOperation,
+											qvt::expressions::VarParameter::varparameter2varparamter,
+											qvt::expressions::Module::module2module,
+											
+											//Ecore 
+											ecore::EClass::eClass2Class,
+											ecore::EPackage::ePackage2Package,
+											ecore::EDataType::eDataType2DataType,
+											ecore::EOperation::eOperation2Operation,
+											ecore::EParameter::eParameter2Parameter,
+											ecore::EStructuralFeature::eStructuralFeature2Property,
+											ecore::EClassifier::eClassifier2Type 
+
+												
+{
+}
+
+mapping ecore::ETypedElement::toTypedElement() : pivot::TypedElement disjuncts
+											
+											// Indirectly connected + Leaf
+											qvt::expressions::Constructor::constructor2constructor,
+
+											qvt::expressions::ContextualProperty::ctProperty2ctProperty,
+											qvt::expressions::EntryOperation::entryOperation2entryOperation,
+											qvt::expressions::Helper::helper2helper,
+											qvt::expressions::MappingCallExp::mapCallExp2mapCallExp,
+											qvt::expressions::MappingOperation::mappingOp2mappingOp,
+											qvt::expressions::MappingParameter::mapParameter2mapParameter,
+											qvt::expressions::ModelParameter::modelParameter2modelParameter,
+											qvt::expressions::ObjectExp::objectExp2objectExp,
+											qvt::expressions::ResolveInExp::resolveInExp2resolveInExp,
+											
+											// Indirectly connected + Not Leaf
+											qvt::expressions::ResolveExp::resolveExp2resolveExp,
+											qvt::expressions::ImperativeCallExp::impCallExp2impCallExp,
+											qvt::expressions::ImperativeOperation::imOperation2imOperation,
+											qvt::expressions::VarParameter::varparameter2varparamter,
+											
+											//Ecore
+											ecore::EOperation::eOperation2Operation,
+											ecore::EParameter::eParameter2Parameter,
+											ecore::EStructuralFeature::eStructuralFeature2Property
+					
+{
+}
+
+mapping ecore::EAnnotation::toAnnotation() : pivot::Annotation disjuncts
+											ecore::EAnnotation::eAnnotation2Annotation
+{
+}
+
+mapping ecore::EDataType::toDataType() : pivot::DataType disjuncts
+												ecore::EDataType::eDataType2DataType
+{
+}
+
+mapping ecore::EClassifier::toType() : pivot::Type disjuncts
+								
+									// Indirect + Leaf
+									qvt::expressions::ModelType::modelType2modelType, 
+									qvt::expressions::Library::library2library,
+									qvt::expressions::OperationalTransformation::opTrans2opTrans,
+			
+									// Indirect + Non Leaf
+									qvt::expressions::Module::module2module,
+									
+									//Ecore
+									ecore::EClass::eClass2Class,
+									ecore::EDataType::eDataType2DataType,	
+									ecore::EClassifier::eClassifier2Type
+						
+{
+}
+
+mapping ecore::EPackage::toPackage() : pivot::Package disjuncts
+																				
+										// Indirect + Leaf
+										qvt::expressions::OperationalTransformation::opTrans2opTrans,
+										qvt::expressions::Library::library2library,
+														
+										// Direct + Non Leaf
+										qvt::expressions::Module::module2module,
+										
+										//Ecore
+										ecore::EPackage::ePackage2Package
+	
+{
+}
+
+mapping ecore::EClass::toClass() : pivot::Class disjuncts 
+									
+									// Direct + Leaf
+									qvt::expressions::ModelType::modelType2modelType, 
+									
+									// Indirect + Leaf
+									qvt::expressions::Library::library2library,
+									qvt::expressions::OperationalTransformation::opTrans2opTrans,
+									
+									// Direct + Non Leaf
+									qvt::expressions::Module::module2module,
+									
+									//Ecore
+									ecore::EClass::eClass2Class 
+									
+
+{
+}
+
+mapping ecore::EOperation::toOperation() : pivot::Operation disjuncts
+																	
+											// Indirectly connected + Leaf
+											qvt::expressions::Constructor::constructor2constructor,
+											qvt::expressions::EntryOperation::entryOperation2entryOperation,
+											qvt::expressions::Helper::helper2helper,
+											qvt::expressions::MappingOperation::mappingOp2mappingOp,
+	
+											// Directly connected + Not Leaf
+											qvt::expressions::ImperativeOperation::imOperation2imOperation,
+											
+											//Ecore
+											ecore::EOperation::eOperation2Operation
+
+{
+}
+
+mapping ecore::EParameter::toParameter() : pivot::Parameter disjuncts
+																			
+											// Indirect + Leaf
+											qvt::expressions::MappingParameter::mapParameter2mapParameter,
+											qvt::expressions::ModelParameter::modelParameter2modelParameter,
+											
+											// Direct + Not Leaf
+											qvt::expressions::VarParameter::varparameter2varparamter,
+											
+											//Ecore
+											ecore::EParameter::eParameter2Parameter
+{
+}
+
+mapping ecore::EStructuralFeature::toProperty () : pivot::Property disjuncts
+													
+													// Direct + Leaf
+													qvt::expressions::ContextualProperty::ctProperty2ctProperty,
+													
+													//Ecore
+													ecore::EStructuralFeature::eStructuralFeature2Property
+													
+	//TODO: One possible inheritance is "EAttribute" but we dont know how to map it
+	//TODO::Here Ereference should be also disjuncted, but there is no equivalent class in pivot yet.
+{
+}
+
+/****************************************************************/
+/*																*/
+/*				OCL DISJUNCTS									*/
+/*																*/
+/****************************************************************/
+
+//TODO: We use toOCLExpression for both OCL and OCLECore. Verify information loss if any..
+//TODO: Other concrete classes from ImperativeOCL?
+mapping ocl::expressions::OCLExpression::toOCLExpression() : pivot::OCLExpression disjuncts 
+
+	qvt::expressions::ObjectExp::objectExp2objectExp,
+	qvt::expressions::MappingCallExp::mapCallExp2mapCallExp,
+	qvt::expressions::ImperativeCallExp::impCallExp2impCallExp,
+	qvt::expressions::ResolveExp::resolveExp2resolveExp,
+	qvt::expressions::ResolveInExp::resolveInExp2resolveInExp,
+
+	qvtimp::AltExp::altExp2AltExp,
+	qvtimp::AssertExp::assertExp2AssertExp,
+	qvtimp::AssignExp::assignExp2AssignExp,
+	qvtimp::BlockExp::blockExp2BlockExp,
+	qvtimp::BreakExp::breakExp2BreakExp,
+	qvtimp::CatchExp::catchExp2CatchExp,
+	qvtimp::ComputeExp::computeExp2ComputeExp,
+	qvtimp::ContinueExp::continueExp2ContinueExp,
+	qvtimp::DictLiteralExp::dictLiteralExp2DictLiteralExp,
+	qvtimp::ForExp::forExp2ForExp,
+	qvtimp::ImperativeIterateExp::imperativeIterateExp2ImperativeIterateExp,
+	qvtimp::ImperativeLoopExp::imperativeLoopExp2ImperativeLoopExp,
+	qvtimp::InstantiationExp::instantiationExp2InstantiationExp,
+	qvtimp::ListLiteralExp::listLiteralExp2ListLiteralExp,
+	qvtimp::LogExp::logExp2LogExp,
+	qvtimp::RaiseExp::raiseExp2RaiseExp,
+	qvtimp::ReturnExp::returnExp2ReturnExp,
+	qvtimp::SwitchExp::switchExp2SwitchExp,
+	qvtimp::TryExp::tryExp2TryExp,
+	qvtimp::UnlinkExp::unlinkExp2UnlinkExp,
+	qvtimp::VariableInitExp::unlinkExp2UnlinkExp,
+	qvtimp::WhileExp::whileExp2WhileExp,
+	
+	ocl::ecore::AssociationClassCallExp::associationClassCallExp2AssociationClassCallExp,
+	ocl::ecore::PropertyCallExp::propertyCallExp2PropertyCallExp,
+	ocl::ecore::IntegerLiteralExp::integerLiteralExp2IntegerLiteralExp,
+
+	ocl::ecore::OperationCallExp::operationCallExp2OperationCallExp,
+	ocl::ecore::IteratorExp::iteratorExp2IteratorExp,
+	ocl::ecore::IterateExp::iterateExp2IterateExp,
+
+	ocl::ecore::StringLiteralExp::stringLiteralExp2StringLiteralExp,
+	ocl::ecore::NullLiteralExp::nullLiteralExp2NullLiteralExp,
+	ocl::ecore::BooleanLiteralExp::boolLiteralExp2BoolLiteralExp,
+
+	ocl::ecore::TupleLiteralExp::tupleLiteralExp2TupleLiteralExp,
+	ocl::ecore::CollectionLiteralExp::collectionLiteralExp2CollectionLiteralExp,	
+	ocl::ecore::EnumLiteralExp::enumLiteralExp2EnumLiteralExp,
+	ocl::ecore::InvalidLiteralExp::invalidLiteralExp2InvalidLiteralExp,
+			
+	ocl::ecore::IfExp::ifExp2ifExp,
+	ocl::ecore::LetExp::letExp2LetExp,
+	ocl::ecore::MessageExp::messageExp2MessageExp,
+	ocl::ecore::StateExp::stateExp2StateExp,
+	ocl::ecore::TypeExp::typeExp2TypeExp,
+	ocl::ecore::UnspecifiedValueExp::unspecifiedValueExp2UnspecifiedValueExp,
+	ocl::ecore::VariableExp::variableExp2VariableExp,
+	
+	ocl::expressions::AssociationClassCallExp::associationClassCallExp2AssociationClassCallExp,
+	ocl::expressions::PropertyCallExp::propertyCallExp2PropertyCallExp,
+	ocl::expressions::IntegerLiteralExp::integerLiteralExp2IntegerLiteralExp,
+
+	ocl::expressions::OperationCallExp::operationCallExp2OperationCallExp,
+	ocl::expressions::IteratorExp::iteratorExp2IteratorExp,
+	ocl::expressions::IterateExp::iterateExp2IterateExp,
+
+	ocl::expressions::StringLiteralExp::stringLiteralExp2StringLiteralExp,
+	ocl::expressions::NullLiteralExp::nullLiteralExp2NullLiteralExp,
+	ocl::expressions::BooleanLiteralExp::boolLiteralExp2BoolLiteralExp,
+
+	ocl::expressions::TupleLiteralExp::tupleLiteralExp2TupleLiteralExp,
+	ocl::expressions::CollectionLiteralExp::collectionLiteralExp2CollectionLiteralExp,	
+	ocl::expressions::EnumLiteralExp::enumLiteralExp2EnumLiteralExp,
+	ocl::expressions::InvalidLiteralExp::invalidLiteralExp2InvalidLiteralExp,
+			
+	ocl::expressions::IfExp::ifExp2ifExp,
+	ocl::expressions::LetExp::letExp2LetExp,
+	ocl::expressions::MessageExp::messageExp2MessageExp,
+	ocl::expressions::StateExp::stateExp2StateExp,
+	ocl::expressions::TypeExp::typeExp2TypeExp,
+	ocl::expressions::UnspecifiedValueExp::unspecifiedValueExp2UnspecifiedValueExp,
+	ocl::expressions::VariableExp::variableExp2VariableExp
+
+{
+	
+}
+
+
+mapping ocl::expressions::CollectionLiteralPart::toCollectionLiteralPart() : pivot::CollectionLiteralPart disjuncts
+													ocl::expressions::CollectionRange::collectionRange2CollectionRange										
+{
+}
+
+/****************************************************************/
+/*																*/
+/*				OCL TRANSFORMATIONS								*/
+/*																*/
+/****************************************************************/
+
+/* --- 1. OCLExpression transformation  --- */
+//TODO: Inheritence from TypedElement
+abstract mapping ocl::expressions::OCLExpression::oclExpression2OclExpression() : pivot::OCLExpression 
+{
+}
+
+/* --- 2. AssociationClassCallExp transformation  --- */
+mapping ocl::expressions::AssociationClassCallExp::associationClassCallExp2AssociationClassCallExp () : pivot::AssociationClassCallExp inherits ocl::expressions::NavigationCallExp::navigationCallExp2NavigationCallExp
+{
+	//TODO: Verify if the downcast from EClassifier to EClass is correct 
+	// TODO: How to transform EClassifier to AssociationClass?
+	//result.referredAssociationClass := self.referredAssociationClass.oclAsType(ecore::EClass) .xmap eClass2AssosiationClass();
+}
+
+/* --- 3. BooleanLiteralExp transformation  --- */
+mapping ocl::expressions::BooleanLiteralExp::boolLiteralExp2BoolLiteralExp () : pivot::BooleanLiteralExp inherits ocl::expressions::PrimitiveLiteralExp::primitiveLiteralExp2PrimitiveLiteralExp
+{
+	result.booleanSymbol := self.booleanSymbol;
+}
+
+/* --- 4. CallExp transformation  --- */
+//Note: Update the document
+//TODO: Inherits from CallingASTNodeS
+abstract mapping ocl::expressions::CallExp::callExp2CallExp () : pivot::CallExp inherits ocl::expressions::OCLExpression::oclExpression2OclExpression
+{
+	result.source := self.source .xmap toOCLExpression();
+}
+
+/* --- 5. CollectionLiteralExp transformation  --- */
+mapping ocl::expressions::CollectionLiteralExp::collectionLiteralExp2CollectionLiteralExp () : pivot::CollectionLiteralExp 
+															inherits ocl::expressions::LiteralExp::literalExp2LiteralExp
+{
+	result.kind := QueryCollectionKind(self.kind);
+	result.part += self.part .xmap toCollectionLiteralPart();
+	//TODO
+	// ? := self.simpleRange:EBoolean
+}
+
+/* --- 6. EnumLiteralExp transformation  --- */
+mapping ocl::expressions::EnumLiteralExp::enumLiteralExp2EnumLiteralExp () : pivot::EnumLiteralExp inherits ocl::expressions::LiteralExp::literalExp2LiteralExp
+{
+	//TODO: Verify the mapping between EEnumLiteral->EObject and pivot::EnumerationLiteral
+	result.referredEnumLiteral := self.referredEnumLiteral .resolveone(pivot::EnumerationLiteral);
+}
+
+/* --- 7. FeatureCallExp transformation  --- */
+abstract mapping ocl::expressions::FeatureCallExp::featureCallExp2FeatureCallExp () : pivot::FeatureCallExp inherits 				
+															ocl::expressions::CallExp::callExp2CallExp
+{
+	result.isPre := self.markedPre;
+}
+
+/* --- 8. IfExp transformation  --- */
+mapping ocl::expressions::IfExp::ifExp2ifExp () : pivot::IfExp inherits ocl::expressions::OCLExpression::oclExpression2OclExpression
+{
+	result.condition := self.condition .xmap toOCLExpression();
+	result.thenExpression := self.thenExpression .xmap toOCLExpression();
+	result.elseExpression := self.elseExpression .xmap toOCLExpression();
+}
+
+/* --- 9. IntegerLiteralExp transformation  --- */
+mapping ocl::expressions::IntegerLiteralExp::integerLiteralExp2IntegerLiteralExp () : pivot::IntegerLiteralExp inherits ocl::expressions::NumericLiteralExp::numericLiteralExp2NumericLiteralExp
+{
+	//TODO: Verify the mapping between EIntegerObject and pivot::Integer
+	//result.integerSymbol := self.integerSymbol;
+	
+	//TODO
+	//? := self.extendedIntegerSymbol
+	
+}
+
+/* --- 10. InvalidLiteralExp transformation  --- */
+mapping ocl::expressions::InvalidLiteralExp::invalidLiteralExp2InvalidLiteralExp () : pivot::InvalidLiteralExp inherits ocl::expressions::LiteralExp::literalExp2LiteralExp
+{
+}
+
+/* --- 11. IterateExp transformation  --- */
+mapping ocl::expressions::IterateExp::iterateExp2IterateExp () : pivot::IterateExp inherits ocl::expressions::LoopExp::loopExp2LoopExp
+{
+	result._result := self._result .xmap toVariable();
+}
+
+/* --- 12. IteratorExp transformation  --- */
+mapping ocl::expressions::IteratorExp::iteratorExp2IteratorExp () : pivot::IteratorExp inherits ocl::expressions::LoopExp::loopExp2LoopExp
+{
+}
+
+/* --- 13. LetExp transformation  --- */
+mapping ocl::expressions::LetExp::letExp2LetExp () : pivot::LetExp inherits ocl::expressions::OCLExpression::oclExpression2OclExpression
+{
+	result._in := self._in .xmap toOCLExpression();
+	result.variable := self.variable .xmap toVariable();
+}
+
+/* --- 14. LiteralExp transformation  --- */
+abstract mapping ocl::expressions::LiteralExp::literalExp2LiteralExp () : pivot::LiteralExp inherits ocl::expressions::OCLExpression::oclExpression2OclExpression
+{
+}
+
+/* --- 15. LoopExp transformation  --- */
+abstract mapping ocl::expressions::LoopExp::loopExp2LoopExp () : pivot::LoopExp inherits ocl::expressions::CallExp::callExp2CallExp
+{
+	result.body := self.body .xmap toOCLExpression();
+	result.iterator += self.iterator .xmap toVariable();
+	
+	//Note:
+	//result.referredIteration := ?
+}
+
+/* --- 16. MessageExp transformation  --- */
+mapping ocl::expressions::MessageExp::messageExp2MessageExp () : pivot::MessageExp inherits ocl::expressions::OCLExpression::oclExpression2OclExpression
+{
+	result.target := self.target .xmap toOCLExpression();
+	result.argument += self.argument .xmap toOCLExpression();
+	
+	//TODO: Verify the mapping between ocl::ecore::CallOperationAction->EObject and pivot::CallOperationAction
+	//result.calledOperation := self.calledOperation;
+	
+	//TODO: Verify the mapping between ocl::ecore::SendSignalAction->EObject and pivot::CallOperationAction
+	//result.sentSignal := self.sentSignal;
+}
+
+/* --- 17. NavigationCallExp transformation  --- */
+abstract mapping ocl::expressions::NavigationCallExp::navigationCallExp2NavigationCallExp () : pivot::NavigationCallExp inherits ocl::expressions::FeatureCallExp::featureCallExp2FeatureCallExp
+{
+	result.qualifier += self.qualifier .xmap toOCLExpression();
+	
+	//TODO: Verify the mapping between ocl::expression::EStructuralFeature->EObject and pivot::Property
+	result.navigationSource := self.navigationSource.oclAsType(ecore::EStructuralFeature) .xmap toProperty();
+}
+
+/* --- 18. NullLiteralExp transformation  --- */
+mapping ocl::expressions::NullLiteralExp::nullLiteralExp2NullLiteralExp () : pivot::NullLiteralExp inherits ocl::expressions::LiteralExp::literalExp2LiteralExp
+{
+}
+
+/* --- 19. NumericLiteralExp transformation  --- */
+abstract mapping ocl::expressions::NumericLiteralExp::numericLiteralExp2NumericLiteralExp () : pivot::NumericLiteralExp inherits ocl::expressions::PrimitiveLiteralExp::primitiveLiteralExp2PrimitiveLiteralExp
+{
+}
+
+/* --- 20. OperationCallExp transformation  --- */
+mapping ocl::expressions::OperationCallExp::operationCallExp2OperationCallExp () : pivot::OperationCallExp   inherits 					
+															ocl::expressions::FeatureCallExp::featureCallExp2FeatureCallExp     
+{
+	result.argument += self.argument .xmap toOCLExpression();
+	
+	//TODO: Verify the mapping between EOperation->EObject and Operation
+	result.referredOperation := self.referredOperation.oclAsType(ecore::EOperation) .xmap toOperation();
+	
+}
+
+/* --- 21. PrimitiveLiteralExp transformation  --- */
+abstract mapping ocl::expressions::PrimitiveLiteralExp::primitiveLiteralExp2PrimitiveLiteralExp () : pivot::PrimitiveLiteralExp inherits ocl::expressions::LiteralExp::literalExp2LiteralExp
+{
+}
+
+/* --- 22. PropertyCallExp transformation  --- */
+mapping ocl::expressions::PropertyCallExp::propertyCallExp2PropertyCallExp () : pivot::PropertyCallExp inherits ocl::expressions::NavigationCallExp::navigationCallExp2NavigationCallExp
+{
+	//TODO: Verify the mapping between ocl::expression::EStructuralFeature->EObject and pivot::Property
+	result.referredProperty := self.referredProperty.oclAsType(ecore::EStructuralFeature) .late resolveone (pivot::Property);
+}
+
+/* --- 23. StateExp transformation  --- */
+mapping ocl::expressions::StateExp::stateExp2StateExp () : pivot::StateExp inherits ocl::expressions::OCLExpression::oclExpression2OclExpression
+{
+	//TODO: Verify the mapping between State->EObject and pivot::State
+	//result.referredState := self.referredState;
+}
+
+/* --- 24. StringLiteralExp transformation  --- */
+mapping ocl::expressions::StringLiteralExp::stringLiteralExp2StringLiteralExp () : pivot::StringLiteralExp inherits ocl::expressions::PrimitiveLiteralExp::primitiveLiteralExp2PrimitiveLiteralExp
+{
+	result.stringSymbol := self.stringSymbol;
+}
+
+/* --- 25. TupleLiteralExp transformation  --- */
+mapping ocl::expressions::TupleLiteralExp::tupleLiteralExp2TupleLiteralExp () : pivot::TupleLiteralExp inherits ocl::expressions::LiteralExp::literalExp2LiteralExp
+{
+	result.part += self.part .xmap tupleLiteralPart2TupleLiteralPart();
+}
+
+/* --- 26. TypeExp transformation  --- */
+mapping ocl::expressions::TypeExp::typeExp2TypeExp () : pivot::TypeExp inherits ocl::expressions::OCLExpression::oclExpression2OclExpression
+{
+	result.referredType := self.referredType.oclAsType(ecore::EClassifier) .xmap toType();
+}
+
+/* --- 27. UnspecifiedValueExp transformation  --- */
+mapping ocl::expressions::UnspecifiedValueExp::unspecifiedValueExp2UnspecifiedValueExp () : pivot::UnspecifiedValueExp inherits ocl::expressions::OCLExpression::oclExpression2OclExpression
+{
+}
+
+/* --- 28. VariableExp transformation  --- */
+mapping ocl::expressions::VariableExp::variableExp2VariableExp () : pivot::VariableExp inherits ocl::expressions::OCLExpression::oclExpression2OclExpression
+{
+	//TODO: Verify the mapping between ocl::expression::Variable->EObject and pivot::VariableDeclaration
+	result.referredVariable := self.referredVariable .xmap toVariable();
+}
+
+/* --- 29. Variable transformation --- */
+//TODO: Fix inheritance from typedElement2TypedElement (defined in OCL)
+//TODO : Inheritence from Visitable and ASTNode
+mapping ocl::expressions::Variable::variable2Variable () : pivot::Variable
+{
+	//TODO: Verify the mapping between EParameter->EObject and Parameter
+	result.representedParameter := self.representedParameter.oclAsType(EParameter) .xmap toParameter();
+	
+	result.initExpression := self.initExpression .xmap toOCLExpression();
+	
+	//TODO In ocl "init_type" exists but doesn't exist in pivot. 
+	//TODO Transformation not completed. Research needed for mapping abstract type and template class.
+	//TODO Variable in OCL is inheritence by "Visitable" and "TypedASTNode"" but not in pivot.
+}
+
+/* --- 30. CollectionLiteralPart transformation --- */
+//Note: Inherits from ocl::expression::TypedElement and ocl::utilities::Visitable
+abstract mapping ocl::expressions::CollectionLiteralPart::collectionLiteralPart2CollectionLiteralPart() : pivot::CollectionLiteralPart																		
+{
+}
+
+/* --- 31. TupleLiteralPart transformation --- */
+//Note: Inherits from ocl::expression::TypedElement and ocl::utilities::Visitable and ocl::utilities::TypedASTNode
+mapping ocl::expressions::TupleLiteralPart::tupleLiteralPart2TupleLiteralPart() : pivot::TupleLiteralPart																		
+{
+	result.initExpression := self.value .xmap toOCLExpression();
+	
+	//Note:
+	//? := self.attribute; //This is instantiated from EStructuralFeature
+
+}
+
+/* --- 32. CollectionRange transformation --- */
+mapping ocl::expressions::CollectionRange::collectionRange2CollectionRange() : pivot::CollectionRange inherits	
+								ocl::expressions::CollectionLiteralPart::collectionLiteralPart2CollectionLiteralPart																	
+{
+	result.first := self.first .xmap toOCLExpression();	
+	result.last := self.last .xmap toOCLExpression();	
+}
+
+/* --- 33. CollectionType transformation --- */
+//Note: It inherits from ocl::utilities::PredefinedType and ocl::utilities::TypedASTNode 
+mapping ocl::types::CollectionType::collectionType2CollectionType() : pivot::CollectionType												
+{
+	result.elementType := self.elementType.oclAsType(ecore::EClassifier) .xmap toType();
+	//? := self.kind;
+	//result.lower := ?;
+	//result.upper := ?;
+
+}
+
+/****************************************************************/
+/*																*/
+/*				OCL ECORE TRANSFORMATIONS						*/
+/*																*/
+/****************************************************************/
+
+/* --- 1. OCLExpression transformation  --- */
+abstract mapping ocl::ecore::OCLExpression::oclExpression2OclExpression() : pivot::OCLExpression inherits 
+																ecore::ETypedElement::eTypedElement2TypedElement,
+																ocl::expressions::OCLExpression::oclExpression2OclExpression
+																
+{
+}
+
+/* --- 2. AssociationClassCallExp transformation  --- */
+abstract mapping ocl::ecore::AssociationClassCallExp::associationClassCallExp2AssociationClassCallExp () : pivot::AssociationClassCallExp 
+									inherits ocl::ecore::NavigationCallExp::navigationCallExp2NavigationCallExp,
+									ocl::expressions::AssociationClassCallExp::associationClassCallExp2AssociationClassCallExp
+{
+}
+
+/* --- 3. BooleanLiteralExp transformation  --- */
+mapping ocl::ecore::BooleanLiteralExp::boolLiteralExp2BoolLiteralExp () : pivot::BooleanLiteralExp 
+									inherits ocl::ecore::PrimitiveLiteralExp::primitiveLiteralExp2PrimitiveLiteralExp,
+									ocl::expressions::BooleanLiteralExp::boolLiteralExp2BoolLiteralExp
+{
+}
+
+/* --- 4. CallExp transformation  --- */
+abstract mapping ocl::ecore::CallExp::callExp2CallExp () : pivot::CallExp inherits 
+																	ocl::ecore::OCLExpression::oclExpression2OclExpression,
+																	ocl::expressions::CallExp::callExp2CallExp
+{
+}
+
+/* --- 5. CollectionLiteralExp transformation  --- */
+mapping ocl::ecore::CollectionLiteralExp::collectionLiteralExp2CollectionLiteralExp () : pivot::CollectionLiteralExp 
+																	inherits ocl::ecore::LiteralExp::literalExp2LiteralExp,
+																	ocl::expressions::CollectionLiteralExp::collectionLiteralExp2CollectionLiteralExp
+{
+}
+
+/* --- 6. EnumLiteralExp transformation  --- */
+mapping ocl::ecore::EnumLiteralExp::enumLiteralExp2EnumLiteralExp () : pivot::EnumLiteralExp 
+															inherits ocl::ecore::LiteralExp::literalExp2LiteralExp,
+															ocl::expressions::EnumLiteralExp::enumLiteralExp2EnumLiteralExp
+{
+}
+
+/* --- 7. FeatureCallExp transformation  --- */
+abstract mapping ocl::ecore::FeatureCallExp::featureCallExp2FeatureCallExp () : pivot::FeatureCallExp inherits 
+													ocl::expressions::FeatureCallExp::featureCallExp2FeatureCallExp,
+													ocl::ecore::CallExp::callExp2CallExp
+{
+}
+
+/* --- 8. IfExp transformation  --- */
+mapping ocl::ecore::IfExp::ifExp2ifExp () : pivot::IfExp 
+									inherits ocl::ecore::OCLExpression::oclExpression2OclExpression,
+									ocl::expressions::IfExp::ifExp2ifExp
+{
+}
+
+/* --- 9. IntegerLiteralExp transformation  --- */
+mapping ocl::ecore::IntegerLiteralExp::integerLiteralExp2IntegerLiteralExp () : pivot::IntegerLiteralExp 
+							inherits ocl::ecore::NumericLiteralExp::numericLiteralExp2NumericLiteralExp,
+							ocl::expressions::IntegerLiteralExp::integerLiteralExp2IntegerLiteralExp
+{
+}
+
+/* --- 10. InvalidLiteralExp transformation  --- */
+mapping ocl::ecore::InvalidLiteralExp::invalidLiteralExp2InvalidLiteralExp () : pivot::InvalidLiteralExp 
+													inherits ocl::ecore::LiteralExp::literalExp2LiteralExp,
+													ocl::expressions::InvalidLiteralExp::invalidLiteralExp2InvalidLiteralExp 
+{
+}
+
+/* --- 11. IterateExp transformation  --- */
+mapping ocl::ecore::IterateExp::iterateExp2IterateExp () : pivot::IterateExp 
+													inherits ocl::ecore::LoopExp::loopExp2LoopExp,
+													ocl::expressions::IterateExp::iterateExp2IterateExp
+{
+}
+
+/* --- 12. IteratorExp transformation  --- */
+mapping ocl::ecore::IteratorExp::iteratorExp2IteratorExp () : pivot::IteratorExp 
+													inherits ocl::ecore::LoopExp::loopExp2LoopExp,
+													ocl::expressions::IteratorExp::iteratorExp2IteratorExp
+{
+}
+
+/* --- 13. LetExp transformation  --- */
+mapping ocl::ecore::LetExp::letExp2LetExp () : pivot::LetExp 
+											inherits ocl::ecore::OCLExpression::oclExpression2OclExpression,
+											ocl::expressions::LetExp::letExp2LetExp
+{
+}
+
+/* --- 14. LiteralExp transformation  --- */
+abstract mapping ocl::ecore::LiteralExp::literalExp2LiteralExp () : pivot::LiteralExp 
+															inherits ocl::ecore::OCLExpression::oclExpression2OclExpression,
+															ocl::expressions::LiteralExp::literalExp2LiteralExp
+{
+}
+
+/* --- 15. LoopExp transformation  --- */
+abstract mapping ocl::ecore::LoopExp::loopExp2LoopExp () : pivot::LoopExp 
+															inherits ocl::ecore::CallExp::callExp2CallExp,
+															ocl::expressions::LoopExp::loopExp2LoopExp
+{
+}
+
+/* --- 16. MessageExp transformation  --- */
+mapping ocl::ecore::MessageExp::messageExp2MessageExp () : pivot::MessageExp 
+												inherits ocl::ecore::OCLExpression::oclExpression2OclExpression,
+												ocl::expressions::MessageExp::messageExp2MessageExp
+{
+}
+
+/* --- 17. NavigationCallExp transformation  --- */
+abstract mapping ocl::ecore::NavigationCallExp::navigationCallExp2NavigationCallExp () : pivot::NavigationCallExp inherits ocl::ecore::FeatureCallExp::featureCallExp2FeatureCallExp,
+																										ocl::expressions::NavigationCallExp::navigationCallExp2NavigationCallExp
+{
+}
+
+/* --- 18. NullLiteralExp transformation  --- */
+mapping ocl::ecore::NullLiteralExp::nullLiteralExp2NullLiteralExp () : pivot::NullLiteralExp 
+															inherits ocl::ecore::LiteralExp::literalExp2LiteralExp,
+															ocl::expressions::NullLiteralExp::nullLiteralExp2NullLiteralExp
+{
+}
+
+/* --- 19. NumericLiteralExp transformation  --- */
+abstract mapping ocl::ecore::NumericLiteralExp::numericLiteralExp2NumericLiteralExp () : pivot::NumericLiteralExp 
+															inherits ocl::ecore::PrimitiveLiteralExp::primitiveLiteralExp2PrimitiveLiteralExp,
+															ocl::expressions::NumericLiteralExp::numericLiteralExp2NumericLiteralExp
+{
+}
+
+/* --- 20. OperationCallExp transformation  --- */
+//Note: OperationCallExp in Pivot also inherits from ReferingElement
+mapping ocl::ecore::OperationCallExp::operationCallExp2OperationCallExp () : pivot::OperationCallExp   inherits 
+															ocl::expressions::OperationCallExp::operationCallExp2OperationCallExp,
+															ocl::ecore::FeatureCallExp::featureCallExp2FeatureCallExp     
+{
+}
+
+/* --- 21. PrimitiveLiteralExp transformation  --- */
+abstract mapping ocl::ecore::PrimitiveLiteralExp::primitiveLiteralExp2PrimitiveLiteralExp () : pivot::PrimitiveLiteralExp 
+															inherits ocl::ecore::LiteralExp::literalExp2LiteralExp,
+															ocl::expressions::PrimitiveLiteralExp::primitiveLiteralExp2PrimitiveLiteralExp
+{
+}
+
+/* --- 22. PropertyCallExp transformation  --- */
+mapping ocl::ecore::PropertyCallExp::propertyCallExp2PropertyCallExp () : pivot::PropertyCallExp inherits ocl::ecore::NavigationCallExp::navigationCallExp2NavigationCallExp,
+ 																								ocl::expressions::PropertyCallExp::propertyCallExp2PropertyCallExp
+{
+}
+
+/* --- 23. StateExp transformation  --- */
+mapping ocl::ecore::StateExp::stateExp2StateExp () : pivot::StateExp 
+					inherits ocl::ecore::OCLExpression::oclExpression2OclExpression,
+					 ocl::expressions::StateExp::stateExp2StateExp
+{
+}
+
+/* --- 24. StringLiteralExp transformation  --- */
+mapping ocl::ecore::StringLiteralExp::stringLiteralExp2StringLiteralExp () : pivot::StringLiteralExp 
+										inherits ocl::ecore::PrimitiveLiteralExp::primitiveLiteralExp2PrimitiveLiteralExp,
+										ocl::expressions::StringLiteralExp::stringLiteralExp2StringLiteralExp
+{
+}
+
+/* --- 25. TupleLiteralExp transformation  --- */
+mapping ocl::ecore::TupleLiteralExp::tupleLiteralExp2TupleLiteralExp () : pivot::TupleLiteralExp 
+											inherits ocl::ecore::LiteralExp::literalExp2LiteralExp,
+											ocl::expressions::TupleLiteralExp::tupleLiteralExp2TupleLiteralExp
+{
+}
+
+/* --- 26. TypeExp transformation  --- */
+mapping ocl::ecore::TypeExp::typeExp2TypeExp () : pivot::TypeExp 
+												inherits ocl::ecore::OCLExpression::oclExpression2OclExpression,
+												ocl::expressions::TypeExp::typeExp2TypeExp
+{
+}
+
+/* --- 27. UnspecifiedValueExp transformation  --- */
+mapping ocl::ecore::UnspecifiedValueExp::unspecifiedValueExp2UnspecifiedValueExp () : pivot::UnspecifiedValueExp 
+														inherits ocl::ecore::OCLExpression::oclExpression2OclExpression,
+														ocl::ecore::UnspecifiedValueExp::unspecifiedValueExp2UnspecifiedValueExp
+{
+}
+
+/* --- 28. VariableExp transformation  --- */
+mapping ocl::ecore::VariableExp::variableExp2VariableExp () : pivot::VariableExp inherits 
+															ocl::ecore::OCLExpression::oclExpression2OclExpression,
+															ocl::expressions::VariableExp::variableExp2VariableExp
+{
+}
+
+/* --- 29. Variable transformation --- */
+mapping ocl::ecore::Variable::variable2Variable () : pivot::Variable inherits ecore::ETypedElement::eTypedElement2TypedElement,
+																		ocl::expressions::Variable::variable2Variable
+{
+}
+
+/* --- 30. CollectionLiteralPart transformation --- */
+//Note: Inherits from ocl::expression::TypedElement and ocl::utilities::Visitable
+abstract mapping ocl::ecore::CollectionLiteralPart::collectionLiteralPart2CollectionLiteralPart() : pivot::CollectionLiteralPart
+																	inherits ecore::ETypedElement::eTypedElement2TypedElement,
+																	ocl::expressions::CollectionLiteralPart::collectionLiteralPart2CollectionLiteralPart																		
+{
+}
+
+/* --- 31. TupleLiteralPart transformation --- */
+mapping ocl::ecore::TupleLiteralPart::collectionLiteralPart2CollectionLiteralPart() : pivot::TupleLiteralPart	
+																	inherits ecore::ETypedElement::eTypedElement2TypedElement,
+																	ocl::expressions::TupleLiteralPart::tupleLiteralPart2TupleLiteralPart
+{
+}
+
+/* --- 32. CollectionRange transformation --- */
+mapping ocl::ecore::CollectionRange::collectionRange2CollectionRange() : pivot::CollectionRange inherits	
+								ocl::ecore::CollectionLiteralPart::collectionLiteralPart2CollectionLiteralPart,	
+								ocl::expressions::CollectionRange::collectionRange2CollectionRange																
+{
+}
+
+/* --- 33. CollectionType transformation --- */
+mapping ocl::ecore::CollectionType::collectionType2CollectionType() : pivot::CollectionType inherits	
+								ecore::EDataType::eDataType2DataType,
+								ocl::types::CollectionType::collectionType2CollectionType													
+{
+}
+
+
+/****************************************************************/
+/*																*/
+/*				IMPERATIVE OCL TRANSFORMATION					*/
+/*																*/
+/****************************************************************/
+
+/* --- 1. AltExp transformation --- */
+mapping qvtimp::AltExp::altExp2AltExp() : pivotimp::AltExp inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.body := self.body .xmap toOCLExpression();
+	result.condition := self.condition .xmap toOCLExpression();
+}
+
+/* --- 2. AssertExp transformation --- */
+mapping qvtimp::AssertExp::assertExp2AssertExp() : pivotimp::AssertExp inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.assertion := self.assertion .xmap toOCLExpression();
+	result._log := self._log .xmap logExp2LogExp();
+	result.severity := QuerySeverityKind(self.severity);
+}
+
+/* --- 3. AssignExp transformation --- */
+mapping qvtimp::AssignExp::assignExp2AssignExp() : pivotimp::AssignExp inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.defaultValue := self.defaultValue .xmap toOCLExpression();
+	result.isReset := self.isReset;
+	result.left := self.left .xmap toOCLExpression();
+	result.value += self.value .xmap toOCLExpression();
+}
+
+/* --- 4. BlockExp transformation --- */
+mapping qvtimp::BlockExp::blockExp2BlockExp() : pivotimp::BlockExp inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.body += self.body .xmap toOCLExpression();
+}
+
+/* --- 5. BreakExp transformation --- */
+mapping qvtimp::BreakExp::breakExp2BreakExp() : pivotimp::BreakExp inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+}
+
+/* --- 6. CatchExp transformation --- */
+mapping qvtimp::CatchExp::catchExp2CatchExp() : pivotimp::CatchExp inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.body += self.body .xmap toOCLExpression();
+	result._exception += self._exception .xmap toType();
+}
+
+/* --- 7. ComputeExp transformation --- */
+mapping qvtimp::ComputeExp::computeExp2ComputeExp() : pivotimp::ComputeExp inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.body := self.body .xmap toOCLExpression();
+	result.returnedElement := self.returnedElement .xmap toVariable();
+}
+
+/* --- 8. ContinueExp transformation --- */
+mapping qvtimp::ContinueExp::continueExp2ContinueExp() : pivotimp::ContinueExp inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+}
+
+/* --- 9. DictLiteralExp transformation --- */
+mapping qvtimp::DictLiteralExp::dictLiteralExp2DictLiteralExp() : pivotimp::DictLiteralExp inherits ocl::ecore::LiteralExp::literalExp2LiteralExp
+{
+	result.part += self.part .xmap dictLiteralPart2DictLiteralPart();
+}
+
+/* --- 10. DictLiteralPart transformation --- */
+mapping qvtimp::DictLiteralPart::dictLiteralPart2DictLiteralPart() : pivotimp::DictLiteralPart inherits ecore::EModelElement::eModelElement2Element
+{ 
+	result.key := self.key .xmap toOCLExpression();
+	result.value := self.value .xmap toOCLExpression();	
+	
+	//Note:
+	// result.partOwner := ? // of type DictLiteralExpression
+}
+
+/* --- 11. DictionaryType transformation --- */
+mapping qvtimp::DictionaryType::dictionaryType2DictionaryType() : pivotimp::DictionaryType inherits ocl::types::CollectionType::collectionType2CollectionType
+{ 
+	result.keyType := self.keyType .xmap toType();
+}
+
+/* --- 12. ForExp transformation --- */
+mapping qvtimp::ForExp::forExp2ForExp() : pivotimp::ForExp inherits qvtimp::ImperativeLoopExp::imperativeLoopExp2ImperativeLoopExp
+{
+}
+
+/* --- 13. ImperativeExpression transformation --- */
+abstract mapping qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression() : pivotimp::ImperativeExpression inherits ocl::ecore::OCLExpression::oclExpression2OclExpression
+{
+}
+
+/* --- 14. ImperativeIterateExp transformation --- */
+mapping qvtimp::ImperativeIterateExp::imperativeIterateExp2ImperativeIterateExp() : pivotimp::ImperativeIterateExp inherits qvtimp::ImperativeLoopExp::imperativeLoopExp2ImperativeLoopExp
+{
+	result.target := self.target .xmap toVariable();
+}
+
+/* --- 15. ImperativeLoopExp transformation --- */
+abstract mapping qvtimp::ImperativeLoopExp::imperativeLoopExp2ImperativeLoopExp() : pivotimp::ImperativeLoopExp inherits ocl::ecore::LoopExp::loopExp2LoopExp,
+																												qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.condition := self.condition .xmap toOCLExpression();
+}
+
+/* --- 16. InstantiationExp transformation --- */
+mapping qvtimp::InstantiationExp::instantiationExp2InstantiationExp() : pivotimp::InstantiationExp inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.argument += self.argument .xmap toOCLExpression();
+	result.extent := self.extent .xmap toVariable();
+	result.instantiatedClass := self.instantiatedClass .late resolveone(pivot::Class);
+}
+
+/* --- 17. ListLiteralExp transformation --- */
+mapping qvtimp::ListLiteralExp::listLiteralExp2ListLiteralExp() : pivotimp::ListLiteralExp 
+																		inherits ocl::ecore::LiteralExp::literalExp2LiteralExp
+{
+	result.element += self.element .xmap toOCLExpression();
+}
+
+/* --- 18. ListType transformation --- */
+mapping qvtimp::ListType::listType2ListType() : pivotimp::ListType 
+															inherits ocl::types::CollectionType::collectionType2CollectionType
+{
+}
+
+/* --- 19. LogExp transformation --- */
+mapping qvtimp::LogExp::logExp2LogExp() : pivotimp::LogExp inherits 
+                   ocl::ecore::OperationCallExp::operationCallExp2OperationCallExp, 
+                   qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.condition := self.condition .xmap toOCLExpression();
+}
+
+/* --- 20. RaiseExp transformation --- */
+mapping qvtimp::RaiseExp::raiseExp2RaiseExp() : pivotimp::RaiseExp 
+											inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.argument := self.argument .xmap toOCLExpression();
+	result._exception := self._exception .xmap toType();
+}
+
+/* --- 21. ReturnExp transformation --- */
+mapping qvtimp::ReturnExp::returnExp2ReturnExp() : pivotimp::ReturnExp 
+											inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.value := self.value .xmap toOCLExpression();
+	
+}
+
+/* --- 22. SeverityKind transformation --- */
+query QuerySeverityKind(sk: qvtimp::SeverityKind) : pivotimp::SeverityKind
+{
+		var severityKind : pivotimp::SeverityKind;
+	switch{
+		case (sk = qvtimp::SeverityKind::error) severityKind := pivotimp::SeverityKind::error;
+		case (sk = qvtimp::SeverityKind::warning) severityKind := pivotimp::SeverityKind::warning;
+		case (sk = qvtimp::SeverityKind::fatal) severityKind := pivotimp::SeverityKind::fatal;
+	};
+	return severityKind;
+}
+
+/* --- 23. SwitchExp transformation --- */
+mapping qvtimp::SwitchExp::switchExp2SwitchExp() : pivotimp::SwitchExp 
+											inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.alternativePart += self.alternativePart .xmap altExp2AltExp();
+	result.elsePart := self.elsePart .xmap toOCLExpression();
+}
+
+/* --- 24. TryExp transformation --- */
+mapping qvtimp::TryExp::tryExp2TryExp() : pivotimp::TryExp 
+											inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.exceptClause += self.exceptClause .xmap catchExp2CatchExp();
+	result.tryBody += self.tryBody .xmap toOCLExpression();
+}
+
+/* --- 25. Typedef transformation --- */
+mapping qvtimp::Typedef::typedef2Typedef() : pivotimp::Typedef 
+											inherits ecore::EClass::eClass2Class
+{
+	result.base := self.base .xmap eClassifier2Type();
+	result.condition := self.condition .xmap toOCLExpression();
+}
+
+/* --- 26. UnlinkExp transformation --- */
+mapping qvtimp::UnlinkExp::unlinkExp2UnlinkExp() : pivotimp::UnlinkExp 
+											inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.item := self.item .xmap toOCLExpression();
+	result.target := self.target .xmap toOCLExpression();
+}
+
+/* --- 27. VariableInitExp transformation --- */
+mapping qvtimp::VariableInitExp::unlinkExp2UnlinkExp() : pivotimp::VariableInitExp 
+											inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.referredVariable := self.referredVariable .xmap toVariable();
+	result.withResult := self.withResult;
+}
+
+/* --- 28. WhileExp transformation --- */
+mapping qvtimp::WhileExp::whileExp2WhileExp() : pivotimp::WhileExp 
+											inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
+{
+	result.body := self.body .xmap toOCLExpression();
+	result.condition := self.condition .xmap toOCLExpression();
+}
+
+//Note: OrderedTupleLiteralExp does not exist in the pivot ImperativeOCL.
+//Note: OrderedTupleLiteralPart does not exist in the pivot ImperativeOCL.
+//Note: OrderedTupleType does not exist in the pivot ImperativeOCL.
+//Note: UnpackExp does not exist in the pivot ImperativeOCL.
