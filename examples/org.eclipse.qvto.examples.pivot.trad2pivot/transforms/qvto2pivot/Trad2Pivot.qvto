@@ -9,7 +9,6 @@ modeltype qvtimp "strict" uses ImperativeOCL('http://www.eclipse.org/qvt/1.0/Imp
 
 transformation Trad2Pivot(in o: qvt, out p: qvtpivot);
 
-
 main() {
 	o.rootObjects()[qvt::expressions::OperationalTransformation] .xmap opTrans2opTrans();
 }
@@ -392,6 +391,9 @@ mapping ecore::EAnnotation::eAnnotation2Annotation() : pivot::Annotation
 /* --- 7. EOperation transformacion --- */
 mapping ecore::EOperation::eOperation2Operation () : pivot::Operation inherits ecore::ETypedElement::eTypedElement2TypedElement
 {
+	
+	//result._class := self.eContainingClass .resolveone(pivot::Class);
+	
 	result.ownedParameter += self.eParameters .xmap toParameter();
 	
 	result.raisedException += self.eExceptions .late resolve(pivot::Type);
@@ -811,7 +813,7 @@ mapping ocl::expressions::CollectionLiteralExp::collectionLiteralExp2CollectionL
 mapping ocl::expressions::EnumLiteralExp::enumLiteralExp2EnumLiteralExp () : pivot::EnumLiteralExp inherits ocl::expressions::LiteralExp::literalExp2LiteralExp
 {
 	//TODO: Verify the mapping between EEnumLiteral->EObject and pivot::EnumerationLiteral
-	result.referredEnumLiteral := self.referredEnumLiteral .resolveone(pivot::EnumerationLiteral);
+	result.referredEnumLiteral := self.referredEnumLiteral .late resolveone(pivot::EnumerationLiteral);
 }
 
 /* --- 7. FeatureCallExp transformation  --- */
@@ -894,10 +896,10 @@ mapping ocl::expressions::MessageExp::messageExp2MessageExp () : pivot::MessageE
 /* --- 17. NavigationCallExp transformation  --- */
 abstract mapping ocl::expressions::NavigationCallExp::navigationCallExp2NavigationCallExp () : pivot::NavigationCallExp inherits ocl::expressions::FeatureCallExp::featureCallExp2FeatureCallExp
 {
-	result.qualifier += self.qualifier .xmap toOCLExpression();
+	result.qualifier += self.qualifier .late resolve(pivot::OCLExpression);
 	
 	//TODO: Verify the mapping between ocl::expression::EStructuralFeature->EObject and pivot::Property
-	result.navigationSource := self.navigationSource.oclAsType(ecore::EStructuralFeature) .xmap toProperty();
+	result.navigationSource := self.navigationSource .late resolveone(pivot::Property);
 }
 
 /* --- 18. NullLiteralExp transformation  --- */
@@ -917,7 +919,7 @@ mapping ocl::expressions::OperationCallExp::operationCallExp2OperationCallExp ()
 	result.argument += self.argument .xmap toOCLExpression();
 	
 	//TODO: Verify the mapping between EOperation->EObject and Operation
-	result.referredOperation := self.referredOperation.oclAsType(ecore::EOperation) .xmap toOperation();
+	result.referredOperation := self.referredOperation .resolveone(pivot::Operation);
 	
 }
 
@@ -930,7 +932,7 @@ abstract mapping ocl::expressions::PrimitiveLiteralExp::primitiveLiteralExp2Prim
 mapping ocl::expressions::PropertyCallExp::propertyCallExp2PropertyCallExp () : pivot::PropertyCallExp inherits ocl::expressions::NavigationCallExp::navigationCallExp2NavigationCallExp
 {
 	//TODO: Verify the mapping between ocl::expression::EStructuralFeature->EObject and pivot::Property
-	result.referredProperty := self.referredProperty.oclAsType(ecore::EStructuralFeature) .late resolveone (pivot::Property);
+	result.referredProperty := self.referredProperty .late resolveone (pivot::Property);
 }
 
 /* --- 23. StateExp transformation  --- */
@@ -955,7 +957,7 @@ mapping ocl::expressions::TupleLiteralExp::tupleLiteralExp2TupleLiteralExp () : 
 /* --- 26. TypeExp transformation  --- */
 mapping ocl::expressions::TypeExp::typeExp2TypeExp () : pivot::TypeExp inherits ocl::expressions::OCLExpression::oclExpression2OclExpression
 {
-	result.referredType := self.referredType.oclAsType(ecore::EClassifier) .xmap toType();
+	result.referredType := self.referredType .late resolveone(pivot::Type);
 }
 
 /* --- 27. UnspecifiedValueExp transformation  --- */
@@ -967,7 +969,7 @@ mapping ocl::expressions::UnspecifiedValueExp::unspecifiedValueExp2UnspecifiedVa
 mapping ocl::expressions::VariableExp::variableExp2VariableExp () : pivot::VariableExp inherits ocl::expressions::OCLExpression::oclExpression2OclExpression
 {
 	//TODO: Verify the mapping between ocl::expression::Variable->EObject and pivot::VariableDeclaration
-	result.referredVariable := self.referredVariable .xmap toVariable();
+	result.referredVariable := self.referredVariable .late resolveone(pivot::Variable);
 }
 
 /* --- 29. Variable transformation --- */
@@ -976,7 +978,7 @@ mapping ocl::expressions::VariableExp::variableExp2VariableExp () : pivot::Varia
 mapping ocl::expressions::Variable::variable2Variable () : pivot::Variable
 {
 	//TODO: Verify the mapping between EParameter->EObject and Parameter
-	result.representedParameter := self.representedParameter.oclAsType(EParameter) .xmap toParameter();
+	result.representedParameter := self.representedParameter .late resolveone(pivot::Parameter);
 	
 	result.initExpression := self.initExpression .xmap toOCLExpression();
 	
@@ -1014,7 +1016,7 @@ mapping ocl::expressions::CollectionRange::collectionRange2CollectionRange() : p
 //Note: It inherits from ocl::utilities::PredefinedType and ocl::utilities::TypedASTNode 
 mapping ocl::types::CollectionType::collectionType2CollectionType() : pivot::CollectionType												
 {
-	result.elementType := self.elementType.oclAsType(ecore::EClassifier) .xmap toType();
+	result.elementType := self.elementType .late resolveone(pivot::Type);
 	//? := self.kind;
 	//result.lower := ?;
 	//result.upper := ?;
@@ -1163,8 +1165,8 @@ abstract mapping ocl::ecore::NumericLiteralExp::numericLiteralExp2NumericLiteral
 /* --- 20. OperationCallExp transformation  --- */
 //Note: OperationCallExp in Pivot also inherits from ReferingElement
 mapping ocl::ecore::OperationCallExp::operationCallExp2OperationCallExp () : pivot::OperationCallExp   inherits 
-															ocl::expressions::OperationCallExp::operationCallExp2OperationCallExp,
-															ocl::ecore::FeatureCallExp::featureCallExp2FeatureCallExp     
+															ocl::ecore::FeatureCallExp::featureCallExp2FeatureCallExp,    
+															ocl::expressions::OperationCallExp::operationCallExp2OperationCallExp
 {
 }
 
@@ -1304,7 +1306,7 @@ mapping qvtimp::BreakExp::breakExp2BreakExp() : pivotimp::BreakExp inherits qvti
 mapping qvtimp::CatchExp::catchExp2CatchExp() : pivotimp::CatchExp inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
 {
 	result.body += self.body .xmap toOCLExpression();
-	result._exception += self._exception .xmap toType();
+	result._exception += self._exception .late resolve(pivot::Type);
 }
 
 /* --- 7. ComputeExp transformation --- */
@@ -1338,7 +1340,7 @@ mapping qvtimp::DictLiteralPart::dictLiteralPart2DictLiteralPart() : pivotimp::D
 /* --- 11. DictionaryType transformation --- */
 mapping qvtimp::DictionaryType::dictionaryType2DictionaryType() : pivotimp::DictionaryType inherits ocl::types::CollectionType::collectionType2CollectionType
 { 
-	result.keyType := self.keyType .xmap toType();
+	result.keyType := self.keyType .late resolveone(pivot::Type);
 }
 
 /* --- 12. ForExp transformation --- */
@@ -1368,7 +1370,7 @@ abstract mapping qvtimp::ImperativeLoopExp::imperativeLoopExp2ImperativeLoopExp(
 mapping qvtimp::InstantiationExp::instantiationExp2InstantiationExp() : pivotimp::InstantiationExp inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
 {
 	result.argument += self.argument .xmap toOCLExpression();
-	result.extent := self.extent .xmap toVariable();
+	result.extent := self.extent .late resolveone(pivot::Variable);
 	result.instantiatedClass := self.instantiatedClass .late resolveone(pivot::Class);
 }
 
@@ -1398,7 +1400,7 @@ mapping qvtimp::RaiseExp::raiseExp2RaiseExp() : pivotimp::RaiseExp
 											inherits qvtimp::ImperativeExpression::imperativeExpression2ImperativeExpression
 {
 	result.argument := self.argument .xmap toOCLExpression();
-	result._exception := self._exception .xmap toType();
+	result._exception := self._exception .late resolveone(pivot::Type);
 }
 
 /* --- 21. ReturnExp transformation --- */
@@ -1441,7 +1443,7 @@ mapping qvtimp::TryExp::tryExp2TryExp() : pivotimp::TryExp
 mapping qvtimp::Typedef::typedef2Typedef() : pivotimp::Typedef 
 											inherits ecore::EClass::eClass2Class
 {
-	result.base := self.base .xmap eClassifier2Type();
+	result.base := self.base .late resolveone(pivot::Type);
 	result.condition := self.condition .xmap toOCLExpression();
 }
 
