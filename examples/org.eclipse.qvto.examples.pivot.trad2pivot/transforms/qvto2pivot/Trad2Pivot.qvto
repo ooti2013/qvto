@@ -7,14 +7,12 @@ modeltype ecore "strict" uses ecore('http://www.eclipse.org/emf/2002/Ecore');//p
 modeltype oclpl "strict" uses ocl('http://www.eclipse.org/ocl/1.1.0/OCL');//pl
 modeltype qvtimp "strict" uses ImperativeOCL('http://www.eclipse.org/qvt/1.0/ImperativeOCL');//pl
 
-
 transformation Trad2Pivot(in o: qvt, out p: qvtpivot);
 
 
 main() {
 	o.rootObjects()[qvt::expressions::OperationalTransformation] .xmap opTrans2opTrans();
 }
-
 
 /****************************************************************/
 /*																*/
