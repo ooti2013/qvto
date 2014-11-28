@@ -223,7 +223,6 @@ mapping qvt::expressions::MappingOperation::mappingOp2mappingOp() : qvtpivot::Ma
 	result._where := self._where .xmap toOCLExpression();
 }
 
-
 query QueryOclWhen( eco:OrderedSet(ocl::ecore::OCLExpression)) : pivot::OCLExpression {
 	//Returns the transformation of the last element in the input set.
 	var queryWhen: pivot::OCLExpression;
