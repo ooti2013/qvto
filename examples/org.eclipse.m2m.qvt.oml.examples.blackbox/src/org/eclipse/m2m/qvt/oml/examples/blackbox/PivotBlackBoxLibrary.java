@@ -56,4 +56,10 @@ public class PivotBlackBoxLibrary {
 	public static Object getParameter(EParameter self) throws ParserException {
 		return metaModelManager.getPivotOf(Parameter.class, self);
 	}
+		
+	@Operation(contextual=true)
+	public static Object getIntegerType (EClassifier self)
+	{
+		return metaModelManager.getIntegerType();
+	}
 }

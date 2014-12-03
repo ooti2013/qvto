@@ -4,7 +4,7 @@ modeltype MMB uses 'MMB';
 transformation QVToOld(in source:MMA, out target:MMB);
 
 main() {
-	
+	3<=2;
 	source.rootObjects()[MMA::Project] -> map Project2Model();
 }
 

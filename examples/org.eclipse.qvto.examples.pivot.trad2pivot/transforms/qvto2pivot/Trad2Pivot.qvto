@@ -836,7 +836,7 @@ mapping ocl::expressions::IfExp::ifExp2ifExp () : pivot::IfExp inherits ocl::exp
 mapping ocl::expressions::IntegerLiteralExp::integerLiteralExp2IntegerLiteralExp () : pivot::IntegerLiteralExp inherits ocl::expressions::NumericLiteralExp::numericLiteralExp2NumericLiteralExp
 {
 	//TODO: Verify the mapping between EIntegerObject and pivot::Integer
-	//result.integerSymbol := self.integerSymbol;
+	result.integerSymbol := self.integerSymbol.oclAsType(pivot::Integer);
 	
 	//TODO
 	//? := self.extendedIntegerSymbol
@@ -921,10 +921,10 @@ mapping ocl::expressions::OperationCallExp::operationCallExp2OperationCallExp ()
 	
 	// At this point, the metamodelmanager returns null or throws an exception (because of the exception, the output file is not generated).  
 	// "getOperation"" is a function defined in the blackbox that transform an ecore::EOperation to an pivot::Operation. 
-	result.referredOperation := self.referredOperation.oclAsType(EOperation).getOperation().oclAsType(pivot::Operation);
+	//result.referredOperation := self.referredOperation.oclAsType(EOperation).getOperation().oclAsType(pivot::Operation);
 	
 	//Old code. In order to generate the output file, comment the line just above and uncomment the line just bellow. 
-	//result.referredOperation := self.referredOperation.oclAsType(EOperation).xmap toOperation();
+	result.referredOperation := self.referredOperation.oclAsType(EOperation).xmap toOperation();
 }
 
 /* --- 21. PrimitiveLiteralExp transformation  --- */
@@ -1095,6 +1095,7 @@ mapping ocl::ecore::IntegerLiteralExp::integerLiteralExp2IntegerLiteralExp () : 
 							inherits ocl::ecore::NumericLiteralExp::numericLiteralExp2NumericLiteralExp,
 							ocl::expressions::IntegerLiteralExp::integerLiteralExp2IntegerLiteralExp
 {
+	result.type := self.eType.getIntegerType().oclAsType(pivot::Type);
 }
 
 /* --- 10. InvalidLiteralExp transformation  --- */
