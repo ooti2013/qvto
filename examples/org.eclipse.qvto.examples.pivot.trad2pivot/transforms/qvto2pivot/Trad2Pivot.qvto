@@ -419,12 +419,12 @@ abstract mapping ecore::ETypedElement::eTypedElement2TypedElement () : pivot::Ty
 {
 	result.isRequired := self.required;
 	result.type := self.eType .resolveone(pivot::Type);
-	
 	if (result.type = null){
-		result.type := self.eType.xmap toType();
+		result.type := self.eType.getPrimitiveType().oclAsType(pivot::Type);
+		if (result.type = null){
+			result.type := self.eType .resolveone(pivot::Type);			
+		}	
 	}
-	
-	
 }
 
 /* --- 11. ENamedElement transformacion --- */
@@ -926,8 +926,9 @@ mapping ocl::expressions::OperationCallExp::operationCallExp2OperationCallExp ()
 	var arguments := result.argument.type -> name;
 	result.referredOperation := self.referredOperation.oclAsType(EOperation).getOperation(result.source.type.name ,arguments).oclAsType(pivot::Operation);
 
-	if (result.referredOperation = null)
-		result.referredOperation := self.referredOperation.oclAsType(EOperation).xmap toOperation();
+	//TODO: Without this, some reference are lost. With this, we have hanging objects but the references are set.
+	/*if (result.referredOperation = null)
+		result.referredOperation := self.referredOperation.oclAsType(EOperation).xmap toOperation();*/
 }
 
 /* --- 21. PrimitiveLiteralExp transformation  --- */
@@ -939,7 +940,13 @@ abstract mapping ocl::expressions::PrimitiveLiteralExp::primitiveLiteralExp2Prim
 mapping ocl::expressions::PropertyCallExp::propertyCallExp2PropertyCallExp () : pivot::PropertyCallExp inherits ocl::expressions::NavigationCallExp::navigationCallExp2NavigationCallExp
 {
 	//TODO: Verify the mapping between ocl::expression::EStructuralFeature->EObject and pivot::Property
-	result.referredProperty := self.referredProperty .late resolveone (pivot::Property);
+	result.referredProperty := self.referredProperty .resolveone (pivot::Property);
+	//TODO: Without this, some reference are lost. With this, we have hanging objects but the references are set.
+	/*if (result.referredProperty = null)
+	{
+		result.referredProperty := self.referredProperty.oclAsType(ecore::EStructuralFeature) .xmap toProperty();
+	}*/
+	
 }
 
 /* --- 23. StateExp transformation  --- */
@@ -1098,7 +1105,7 @@ mapping ocl::ecore::IntegerLiteralExp::integerLiteralExp2IntegerLiteralExp () : 
 							inherits ocl::ecore::NumericLiteralExp::numericLiteralExp2NumericLiteralExp,
 							ocl::expressions::IntegerLiteralExp::integerLiteralExp2IntegerLiteralExp
 {
-	result.type := self.eType.getIntegerType().oclAsType(pivot::Type);
+	result.type := self.eType.getPrimitiveType().oclAsType(pivot::Type);
 }
 
 /* --- 10. InvalidLiteralExp transformation  --- */

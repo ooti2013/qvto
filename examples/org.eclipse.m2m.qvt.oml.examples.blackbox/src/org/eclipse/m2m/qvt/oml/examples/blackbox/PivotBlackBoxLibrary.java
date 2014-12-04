@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.m2m.qvt.oml.blackbox.java.Operation;
+import org.eclipse.ocl.ecore.PrimitiveType;
 import org.eclipse.ocl.examples.pivot.Class;
 import org.eclipse.ocl.examples.pivot.IntegerLiteralExp;
 import org.eclipse.ocl.examples.pivot.Parameter;
@@ -61,7 +62,12 @@ public class PivotBlackBoxLibrary {
 			for(int i = 0; i< args.size();i++){
 				args1[i] = typeDispatcher(args.get(i));
 			}
-			return metaModelManager.resolveOperation(typeDispatcher(source), self.getName(), args1);
+			try{
+				return metaModelManager.resolveOperation(typeDispatcher(source), self.getName(), args1);
+			}catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
@@ -73,7 +79,7 @@ public class PivotBlackBoxLibrary {
 			 return	metaModelManager.getBooleanType();
 		if(in.equals("String"))
 			 return	metaModelManager.getStringType();
-			
+		/*TODO: Add more primitive types*/
 		return null;
 	}
 	
@@ -84,27 +90,9 @@ public class PivotBlackBoxLibrary {
 	}
 
 	@Operation(contextual = true)
-	public static Object getIntegerType(EClassifier self) {
-		return metaModelManager.getIntegerType();
+	public static Object getPrimitiveType(EClassifier self) {
+		if (self.getName() != null)
+			return typeDispatcher(self.getName());
+		return null;
 	}
-
-	@Operation(contextual = true)
-	public static Object getResolvedOperationTest(EOperation self) throws Exception {
-		// creating pivot operation
-		org.eclipse.ocl.examples.pivot.Operation result = PivotFactory.eINSTANCE
-				.createOperation();
-		// creating a rightside
-		IntegerLiteralExp rightside = PivotFactory.eINSTANCE
-				.createIntegerLiteralExp();
-		rightside.setType(PivotFactory.eINSTANCE.createType());
-		// creating a leftside
-		IntegerLiteralExp leftside = PivotFactory.eINSTANCE
-				.createIntegerLiteralExp();
-		leftside.setType(PivotFactory.eINSTANCE.createType());
-		// calling the resolveOperation of the metaModelManager
-		result = metaModelManager.resolveOperation(metaModelManager.getIntegerType(), ">", metaModelManager.getIntegerType());
-
-		return result;
-	}
-
 }
