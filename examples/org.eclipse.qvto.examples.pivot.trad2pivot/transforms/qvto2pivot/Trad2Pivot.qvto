@@ -398,7 +398,6 @@ mapping ecore::EOperation::eOperation2Operation () : pivot::Operation inherits e
 	result.ownedParameter += self.eParameters .xmap toParameter();
 	
 	result.raisedException += self.eExceptions .late resolve(pivot::Type);
-	
 }
 
 
@@ -419,7 +418,12 @@ abstract mapping ecore::EModelElement::eModelElement2Element () : pivot::Element
 abstract mapping ecore::ETypedElement::eTypedElement2TypedElement () : pivot::TypedElement inherits ecore::ENamedElement::eNamedElement2NamedElement
 {
 	result.isRequired := self.required;
-	result.type := self.eType .late resolveone(pivot::Type);
+	result.type := self.eType .resolveone(pivot::Type);
+	
+	if (result.type = null){
+		result.type := self.eType.xmap toType();
+	}
+	
 	
 }
 
@@ -918,13 +922,12 @@ mapping ocl::expressions::OperationCallExp::operationCallExp2OperationCallExp ()
 															ocl::expressions::FeatureCallExp::featureCallExp2FeatureCallExp     
 {
 	result.argument += self.argument .xmap toOCLExpression();
-	
-	// At this point, the metamodelmanager returns null or throws an exception (because of the exception, the output file is not generated).  
-	// "getOperation"" is a function defined in the blackbox that transform an ecore::EOperation to an pivot::Operation. 
-	//result.referredOperation := self.referredOperation.oclAsType(EOperation).getOperation().oclAsType(pivot::Operation);
-	
-	//Old code. In order to generate the output file, comment the line just above and uncomment the line just bellow. 
-	result.referredOperation := self.referredOperation.oclAsType(EOperation).xmap toOperation();
+
+	var arguments := result.argument.type -> name;
+	result.referredOperation := self.referredOperation.oclAsType(EOperation).getOperation(result.source.type.name ,arguments).oclAsType(pivot::Operation);
+
+	if (result.referredOperation = null)
+		result.referredOperation := self.referredOperation.oclAsType(EOperation).xmap toOperation();
 }
 
 /* --- 21. PrimitiveLiteralExp transformation  --- */

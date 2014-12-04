@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.m2m.qvt.oml.examples.blackbox;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EOperation;
@@ -51,11 +54,30 @@ public class PivotBlackBoxLibrary {
 	}
 
 	@Operation(contextual = true)
-	public static Object getOperation(EOperation self) throws ParserException {
-		return metaModelManager.getPivotOf(
-				org.eclipse.ocl.examples.pivot.Operation.class, self);
+	public static Object getOperation(EOperation self, String source, List<String> args) throws ParserException {
+		if (source != null)
+		{
+			Type[] args1 = new Type[args.size()];
+			for(int i = 0; i< args.size();i++){
+				args1[i] = typeDispatcher(args.get(i));
+			}
+			return metaModelManager.resolveOperation(typeDispatcher(source), self.getName(), args1);
+		}
+		return null;
 	}
 
+	private static Type typeDispatcher(String in){
+		if(in.equals("Integer"))
+			return	metaModelManager.getIntegerType();
+		if(in.equals("Boolean"))
+			 return	metaModelManager.getBooleanType();
+		if(in.equals("String"))
+			 return	metaModelManager.getStringType();
+			
+		return null;
+	}
+	
+	
 	@Operation(contextual = true)
 	public static Object getParameter(EParameter self) throws ParserException {
 		return metaModelManager.getPivotOf(Parameter.class, self);
@@ -67,7 +89,7 @@ public class PivotBlackBoxLibrary {
 	}
 
 	@Operation(contextual = true)
-	public static Object getResolvedOperationTest() throws Exception {
+	public static Object getResolvedOperationTest(EOperation self) throws Exception {
 		// creating pivot operation
 		org.eclipse.ocl.examples.pivot.Operation result = PivotFactory.eINSTANCE
 				.createOperation();
@@ -80,8 +102,7 @@ public class PivotBlackBoxLibrary {
 				.createIntegerLiteralExp();
 		leftside.setType(PivotFactory.eINSTANCE.createType());
 		// calling the resolveOperation of the metaModelManager
-		result = metaModelManager.resolveOperation(leftside.getType(), ">",
-				rightside.getType());
+		result = metaModelManager.resolveOperation(metaModelManager.getIntegerType(), ">", metaModelManager.getIntegerType());
 
 		return result;
 	}
